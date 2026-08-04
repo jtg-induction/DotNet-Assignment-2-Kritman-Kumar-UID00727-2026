@@ -1,0 +1,17 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# NuGet packages (packages.config)
+packages/
+
+# Build output
+RestaurantServer/bin/
+RestaurantServer/obj/
+
+RestaurantServer.Tests/bin/
+RestaurantServer.Tests/obj/
+
+# Local database connection strings
+RestaurantServer/ConnectionStrings.config
