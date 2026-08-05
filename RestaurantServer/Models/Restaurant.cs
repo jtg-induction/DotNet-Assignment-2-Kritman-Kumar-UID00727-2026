@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using RestaurantServer.Constants;
 
 namespace RestaurantServer.Models
 {
@@ -15,29 +16,59 @@ namespace RestaurantServer.Models
 
         [Key]
         public long Id { get; set; }
+
         [Required]
-        [MaxLength(150)]
+        [MaxLength(ValidationConstants.NameMaxLength)]
         public string RestaurantName { get; set; }
-        [MaxLength(500)]
+
+        [MaxLength(ValidationConstants.DescriptionMaxLength)]
         public string Description { get; set; }
-        [MaxLength(20)]
+
+        [MaxLength(ValidationConstants.MobileNumberMaxLength)]
         public string MobileNumber { get; set; }
-        [MaxLength(200)]
+
+        [Required]
+        [MaxLength(ValidationConstants.AddressMaxLength)]
         public string AddressLine1 { get; set; }
-        [MaxLength(200)]
+
+        [MaxLength(ValidationConstants.AddressMaxLength)]
         public string AddressLine2 { get; set; }
-        [MaxLength(100)]
+
+        [Required]
+        [MaxLength(ValidationConstants.CityMaxLength)]
         public string City { get; set; }
-        [MaxLength(20)]
+
+        [Required]
+        [MaxLength(ValidationConstants.PostalCodeMaxLength)]
         public string PostalCode { get; set; }
-        [MaxLength(100)]
+
+        [Required]
+        [MaxLength(ValidationConstants.CountryMaxLength)]
         public string Country { get; set; }
+
+        [Required]
         public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
+        public long CreatedBy { get; set; }
+
+        [Required]
+        public DateTime UpdatedAt { get; set; }
+
+        [Required]
+        public long UpdatedBy { get; set; }
+
         public bool IsDeleted { get; set; }
+
         // Navigation
+        public virtual User CreatedByUser { get; set; }
+
+        public virtual User UpdatedByUser { get; set; }
+
         public virtual ICollection<Item> Items { get; set; }
+
         public virtual ICollection<Order> Orders { get; set; }
+
         public virtual ICollection<RestaurantOwner> RestaurantOwners { get; set; }
     }
 }
