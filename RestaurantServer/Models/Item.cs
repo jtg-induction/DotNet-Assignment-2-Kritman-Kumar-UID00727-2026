@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using RestaurantServer.Constants;
 
-
 namespace RestaurantServer.Models
 {
     public class Item

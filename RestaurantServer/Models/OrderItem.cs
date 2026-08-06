@@ -9,6 +9,7 @@ namespace RestaurantServer.Models
 
         [Key]
         public long Id { get; set; }
+        
         [Required]
         [MaxLength(ValidationConstants.NameMaxLength)]
         public string Name { get; set; }

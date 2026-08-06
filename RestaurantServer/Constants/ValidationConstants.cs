@@ -1,5 +1,4 @@
-﻿
-namespace RestaurantServer.Constants
+﻿namespace RestaurantServer.Constants
 {
     public static class ValidationConstants
     {
@@ -15,4 +14,3 @@ namespace RestaurantServer.Constants
         public const int PostalCodeMaxLength = 20;
     }
 }
- 

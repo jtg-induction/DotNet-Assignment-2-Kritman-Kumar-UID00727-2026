@@ -22,65 +22,65 @@ namespace RestaurantServer
         {
             // Restaurant -> Items
             modelBuilder.Entity<Item>()
-                .HasRequired(i => i.Restaurant)
-                .WithMany(r => r.Items)
-                .HasForeignKey(i => i.RestaurantId)
+                .HasRequired(item => item.Restaurant)
+                .WithMany(restaurant => restaurant.Items)
+                .HasForeignKey(item => item.RestaurantId)
                 .WillCascadeOnDelete(false);
 
             // Restaurant -> Orders
             modelBuilder.Entity<Order>()
-                .HasRequired(o => o.Restaurant)
-                .WithMany(r => r.Orders)
-                .HasForeignKey(o => o.RestaurantId)
+                .HasRequired(order => order.Restaurant)
+                .WithMany(restaurant => restaurant.Orders)
+                .HasForeignKey(order => order.RestaurantId)
                 .WillCascadeOnDelete(false);
 
             // User -> Orders
             modelBuilder.Entity<Order>()
-                .HasRequired(o => o.User)
-                .WithMany(u => u.Orders)
-                .HasForeignKey(o => o.UserId)
+                .HasRequired(order => order.User)
+                .WithMany(user => user.Orders)
+                .HasForeignKey(order => order.UserId)
                 .WillCascadeOnDelete(false);
 
             // Order -> OrderItems
             modelBuilder.Entity<OrderItem>()
-                .HasRequired(oi => oi.Order)
-                .WithMany(o => o.OrderItems)
-                .HasForeignKey(oi => oi.OrderId)
+                .HasRequired(orderItem => orderItem.Order)
+                .WithMany(order => order.OrderItems)
+                .HasForeignKey(orderItem => orderItem.OrderId)
                 .WillCascadeOnDelete(false);
 
             // Item -> OrderItems
             modelBuilder.Entity<OrderItem>()
-                .HasRequired(oi => oi.Item)
-                .WithMany(i => i.OrderItems)
-                .HasForeignKey(oi => oi.ItemId)
+                .HasRequired(orderItem => orderItem.Item)
+                .WithMany(item => item.OrderItems)
+                .HasForeignKey(orderItem => orderItem.ItemId)
                 .WillCascadeOnDelete(false);
 
             // Restaurant -> RestaurantOwners
             modelBuilder.Entity<RestaurantOwner>()
-                .HasRequired(ro => ro.Restaurant)
-                .WithMany(r => r.RestaurantOwners)
+                .HasRequired(restaurantOwner => restaurantOwner.Restaurant)
+                .WithMany(restaurant => restaurant.RestaurantOwners)
                 .HasForeignKey(ro => ro.RestaurantId)
                 .WillCascadeOnDelete(false);
 
             // User -> RestaurantOwners
             modelBuilder.Entity<RestaurantOwner>()
-                .HasRequired(ro => ro.User)
+                .HasRequired(restaurantOwner => restaurantOwner.User)
                 .WithMany(u => u.RestaurantOwners)
-                .HasForeignKey(ro => ro.UserId)
+                .HasForeignKey(restaurantOwner => restaurantOwner.UserId)
                 .WillCascadeOnDelete(false);
 
             // Restaurant -> CreatedBy User
             modelBuilder.Entity<Restaurant>()
-                .HasRequired(r => r.CreatedByUser)
+                .HasRequired(restaurant => restaurant.CreatedByUser)
                 .WithMany()
-                .HasForeignKey(r => r.CreatedBy)
+                .HasForeignKey(restaurant => restaurant.CreatedBy)
                 .WillCascadeOnDelete(false);
 
             // Restaurant -> UpdatedBy User
             modelBuilder.Entity<Restaurant>()
-                .HasRequired(r => r.UpdatedByUser)
+                .HasRequired(restaurant => restaurant.UpdatedByUser)
                 .WithMany()
-                .HasForeignKey(r => r.UpdatedBy)
+                .HasForeignKey(restaurant => restaurant.UpdatedBy)
                 .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);
