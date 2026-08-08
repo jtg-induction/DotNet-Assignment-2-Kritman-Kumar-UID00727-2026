@@ -12,5 +12,8 @@
         public const int CityMaxLength = 100;
         public const int CountryMaxLength = 100;
         public const int PostalCodeMaxLength = 20;
+        public const int PasswordMinLength = 6;
+        public const int PasswordMaxLength = 100;
+        public const int RefreshTokenMaxLength = 500; 
     }
 }

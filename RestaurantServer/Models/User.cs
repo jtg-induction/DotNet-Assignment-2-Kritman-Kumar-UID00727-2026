@@ -12,6 +12,7 @@ namespace RestaurantServer.Models
         {
             Orders = new HashSet<Order>();
             RestaurantOwners = new HashSet<RestaurantOwner>();
+            RefreshTokens = new HashSet<RefreshToken>();
         }
 
         [Key]
@@ -51,5 +52,7 @@ namespace RestaurantServer.Models
         public virtual ICollection<Order> Orders { get; set; }
 
         public virtual ICollection<RestaurantOwner> RestaurantOwners { get; set; }
+
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

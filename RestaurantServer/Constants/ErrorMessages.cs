@@ -13,5 +13,7 @@
 
         public const string NotFound =
             "The requested resource was not found.";
+            
+        public const string ValidationFailed = "Validation failed.";
     }
 }

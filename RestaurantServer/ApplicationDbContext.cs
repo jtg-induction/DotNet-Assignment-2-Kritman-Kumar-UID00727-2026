@@ -17,6 +17,7 @@ namespace RestaurantServer
         public DbSet<Item> Items { get; set; }
         public DbSet<Restaurant>Restaurants { get; set; }
         public DbSet<RestaurantOwner> RestaurantOwners { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -81,6 +82,13 @@ namespace RestaurantServer
                 .HasRequired(restaurant => restaurant.UpdatedByUser)
                 .WithMany()
                 .HasForeignKey(restaurant => restaurant.UpdatedBy)
+                .WillCascadeOnDelete(false);
+
+            // user -> RefreshToken
+            modelBuilder.Entity<RefreshToken>()
+                .HasRequired(refreshToken => refreshToken.User)
+                .WithMany(user => user.RefreshTokens)
+                .HasForeignKey(refreshToken => refreshToken.UserId)
                 .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);

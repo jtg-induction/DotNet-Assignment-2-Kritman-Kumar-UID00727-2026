@@ -15,3 +15,4 @@ RestaurantServer.Tests/obj/
 
 # Local database connection strings
 RestaurantServer/ConnectionStrings.config
+RestaurantServer/AppSettings.config

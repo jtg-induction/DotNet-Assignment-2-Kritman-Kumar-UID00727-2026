@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http;
 using System.Web.Http.ExceptionHandling;
 using RestaurantServer.Constants;
 
@@ -9,14 +8,31 @@ namespace RestaurantServer.Exceptions
     {
         public override void Handle(ExceptionHandlerContext context)
         {
-            var response = new
+            HttpStatusCode statusCode;
+            object response;
+
+            if (context.Exception is BusinessException businessException)
             {
-                Message = ErrorMessages.InternalServerError
-            };
+                statusCode = HttpStatusCode.BadRequest;
+
+                response = new
+                {
+                    Message = businessException.Message
+                };
+            }
+            else
+            {
+                statusCode = HttpStatusCode.InternalServerError;
+
+                response = new
+                {
+                    Message = ErrorMessages.InternalServerError
+                };
+            }
 
             context.Result = new ErrorMessageResult(
                 context.Request,
-                HttpStatusCode.InternalServerError,
+                statusCode,
                 response
             );
         }
