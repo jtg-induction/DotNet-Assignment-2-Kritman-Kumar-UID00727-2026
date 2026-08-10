@@ -48,7 +48,7 @@ namespace RestaurantServer.Services.Implementations
                 Name = request.Name.Trim(),
                 Email = request.Email,
                 PasswordHash = passwordHash,
-                Balance = 0,
+                Balance = 1000m,
                 Role = (int)UserRole.Customer,
                 IsActive = true,
                 MobileNumber = null,
@@ -185,6 +185,33 @@ namespace RestaurantServer.Services.Implementations
                 RefreshToken = newRefreshToken
             };
         }
+
+        public async Task LogoutAsync(string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                throw new BusinessException(
+                    ValidationMessages.InvalidRefreshToken);
+            }
+
+            var existingRefreshToken =
+                await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+
+            if (existingRefreshToken == null ||
+                existingRefreshToken.IsRevoked)
+            {
+                throw new BusinessException(
+                    ValidationMessages.InvalidRefreshToken);
+            }
+
+            existingRefreshToken.IsRevoked = true;
+            existingRefreshToken.UpdatedAt = DateTime.UtcNow;
+
+            _refreshTokenRepository.Update(existingRefreshToken);
+
+            await _refreshTokenRepository.SaveAsync();
+        }
+
     }
 }
     

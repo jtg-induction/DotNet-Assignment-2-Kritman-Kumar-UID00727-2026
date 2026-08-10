@@ -1,6 +1,8 @@
 ﻿using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
+using System;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Implementations
@@ -30,6 +32,21 @@ namespace RestaurantServer.Repositories.Implementations
         public void Update(RefreshToken refreshToken)
         {
             _context.Entry(refreshToken).State = EntityState.Modified;
+        }
+
+        public async Task RevokeAllByUserIdAsync(long userId)
+        {
+            var refreshTokens = await _context.RefreshTokens
+                .Where(refreshToken =>
+                    refreshToken.UserId == userId &&
+                    !refreshToken.IsRevoked)
+                .ToListAsync();
+
+            foreach (var refreshToken in refreshTokens)
+            {
+                refreshToken.IsRevoked = true;
+                refreshToken.UpdatedAt = DateTime.UtcNow;
+            }
         }
 
         public async Task SaveAsync()

@@ -13,38 +13,64 @@ namespace RestaurantServer.Helpers.Implementations
     {
         public string GenerateAccessToken(User user)
         {
-            var secretKey = ConfigurationManager.AppSettings["JwtSecretKey"];
-            var issuer = ConfigurationManager.AppSettings["JwtIssuer"];
-            var audience = ConfigurationManager.AppSettings["JwtAudience"]; 
+            var secretKey =
+                ConfigurationManager.AppSettings["JwtSecretKey"];
 
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(secretKey)
-            );
+            var issuer =
+                ConfigurationManager.AppSettings["JwtIssuer"];
 
-            var credentials = new SigningCredentials(
-                key,
-                SecurityAlgorithms.HmacSha256
-            );
-            
+            var audience =
+                ConfigurationManager.AppSettings["JwtAudience"];
+
+            var expiryMinutes =
+                int.Parse(
+                    ConfigurationManager.AppSettings[
+                        "JwtAccessTokenExpiryMinutes"
+                    ]);
+
+            var key =
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(secretKey)
+                );
+
+            var credentials =
+                new SigningCredentials(
+                    key,
+                    SecurityAlgorithms.HmacSha256
+                );
+
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                new Claim(
+                    ClaimTypes.NameIdentifier,
+                    user.Id.ToString()
+                ),
+
+                new Claim(
+                    ClaimTypes.Email,
+                    user.Email
+                ),
+
+                new Claim(
+                    ClaimTypes.Role,
+                    user.Role.ToString()
+                )
             };
 
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(15),
-                signingCredentials: credentials
-            );
+            var token =
+                new JwtSecurityToken(
+                    issuer: issuer,
+                    audience: audience,
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMinutes(
+                        expiryMinutes
+                    ),
+                    signingCredentials: credentials
+                );
 
             return new JwtSecurityTokenHandler()
                 .WriteToken(token);
         }
-
 
         public string GenerateRefreshToken()
         {

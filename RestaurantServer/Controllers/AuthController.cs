@@ -1,12 +1,13 @@
 ﻿using RestaurantServer.Constants;
 using RestaurantServer.DTOs.Requests;  
+using RestaurantServer.Exceptions;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
-using RestaurantServer.Exceptions;
 
 namespace RestaurantServer.Controllers
 {
@@ -93,6 +94,54 @@ namespace RestaurantServer.Controllers
             newCookie.Path = "/auth";
 
             response.Headers.AddCookies(new[] { newCookie });
+
+            return ResponseMessage(response);
+        }
+
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IHttpActionResult> Logout()
+        {
+            var refreshTokenCookie = Request.Headers
+                .GetCookies("refreshToken")
+                .FirstOrDefault();
+
+            if (refreshTokenCookie == null)
+            {
+                throw new BusinessException(
+                    ValidationMessages.InvalidRefreshToken);
+            }
+
+            var refreshToken =
+                refreshTokenCookie["refreshToken"]?.Value;
+
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                throw new BusinessException(
+                    ValidationMessages.InvalidRefreshToken);
+            }
+
+            await _authService.LogoutAsync(refreshToken);
+
+            var response = Request.CreateResponse(
+                HttpStatusCode.OK,
+                new
+                {
+                    Message = SuccessMessages.LogoutSuccessful
+                });
+
+            var expiredCookie = new CookieHeaderValue(
+                "refreshToken",
+                ""
+            );
+
+            expiredCookie.HttpOnly = true;
+            expiredCookie.Secure = true;
+            expiredCookie.Path = "/auth";
+            expiredCookie.Expires = DateTimeOffset.UtcNow.AddDays(-1);
+
+            response.Headers.AddCookies(
+                new[] { expiredCookie });
 
             return ResponseMessage(response);
         }
