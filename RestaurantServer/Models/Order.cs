@@ -11,6 +11,7 @@ namespace RestaurantServer.Models
         {
             OrderItems = new HashSet<OrderItem>();
         }
+
         [Key]
         public long Id { get; set; }
 
@@ -22,14 +23,14 @@ namespace RestaurantServer.Models
 
         [Required]
         public int Status { get; set; }
-            
+
         [Range(typeof(decimal), "0", ValidationConstants.DecimalMax)]
         public decimal TotalPrice { get; set; }
 
         [Required]
         [MaxLength(ValidationConstants.AddressMaxLength)]
         public string AddressLine1 { get; set; }
-        
+
         [MaxLength(ValidationConstants.AddressMaxLength)]
         public string AddressLine2 { get; set; }
 

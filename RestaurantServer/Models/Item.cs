@@ -12,6 +12,7 @@ namespace RestaurantServer.Models
         {
             OrderItems = new HashSet<OrderItem>();
         }
+
         [Key]
         public long Id { get; set; }
 
@@ -28,7 +29,7 @@ namespace RestaurantServer.Models
         public long RestaurantId { get; set; }
 
         [Required]
-        [Range(0,int.MaxValue)]
+        [Range(0, int.MaxValue)]
         public int Stock { get; set; }
 
         [Required]

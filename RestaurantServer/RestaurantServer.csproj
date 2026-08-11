@@ -112,7 +112,6 @@
     <Compile Include="Constants\ValidationConstants.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
     <Compile Include="Enums\UserRole.cs" />
-    <Compile Include="Exceptions\ErrorMessageResult.cs" />
     <Compile Include="Exceptions\GlobalExceptionHandler.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
