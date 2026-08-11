@@ -9,7 +9,6 @@ namespace RestaurantServer.Helpers.Interfaces
     public interface IJwtTokenService
     {
         string GenerateAccessToken(User user);
-
         string GenerateRefreshToken();
     }
 }

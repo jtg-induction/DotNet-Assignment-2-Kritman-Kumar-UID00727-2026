@@ -11,11 +11,28 @@ namespace RestaurantServer.Middleware
 {
     public class JwtAuthenticationMiddleware : OwinMiddleware
     {
+        /// <summary>
+        /// Initializes a new instance of the
+        /// <see cref="JwtAuthenticationMiddleware"/> class.
+        /// </summary>
+        /// <param name="next">
+        /// The next middleware component in the OWIN pipeline.
+        /// </param>
         public JwtAuthenticationMiddleware(OwinMiddleware next)
             : base(next)
         {
         }
 
+        /// <summary>
+        /// Validates the JWT bearer token from the Authorization header
+        /// and sets the authenticated user principal for the current request.
+        /// </summary>
+        /// <param name="context">
+        /// The OWIN context for the current HTTP request.
+        /// </param>
+        /// <returns>
+        /// A task representing the asynchronous middleware operation.
+        /// </returns>
         public override async Task Invoke(IOwinContext context)
         {
             var authorizationHeader =

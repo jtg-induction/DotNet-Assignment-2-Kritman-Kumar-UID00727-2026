@@ -9,16 +9,35 @@ using RestaurantServer.Filters;
 
 namespace RestaurantServer.Controllers
 {
+    /// <summary>
+    /// Provides endpoints for managing the authenticated user's account.
+    /// </summary>
     [RoutePrefix("account")]
     public class AccountController : ApiController
     {
         private readonly IAccountService _accountService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
+        /// <param name="accountService">
+        /// The account service used to perform account-related operations.
+        /// </param>
         public AccountController(IAccountService accountService)
         {
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Updates the account details of the currently authenticated user.
+        /// </summary>
+        /// <param name="request">
+        /// The account details to be updated.
+        /// </param>
+        /// <returns>
+        /// An HTTP 200 response containing the updated account information.
+        /// Returns HTTP 401 if the authenticated user's identity cannot be determined.
+        /// </returns>
         [HttpPut]
         [Route("update")]
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
@@ -48,14 +67,18 @@ namespace RestaurantServer.Controllers
                 return Unauthorized();
             }
 
-            var response =
-                await _accountService.UpdateAccountAsync(
-                    userId,
-                    request);
+            var response = await _accountService.UpdateAccountAsync(userId, request);
 
             return Ok(response);
         }
 
+        /// <summary>
+        /// Deactivates the account of the currently authenticated user.
+        /// </summary>
+        /// <returns>
+        /// An HTTP 200 response containing the user's ID and deactivation message.
+        /// Returns HTTP 401 if the authenticated user's identity cannot be determined.
+        /// </returns>
         [HttpPut]
         [Route("deactivate")]
         public async Task<IHttpActionResult> DeactivateAccount()
@@ -76,9 +99,7 @@ namespace RestaurantServer.Controllers
                 return Unauthorized();
             }
 
-            if (!long.TryParse(
-                userIdClaim.Value,
-                out var userId))
+            if (!long.TryParse(userIdClaim.Value,out var userId))
             {
                 return Unauthorized();
             }
@@ -92,18 +113,5 @@ namespace RestaurantServer.Controllers
                 Message = response
             });
         }
-
-
-        [HttpGet]
-        [Route("admin-test")]
-        [CustomAuthorize(UserRole.Admin)]
-        public IHttpActionResult AdminTest()
-        {
-            return Ok(new
-            {
-                Message = "Admin authorization successful."
-            });
-        }
-
     }
 }

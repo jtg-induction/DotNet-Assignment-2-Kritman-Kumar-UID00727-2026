@@ -14,6 +14,15 @@ namespace RestaurantServer.Services.Implementations
         private readonly IAccountRepository _accountRepository; 
         private readonly IRefreshTokenRepository _refreshTokenRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountService"/> class.
+        /// </summary>
+        /// <param name="accountRepository">
+        /// The repository used to access and update user account data.
+        /// </param>
+        /// <param name="refreshTokenRepository">
+        /// The repository used to manage the user's refresh tokens.
+        /// </param>
         public AccountService(IAccountRepository accountRepository,
                 IRefreshTokenRepository refreshTokenRepository)
         {
@@ -21,6 +30,21 @@ namespace RestaurantServer.Services.Implementations
             _refreshTokenRepository = refreshTokenRepository;
         }
 
+        /// <summary>
+        /// Updates the account details of the specified user.
+        /// </summary>
+        /// <param name="userId">
+        /// The unique identifier of the user whose account should be updated.
+        /// </param>
+        /// <param name="request">
+        /// The account details to update.
+        /// </param>
+        /// <returns>
+        /// A response containing the updated account information.
+        /// </returns>
+        /// <exception cref="BusinessException">
+        /// Thrown when the specified user does not exist.
+        /// </exception>
         public async Task<UpdateAccountResponse> UpdateAccountAsync(
             long userId,
             UpdateAccountRequest request)
@@ -47,6 +71,20 @@ namespace RestaurantServer.Services.Implementations
             };
         }
 
+        /// <summary>
+        /// Deactivates the specified user's account and revokes
+        /// all active refresh tokens associated with the user.
+        /// </summary>
+        /// <param name="userId">
+        /// The unique identifier of the user whose account should be deactivated.
+        /// </param>
+        /// <returns>
+        /// A success message confirming that the account was deactivated.
+        /// </returns>
+        /// <exception cref="BusinessException">
+        /// Thrown when the specified user does not exist or the account
+        /// is already inactive.
+        /// </exception>
         public async Task<string> DeactivateAccountAsync(long userId)
         {
             var user = await _accountRepository.GetUserByIdAsync(userId);

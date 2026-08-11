@@ -7,8 +7,19 @@ using System.Web.Http.Controllers;
 
 namespace RestaurantServer.Filters
 {
+    /// <summary>
+    /// Validates the model state before an action is executed and returns
+    /// validation errors when the model is invalid.
+    /// </summary>
     public class ValidateModelAttribute : ActionFilterAttribute
     {
+        /// <summary>
+        /// Executes before the controller action and returns a bad request
+        /// response when model validation fails.
+        /// </summary>
+        /// <param name="actionContext">
+        /// The context for the current HTTP action.
+        /// </param>
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
             if (!actionContext.ModelState.IsValid)

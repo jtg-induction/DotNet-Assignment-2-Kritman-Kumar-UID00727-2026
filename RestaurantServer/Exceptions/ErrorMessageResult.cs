@@ -22,7 +22,6 @@ namespace RestaurantServer.Exceptions
             _content = content;
         }
 
-
         public Task<HttpResponseMessage> ExecuteAsync(
             CancellationToken cancellationToken)
         {

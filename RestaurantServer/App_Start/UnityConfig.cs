@@ -17,33 +17,14 @@ namespace RestaurantServer.App_Start
         {
             Container = new UnityContainer();
 
-            Container.RegisterType<ApplicationDbContext>(
-                new HierarchicalLifetimeManager());
-
-            // Auth
-            Container.RegisterType<IAuthRepository, AuthRepository>(
-                new HierarchicalLifetimeManager());
-
-            Container.RegisterType<IAuthService, AuthService>(
-                new HierarchicalLifetimeManager());
-
-            // Account
-            Container.RegisterType<IAccountRepository, AccountRepository>(
-                new HierarchicalLifetimeManager());
-
-            Container.RegisterType<IAccountService, AccountService>(
-                new HierarchicalLifetimeManager());
-
-            // Helpers
-            Container.RegisterType<IPasswordHasher, PasswordHasher>(
-                new HierarchicalLifetimeManager());
-
-            Container.RegisterType<IJwtTokenService, JwtTokenService>(
-                new HierarchicalLifetimeManager());
-
-            // Refresh Token
-            Container.RegisterType<IRefreshTokenRepository, RefreshTokenRepository>(
-                new HierarchicalLifetimeManager());
+            Container.RegisterType<ApplicationDbContext>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IAuthRepository, AuthRepository>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IAuthService, AuthService>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IAccountRepository, AccountRepository>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IAccountService, AccountService>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IPasswordHasher, PasswordHasher>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IJwtTokenService, JwtTokenService>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IRefreshTokenRepository, RefreshTokenRepository>(new HierarchicalLifetimeManager());
         }
     }
 }

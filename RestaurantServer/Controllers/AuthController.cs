@@ -16,11 +16,26 @@ namespace RestaurantServer.Controllers
     {
         private readonly IAuthService _authService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthController"/> class.
+        /// </summary>
+        /// <param name="authService">
+        /// The authentication service used to perform authentication and token operations.
+        /// </param>
         public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
 
+        /// <summary>
+        /// Registers a new user account.
+        /// </summary>
+        /// <param name="request">
+        /// The user registration details.
+        /// </param>
+        /// <returns>
+        /// An HTTP 201 response containing the newly registered user's information.
+        /// </returns>
         [HttpPost]
         [Route("signup")]
         public async Task<IHttpActionResult> Signup(SignupRequest request)
@@ -30,6 +45,16 @@ namespace RestaurantServer.Controllers
             return Content(HttpStatusCode.Created, response);
         }
 
+        /// <summary>
+        /// Authenticates a user and issues an access token and refresh token.
+        /// The refresh token is stored in a secure HTTP-only cookie.
+        /// </summary>
+        /// <param name="request">
+        /// The user's login credentials.
+        /// </param>
+        /// <returns>
+        /// An HTTP 200 response containing the authentication response.
+        /// </returns>
         [HttpPost]
         [Route("login")]
         public async Task<IHttpActionResult> Login(LoginRequest request)
@@ -55,6 +80,15 @@ namespace RestaurantServer.Controllers
             return ResponseMessage(response);
         }
 
+        /// <summary>
+        /// Generates a new access token using the refresh token stored in the request cookie.
+        /// </summary>
+        /// <returns>
+        /// An HTTP 200 response containing the new authentication response and refresh token.
+        /// </returns>
+        /// <exception cref="BusinessException">
+        /// Thrown when the refresh token cookie is missing or invalid.
+        /// </exception>
         [HttpPost]
         [Route("refresh")]
         public async Task<IHttpActionResult> Refresh()
@@ -98,6 +132,16 @@ namespace RestaurantServer.Controllers
             return ResponseMessage(response);
         }
 
+        /// <summary>
+        /// Logs out the current user by invalidating the refresh token
+        /// and expiring the refresh token cookie.
+        /// </summary>
+        /// <returns>
+        /// An HTTP 200 response containing a logout confirmation message.
+        /// </returns>
+        /// <exception cref="BusinessException">
+        /// Thrown when the refresh token cookie is missing or invalid.
+        /// </exception>
         [HttpPost]
         [Route("logout")]
         public async Task<IHttpActionResult> Logout()

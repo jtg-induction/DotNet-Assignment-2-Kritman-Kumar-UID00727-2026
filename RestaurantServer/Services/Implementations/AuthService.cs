@@ -18,6 +18,21 @@ namespace RestaurantServer.Services.Implementations
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthService"/> class.
+        /// </summary>
+        /// <param name="authRepository">
+        /// The repository used to access user authentication data.
+        /// </param>
+        /// <param name="refreshTokenRepository">
+        /// The repository used to manage refresh tokens.
+        /// </param>
+        /// <param name="passwordHasher">
+        /// The service used to hash and verify user passwords.
+        /// </param>
+        /// <param name="jwtTokenService">
+        /// The service used to generate access and refresh tokens.
+        /// </param>
         public AuthService(
              IAuthRepository authRepository,
              IRefreshTokenRepository refreshTokenRepository,
@@ -30,6 +45,18 @@ namespace RestaurantServer.Services.Implementations
             _jwtTokenService = jwtTokenService;
         }
 
+        /// <summary>
+        /// Registers a new customer account and securely stores the user's password hash.
+        /// </summary>
+        /// <param name="request">
+        /// The user registration details.
+        /// </param>
+        /// <returns>
+        /// A response containing the newly registered user's information.
+        /// </returns>
+        /// <exception cref="BusinessException">
+        /// Thrown when an account with the provided email address already exists.
+        /// </exception>
         public async Task<SignupResponse> SignupAsync(SignupRequest request)
         { 
             request.Email = request.Email.Trim().ToLowerInvariant();
@@ -68,6 +95,19 @@ namespace RestaurantServer.Services.Implementations
             };
         }
 
+        /// <summary>
+        /// Authenticates a user using their email and password and generates
+        /// an access token and refresh token.
+        /// </summary>
+        /// <param name="request">
+        /// The user's login credentials.
+        /// </param>
+        /// <returns>
+        /// A login result containing the authentication response and refresh token.
+        /// </returns>
+        /// <exception cref="BusinessException">
+        /// Thrown when the credentials are invalid or the user's account is inactive.
+        /// </exception>
         public async Task<LoginResult> LoginAsync(LoginRequest request)
         {
             request.Email = request.Email.Trim().ToLowerInvariant();
@@ -126,6 +166,20 @@ namespace RestaurantServer.Services.Implementations
             };
         }
 
+        /// <summary>
+        /// Validates an existing refresh token and generates a new access token
+        /// and refresh token.
+        /// </summary>
+        /// <param name="refreshToken">
+        /// The refresh token used to obtain a new authentication token pair.
+        /// </param>
+        /// <returns>
+        /// A login result containing the new access token and refresh token.
+        /// </returns>
+        /// <exception cref="BusinessException">
+        /// Thrown when the refresh token is missing, invalid, revoked, expired,
+        /// or associated with an inactive or nonexistent user.
+        /// </exception>
         public async Task<LoginResult> RefreshTokenAsync(string refreshToken)
         {
             var existingRefreshToken =
@@ -186,6 +240,18 @@ namespace RestaurantServer.Services.Implementations
             };
         }
 
+        /// <summary>
+        /// Logs out the user by revoking the specified refresh token.
+        /// </summary>
+        /// <param name="refreshToken">
+        /// The refresh token to revoke.
+        /// </param>
+        /// <returns>
+        /// A task representing the asynchronous logout operation.
+        /// </returns>
+        /// <exception cref="BusinessException">
+        /// Thrown when the refresh token is missing, invalid, or already revoked.
+        /// </exception>
         public async Task LogoutAsync(string refreshToken)
         {
             if (string.IsNullOrWhiteSpace(refreshToken))
@@ -214,4 +280,3 @@ namespace RestaurantServer.Services.Implementations
 
     }
 }
-    

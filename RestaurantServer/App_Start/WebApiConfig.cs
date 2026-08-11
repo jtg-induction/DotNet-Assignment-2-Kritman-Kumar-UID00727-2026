@@ -7,6 +7,13 @@ namespace RestaurantServer
 {
     public static class WebApiConfig
     {
+        /// <summary>
+        /// Registers routes, filters, and exception handling services
+        /// for the Web API application.
+        /// </summary>
+        /// <param name="config">
+        /// The HTTP configuration used to configure the Web API pipeline.
+        /// </param>
         public static void Register(HttpConfiguration config)
         {
 
