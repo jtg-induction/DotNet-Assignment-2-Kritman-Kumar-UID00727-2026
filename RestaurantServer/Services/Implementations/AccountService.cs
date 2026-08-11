@@ -105,7 +105,6 @@ namespace RestaurantServer.Services.Implementations
             user.UpdatedAt = DateTime.UtcNow;
 
             await _refreshTokenRepository.RevokeAllByUserIdAsync(userId);
-
             await _accountRepository.SaveAsync();
 
             return SuccessMessages.AccountDeactivatedSuccessful;

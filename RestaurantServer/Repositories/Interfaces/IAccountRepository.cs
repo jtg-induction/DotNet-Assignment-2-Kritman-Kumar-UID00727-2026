@@ -6,7 +6,6 @@ namespace RestaurantServer.Repositories.Interfaces
     public interface IAccountRepository
     {
         Task<User> GetUserByIdAsync(long userId);
-
         Task SaveAsync();
     }
 }

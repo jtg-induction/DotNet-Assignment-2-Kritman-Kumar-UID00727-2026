@@ -6,10 +6,7 @@ namespace RestaurantServer.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<UpdateAccountResponse> UpdateAccountAsync(
-            long userId,
-            UpdateAccountRequest request);
-
+        Task<UpdateAccountResponse> UpdateAccountAsync(long userId,  UpdateAccountRequest request);
         Task<string> DeactivateAccountAsync(long userId);
     }
 }

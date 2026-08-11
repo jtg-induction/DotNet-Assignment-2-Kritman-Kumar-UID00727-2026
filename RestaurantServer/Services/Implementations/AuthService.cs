@@ -69,7 +69,6 @@ namespace RestaurantServer.Services.Implementations
             }
              
             var passwordHash = _passwordHasher.HashPassword(request.Password);
-             
             var user = new User
             {
                 Name = request.Name.Trim(),
@@ -135,9 +134,7 @@ namespace RestaurantServer.Services.Implementations
             }
 
             var accessToken = _jwtTokenService.GenerateAccessToken(user);
-
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
-
             var now = DateTime.UtcNow;
 
             await _refreshTokenRepository.AddAsync(new RefreshToken
@@ -213,13 +210,11 @@ namespace RestaurantServer.Services.Implementations
             }
 
             var accessToken = _jwtTokenService.GenerateAccessToken(user);
-
             var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
 
             existingRefreshToken.Token = newRefreshToken;
             existingRefreshToken.UpdatedAt = DateTime.UtcNow;
-            existingRefreshToken.ExpiresAt =
-                DateTime.UtcNow.AddDays(30);
+            existingRefreshToken.ExpiresAt = DateTime.UtcNow.AddDays(30);
             existingRefreshToken.IsRevoked = false;
 
             _refreshTokenRepository.Update(existingRefreshToken);

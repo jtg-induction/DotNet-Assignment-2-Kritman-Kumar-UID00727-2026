@@ -21,6 +21,7 @@ namespace RestaurantServer.Middleware
         public JwtAuthenticationMiddleware(OwinMiddleware next)
             : base(next)
         {
+
         }
 
         /// <summary>
@@ -62,20 +63,15 @@ namespace RestaurantServer.Middleware
                         new TokenValidationParameters
                         {
                             ValidateIssuerSigningKey = true,
-
                             IssuerSigningKey =
                                 new SymmetricSecurityKey(
                                     Encoding.UTF8.GetBytes(secretKey)
                                 ),
-
                             ValidateIssuer = true,
                             ValidIssuer = issuer,
-
                             ValidateAudience = true,
                             ValidAudience = audience,
-
                             ValidateLifetime = true,
-
                             ClockSkew = TimeSpan.Zero
                         };
 
