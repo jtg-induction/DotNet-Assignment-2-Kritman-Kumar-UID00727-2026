@@ -7,7 +7,7 @@ namespace RestaurantServer.Exceptions
         public ValidationException(string message)
             : base(message)
         {
-            
+
         }
 
         public ValidationException(string message, Exception innerException)

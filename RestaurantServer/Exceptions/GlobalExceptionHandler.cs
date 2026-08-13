@@ -17,17 +17,8 @@ namespace RestaurantServer.Exceptions
     {
         /// <summary>
         /// Handles an unhandled exception and creates a standardized
-        /// HTTP 500 Internal Server Error response.
+        /// HTTP response.
         /// </summary>
-        /// <param name="context">
-        /// The exception handling context containing the request and exception information.
-        /// </param>
-        /// <param name="cancellationToken">
-        /// A token that can be used to cancel the operation.
-        /// </param>
-        /// <returns>
-        /// A task representing the exception handling operation.
-        /// </returns>
         public Task HandleAsync(
             ExceptionHandlerContext context,
             CancellationToken cancellationToken)
@@ -35,13 +26,13 @@ namespace RestaurantServer.Exceptions
             HttpStatusCode statusCode;
             object response;
 
-            if (context.Exception is ValidationException businessException)
+            if (context.Exception is RestaurantServer.Exceptions.ValidationException validationException)
             {
                 statusCode = HttpStatusCode.BadRequest;
 
                 response = new
                 {
-                    Message = businessException.Message
+                    Message = validationException.Message
                 };
             }
             else
@@ -54,11 +45,11 @@ namespace RestaurantServer.Exceptions
                 };
             }
 
-            context.Result = new ErrorMessageResult(
-                context.Request,
-                statusCode,
-                response
+            context.Result = new ResponseMessageResult(
+                context.Request.CreateResponse(statusCode, response)
             );
+
+            return Task.CompletedTask;
         }
     }
 }
