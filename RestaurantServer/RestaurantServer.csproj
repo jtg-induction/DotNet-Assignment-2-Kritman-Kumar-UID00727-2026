@@ -205,7 +205,6 @@
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
     <Compile Include="Enums\UserRole.cs" />
-    <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Exceptions\ErrorMessageResult.cs" />
     <Compile Include="Exceptions\GlobalExceptionHandler.cs" />
     <Compile Include="Filters\CustomAuthorizeAttribute.cs" />
