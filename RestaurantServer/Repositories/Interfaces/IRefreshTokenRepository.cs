@@ -4,11 +4,9 @@ using System.Threading.Tasks;
 namespace RestaurantServer.Repositories.Interfaces
 {
     public interface IRefreshTokenRepository
+        : IRepository<RefreshToken>
     {
         Task<RefreshToken> GetByTokenAsync(string token);
-        Task AddAsync(RefreshToken refreshToken);
-        void Update(RefreshToken refreshToken);
         Task RevokeAllByUserIdAsync(long userId);
-        Task SaveAsync();
     }
 }

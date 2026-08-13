@@ -86,7 +86,7 @@ namespace RestaurantServer.Controllers
         /// <returns>
         /// An HTTP 200 response containing the new authentication response and refresh token.
         /// </returns>
-        /// <exception cref="BusinessException">
+        /// <exception cref="ValidationException">
         /// Thrown when the refresh token cookie is missing or invalid.
         /// </exception>
         [HttpPost]
@@ -99,7 +99,7 @@ namespace RestaurantServer.Controllers
 
             if (refreshTokenCookie == null)
             {
-                throw new BusinessException(
+                throw new ValidationException(
                     ValidationMessages.InvalidRefreshToken);
             }
 
@@ -107,7 +107,7 @@ namespace RestaurantServer.Controllers
 
             if (string.IsNullOrWhiteSpace(refreshToken))
             {
-                throw new BusinessException(
+                throw new ValidationException(
                     ValidationMessages.InvalidRefreshToken);
             }
 
@@ -139,7 +139,7 @@ namespace RestaurantServer.Controllers
         /// <returns>
         /// An HTTP 200 response containing a logout confirmation message.
         /// </returns>
-        /// <exception cref="BusinessException">
+        /// <exception cref="ValidationException">
         /// Thrown when the refresh token cookie is missing or invalid.
         /// </exception>
         [HttpPost]
@@ -152,7 +152,7 @@ namespace RestaurantServer.Controllers
 
             if (refreshTokenCookie == null)
             {
-                throw new BusinessException(
+                throw new ValidationException(
                     ValidationMessages.InvalidRefreshToken);
             }
 
@@ -161,7 +161,7 @@ namespace RestaurantServer.Controllers
 
             if (string.IsNullOrWhiteSpace(refreshToken))
             {
-                throw new BusinessException(
+                throw new ValidationException(
                     ValidationMessages.InvalidRefreshToken);
             }
 

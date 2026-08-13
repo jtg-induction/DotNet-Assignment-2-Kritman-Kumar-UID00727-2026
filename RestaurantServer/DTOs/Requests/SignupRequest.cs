@@ -17,6 +17,8 @@ namespace RestaurantServer.DTOs.Requests
         [Required(ErrorMessage = ValidationMessages.PasswordRequired)]
         [MinLength(ValidationConstants.PasswordMinLength, ErrorMessage = ValidationMessages.PasswordMinLength)]
         [MaxLength(ValidationConstants.PasswordMaxLength, ErrorMessage = ValidationMessages.PasswordMaxLength)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+            ErrorMessage = ValidationMessages.InvalidPasswordFormat)]
         public string Password { get; set; }
     }
 }

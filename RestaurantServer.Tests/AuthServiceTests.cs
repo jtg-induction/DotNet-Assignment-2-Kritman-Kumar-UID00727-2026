@@ -8,6 +8,7 @@ using RestaurantServer.Helpers.Interfaces;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Implementations;
+using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -20,8 +21,9 @@ namespace RestaurantServer.Tests
         private Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
         private Mock<IPasswordHasher> _passwordHasherMock;
         private Mock<IJwtTokenService> _jwtTokenServiceMock;
-
+        private Mock<IUnitOfWork> _unitOfWorkMock;
         private AuthService _authService;
+        private Mock<IAuthenticationValidator> _authenticationValidatorMock;
 
         [TestInitialize]
         public void Setup()
@@ -30,19 +32,27 @@ namespace RestaurantServer.Tests
             _refreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
             _passwordHasherMock = new Mock<IPasswordHasher>();
             _jwtTokenServiceMock = new Mock<IJwtTokenService>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _authenticationValidatorMock =
+                new Mock<IAuthenticationValidator>();
+
+            _unitOfWorkMock
+                .Setup(unitOfWork =>
+                    unitOfWork.SaveChangesAsync())
+                .Returns(Task.CompletedTask);
 
             _authService = new AuthService(
                 _authRepositoryMock.Object,
                 _refreshTokenRepositoryMock.Object,
                 _passwordHasherMock.Object,
-                _jwtTokenServiceMock.Object
-            );
+                _jwtTokenServiceMock.Object,
+                _unitOfWorkMock.Object,
+                _authenticationValidatorMock.Object);
         }
 
         [TestMethod]
         public async Task SignupAsync_EmailAlreadyExists_ThrowsBusinessException()
         {
-            
             var request = new SignupRequest
             {
                 Name = "Test User",
@@ -65,13 +75,12 @@ namespace RestaurantServer.Tests
             Func<Task> action = async () =>
                 await _authService.SignupAsync(request);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
         public async Task SignupAsync_ValidRequest_ReturnsSignupResponse()
         {
-            
             var request = new SignupRequest
             {
                 Name = "New User",
@@ -91,13 +100,9 @@ namespace RestaurantServer.Tests
 
             _authRepositoryMock
                 .Setup(repository =>
-                    repository.AddUser(It.IsAny<User>()))
+                    repository.AddAsync(It.IsAny<User>()))
                 .Callback<User>(user =>
-                    user.Id = 10008);
-
-            _authRepositoryMock
-                .Setup(repository =>
-                    repository.SaveAsync())
+                    user.Id = 10008)
                 .Returns(Task.CompletedTask);
 
             var response =
@@ -110,12 +115,16 @@ namespace RestaurantServer.Tests
             Assert.AreEqual(
                 SuccessMessages.UserRegistered,
                 response.Message);
+
+            _unitOfWorkMock.Verify(
+                unitOfWork =>
+                    unitOfWork.SaveChangesAsync(),
+                Times.Once);
         }
 
         [TestMethod]
         public async Task LoginAsync_UserNotFound_ThrowsBusinessException()
         {
-            
             var request = new LoginRequest
             {
                 Email = "notfound@example.com",
@@ -130,13 +139,12 @@ namespace RestaurantServer.Tests
             Func<Task> action = async () =>
                 await _authService.LoginAsync(request);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
         public async Task LoginAsync_UserInactive_ThrowsBusinessException()
         {
-            
             var request = new LoginRequest
             {
                 Email = "inactive@example.com",
@@ -159,13 +167,12 @@ namespace RestaurantServer.Tests
             Func<Task> action = async () =>
                 await _authService.LoginAsync(request);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
         public async Task LoginAsync_InvalidPassword_ThrowsBusinessException()
         {
-            
             var request = new LoginRequest
             {
                 Email = "test@example.com",
@@ -195,13 +202,12 @@ namespace RestaurantServer.Tests
             Func<Task> action = async () =>
                 await _authService.LoginAsync(request);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
         public async Task LoginAsync_ValidCredentials_ReturnsLoginResult()
         {
-            
             var request = new LoginRequest
             {
                 Email = "test@example.com",
@@ -245,11 +251,6 @@ namespace RestaurantServer.Tests
                     repository.AddAsync(It.IsAny<RefreshToken>()))
                 .Returns(Task.CompletedTask);
 
-            _refreshTokenRepositoryMock
-                .Setup(repository =>
-                    repository.SaveAsync())
-                .Returns(Task.CompletedTask);
-
             var result =
                 await _authService.LoginAsync(request);
 
@@ -289,16 +290,15 @@ namespace RestaurantServer.Tests
                             token.IsRevoked == false)),
                 Times.Once);
 
-            _refreshTokenRepositoryMock.Verify(
-                repository =>
-                    repository.SaveAsync(),
+            _unitOfWorkMock.Verify(
+                unitOfWork =>
+                    unitOfWork.SaveChangesAsync(),
                 Times.Once);
         }
 
         [TestMethod]
         public async Task RefreshTokenAsync_TokenNotFound_ThrowsBusinessException()
         {
-            
             var refreshToken = "invalid-refresh-token";
 
             _refreshTokenRepositoryMock
@@ -309,13 +309,12 @@ namespace RestaurantServer.Tests
             Func<Task> action = async () =>
                 await _authService.RefreshTokenAsync(refreshToken);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
         public async Task RefreshTokenAsync_TokenRevoked_ThrowsBusinessException()
         {
-            
             var refreshToken = "revoked-refresh-token";
 
             var revokedToken = new RefreshToken
@@ -337,13 +336,12 @@ namespace RestaurantServer.Tests
             Func<Task> action = async () =>
                 await _authService.RefreshTokenAsync(refreshToken);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
- 
+
         [TestMethod]
         public async Task RefreshTokenAsync_TokenExpired_ThrowsBusinessException()
         {
-            
             var refreshToken = "expired-refresh-token";
 
             var existingRefreshToken = new RefreshToken
@@ -365,13 +363,12 @@ namespace RestaurantServer.Tests
             Func<Task> action = async () =>
                 await _authService.RefreshTokenAsync(refreshToken);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
         public async Task RefreshTokenAsync_UserInactive_ThrowsBusinessException()
         {
-            
             var refreshToken = "valid-refresh-token";
 
             var existingRefreshToken = new RefreshToken
@@ -400,20 +397,18 @@ namespace RestaurantServer.Tests
 
             _authRepositoryMock
                 .Setup(repository =>
-                    repository.GetUserByIdAsync(existingRefreshToken.UserId))
+                    repository.GetByIdAsync(existingRefreshToken.UserId))
                 .ReturnsAsync(inactiveUser);
 
             Func<Task> action = async () =>
                 await _authService.RefreshTokenAsync(refreshToken);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
-
 
         [TestMethod]
         public async Task RefreshTokenAsync_UserNotFound_ThrowsBusinessException()
         {
-            
             var refreshToken = "valid-refresh-token";
 
             var existingRefreshToken = new RefreshToken
@@ -434,19 +429,18 @@ namespace RestaurantServer.Tests
 
             _authRepositoryMock
                 .Setup(repository =>
-                    repository.GetUserByIdAsync(existingRefreshToken.UserId))
+                    repository.GetByIdAsync(existingRefreshToken.UserId))
                 .ReturnsAsync((User)null);
 
             Func<Task> action = async () =>
                 await _authService.RefreshTokenAsync(refreshToken);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
         public async Task RefreshTokenAsync_ValidToken_ReturnsLoginResult()
         {
-            
             var refreshToken = "old-refresh-token";
             var newRefreshToken = "new-refresh-token";
 
@@ -477,7 +471,7 @@ namespace RestaurantServer.Tests
 
             _authRepositoryMock
                 .Setup(repository =>
-                    repository.GetUserByIdAsync(user.Id))
+                    repository.GetByIdAsync(user.Id))
                 .ReturnsAsync(user);
 
             _jwtTokenServiceMock
@@ -489,11 +483,6 @@ namespace RestaurantServer.Tests
                 .Setup(service =>
                     service.GenerateRefreshToken())
                 .Returns(newRefreshToken);
-
-            _refreshTokenRepositoryMock
-                .Setup(repository =>
-                    repository.SaveAsync())
-                .Returns(Task.CompletedTask);
 
             var result =
                 await _authService.RefreshTokenAsync(refreshToken);
@@ -532,28 +521,26 @@ namespace RestaurantServer.Tests
                     repository.Update(existingRefreshToken),
                 Times.Once);
 
-            _refreshTokenRepositoryMock.Verify(
-                repository =>
-                    repository.SaveAsync(),
+            _unitOfWorkMock.Verify(
+                unitOfWork =>
+                    unitOfWork.SaveChangesAsync(),
                 Times.Once);
         }
 
         [TestMethod]
         public async Task LogoutAsync_EmptyToken_ThrowsBusinessException()
         {
-            
             var refreshToken = "";
 
             Func<Task> action = async () =>
                 await _authService.LogoutAsync(refreshToken);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
         public async Task LogoutAsync_TokenNotFound_ThrowsBusinessException()
         {
-            
             var refreshToken = "invalid-refresh-token";
 
             _refreshTokenRepositoryMock
@@ -564,7 +551,7 @@ namespace RestaurantServer.Tests
             Func<Task> action = async () =>
                 await _authService.LogoutAsync(refreshToken);
 
-            await Assert.ThrowsExceptionAsync<BusinessException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(action);
         }
 
         [TestMethod]
@@ -588,11 +575,6 @@ namespace RestaurantServer.Tests
                     repository.GetByTokenAsync(refreshToken))
                 .ReturnsAsync(existingRefreshToken);
 
-            _refreshTokenRepositoryMock
-                .Setup(repository =>
-                    repository.SaveAsync())
-                .Returns(Task.CompletedTask);
-
             await _authService.LogoutAsync(refreshToken);
 
             Assert.IsTrue(existingRefreshToken.IsRevoked);
@@ -602,9 +584,9 @@ namespace RestaurantServer.Tests
                     repository.Update(existingRefreshToken),
                 Times.Once);
 
-            _refreshTokenRepositoryMock.Verify(
-                repository =>
-                    repository.SaveAsync(),
+            _unitOfWorkMock.Verify(
+                unitOfWork =>
+                    unitOfWork.SaveChangesAsync(),
                 Times.Once);
         }
     }

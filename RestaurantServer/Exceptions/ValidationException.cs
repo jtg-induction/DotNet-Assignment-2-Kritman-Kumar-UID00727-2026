@@ -2,15 +2,15 @@
 
 namespace RestaurantServer.Exceptions
 {
-    public class BusinessException : Exception
+    public class ValidationException : Exception
     {
-        public BusinessException(string message)
+        public ValidationException(string message)
             : base(message)
         {
             
         }
 
-        public BusinessException(string message, Exception innerException)
+        public ValidationException(string message, Exception innerException)
             : base(message, innerException)
         {
 

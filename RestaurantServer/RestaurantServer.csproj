@@ -192,7 +192,7 @@
     <Compile Include="Constants\SuccessMessages.cs" />
     <Compile Include="Constants\ValidationConstants.cs" />
     <Compile Include="Constants\ValidationMessages.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="DTOs\Requests\LoginRequest.cs" />
     <Compile Include="DTOs\Requests\RefreshTokenRequest.cs" />
@@ -202,10 +202,10 @@
     <Compile Include="DTOs\Responses\LoginResult.cs" />
     <Compile Include="DTOs\Responses\RefreshTokenResponse.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
-    <Compile Include="DTOs\Responses\UpdateAccountResponse.cs" />
+    <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
     <Compile Include="Enums\UserRole.cs" />
-    <Compile Include="Exceptions\BusinessException.cs" />
+    <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Exceptions\ErrorMessageResult.cs" />
     <Compile Include="Exceptions\GlobalExceptionHandler.cs" />
     <Compile Include="Filters\CustomAuthorizeAttribute.cs" />
@@ -213,10 +213,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Implementations\AuthenticationValidator.cs" />
     <Compile Include="Helpers\Implementations\JwtTokenService.cs" />
     <Compile Include="Helpers\Implementations\PasswordHasher.cs" />
+    <Compile Include="Helpers\Implementations\UserValidator.cs" />
+    <Compile Include="Helpers\Interfaces\IAuthenticationValidator.cs" />
     <Compile Include="Helpers\Interfaces\IJwtTokenService.cs" />
     <Compile Include="Helpers\Interfaces\IPasswordHasher.cs" />
+    <Compile Include="Helpers\Interfaces\IUserValidator.cs" />
     <Compile Include="Middleware\JwtAuthenticationMiddleware.cs" />
     <Compile Include="Migrations\202608052226261_AddConstraintsAndIndexes.cs" />
     <Compile Include="Migrations\202608052226261_AddConstraintsAndIndexes.Designer.cs">
@@ -235,15 +239,19 @@
     <Compile Include="Models\RestaurantOwner.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\Implementations\AccountRepository.cs" />
+    <Compile Include="Repositories\Implementations\Repository.cs" />
+    <Compile Include="Repositories\Implementations\UnitOfWork.cs" />
+    <Compile Include="Repositories\Implementations\UsersRepository.cs" />
     <Compile Include="Repositories\Implementations\AuthRepository.cs" />
     <Compile Include="Repositories\Implementations\RefreshTokenRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IAccountRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IUnitOfWork.cs" />
+    <Compile Include="Repositories\Interfaces\IUsersRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAuthRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRefreshTokenRepository.cs" />
-    <Compile Include="Services\Implementations\AccountService.cs" />
+    <Compile Include="Services\Implementations\UserUpdateService.cs" />
     <Compile Include="Services\Implementations\AuthService.cs" />
-    <Compile Include="Services\Interfaces\IAccountService.cs" />
+    <Compile Include="Services\Interfaces\IUserUpdateService.cs" />
     <Compile Include="Services\Interfaces\IAuthService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

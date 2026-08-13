@@ -11,7 +11,7 @@ namespace RestaurantServer.Exceptions
             HttpStatusCode statusCode;
             object response;
 
-            if (context.Exception is BusinessException businessException)
+            if (context.Exception is ValidationException businessException)
             {
                 statusCode = HttpStatusCode.BadRequest;
 

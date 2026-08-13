@@ -12,18 +12,18 @@ namespace RestaurantServer.Controllers
     /// <summary>
     /// Provides endpoints for managing the authenticated user's account.
     /// </summary>
-    [RoutePrefix("account")]
-    public class AccountController : ApiController
+    [RoutePrefix("users")]
+    public class UserController : ApiController
     {
-        private readonly IAccountService _accountService;
+        private readonly IUserUpdateService _accountService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// Initializes a new instance of the <see cref="UserController"/> class.
         /// </summary>
         /// <param name="accountService">
         /// The account service used to perform account-related operations.
         /// </param>
-        public AccountController(IAccountService accountService)
+        public UserController(IUserUpdateService accountService)
         {
             _accountService = accountService;
         }
@@ -38,27 +38,17 @@ namespace RestaurantServer.Controllers
         /// An HTTP 200 response containing the updated account information.
         /// Returns HTTP 401 if the authenticated user's identity cannot be determined.
         /// </returns>
-        [HttpPut]
-        [Route("update")]
+        [HttpPatch]
+        [Route("{id:long}")]
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
         public async Task<IHttpActionResult> UpdateAccount(
             UpdateAccountRequest request)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
 
-            if (claimsPrincipal == null)
-            {
-                return Unauthorized();
-            }
-
             var userIdClaim = claimsPrincipal.Claims
                 .FirstOrDefault(
                     claim => claim.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null)
-            {
-                return Unauthorized();
-            }
 
             if (!long.TryParse(
                 userIdClaim.Value,
@@ -79,8 +69,9 @@ namespace RestaurantServer.Controllers
         /// An HTTP 200 response containing the user's ID and deactivation message.
         /// Returns HTTP 401 if the authenticated user's identity cannot be determined.
         /// </returns>
-        [HttpPut]
-        [Route("deactivate")]
+        [HttpPatch]
+        [Route("{id:long}/deactivate")]
+        [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
         public async Task<IHttpActionResult> DeactivateAccount()
         {
             var claimsPrincipal = User as ClaimsPrincipal;

@@ -30,5 +30,21 @@ namespace RestaurantServer.Models
 
         // Navigation
         public virtual User User { get; set; }
+
+        public RefreshToken()
+        {
+
+        }
+
+        public RefreshToken(long userId)
+        {
+            UserId = userId;
+            IsRevoked = false;
+
+            var now = DateTime.UtcNow;
+            CreatedAt = now;
+            UpdatedAt = now;
+            ExpiresAt = now.AddDays(30);
+        }
     }
 }

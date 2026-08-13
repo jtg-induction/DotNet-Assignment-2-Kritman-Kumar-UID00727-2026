@@ -1,13 +1,10 @@
-﻿using System.Threading.Tasks;
-using RestaurantServer.Models;
+﻿using RestaurantServer.Models;
+using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Interfaces
 {
-    public interface IAuthRepository
+    public interface IAuthRepository : IRepository<User>
     {
         Task<User> GetUserByEmailAsync(string email);
-        Task<User> GetUserByIdAsync(long userId);
-        void AddUser(User user);
-        Task SaveAsync();
     }
 }

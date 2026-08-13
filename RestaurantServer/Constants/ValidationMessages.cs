@@ -24,5 +24,6 @@
         public const string InvalidRefreshToken = "Invalid refresh token.";
         public const string InvalidMobileNumber = "Mobile number is invalid.";
         public const string NotAuthorized = "You are not authorized to access this resource.";
+        public const string InvalidPasswordFormat = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
     }
 }

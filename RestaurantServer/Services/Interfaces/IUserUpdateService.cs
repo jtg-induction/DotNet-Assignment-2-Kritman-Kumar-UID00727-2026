@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace RestaurantServer.Services.Interfaces
 {
-    public interface IAccountService
+    public interface IUserUpdateService
     {
-        Task<UpdateAccountResponse> UpdateAccountAsync(long userId,  UpdateAccountRequest request);
+        Task<UpdateUserResponse> UpdateAccountAsync(long userId,  UpdateAccountRequest request);
         Task<string> DeactivateAccountAsync(long userId);
     }
 }

@@ -2,20 +2,24 @@
 using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Exceptions;
+using RestaurantServer.Repositories.Implementations;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Interfaces;
+using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Threading.Tasks;
 
 namespace RestaurantServer.Services.Implementations
 {
-    public class AccountService : IAccountService
+    public class UserUpdateService : IUserUpdateService
     {
-        private readonly IAccountRepository _accountRepository; 
+        private readonly IUsersRepository _usersRepository; 
         private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserValidator _userValidator;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AccountService"/> class.
+        /// Initializes a new instance of the <see cref="UserUpdateService"/> class.
         /// </summary>
         /// <param name="accountRepository">
         /// The repository used to access and update user account data.
@@ -23,11 +27,15 @@ namespace RestaurantServer.Services.Implementations
         /// <param name="refreshTokenRepository">
         /// The repository used to manage the user's refresh tokens.
         /// </param>
-        public AccountService(IAccountRepository accountRepository,
-                IRefreshTokenRepository refreshTokenRepository)
+        public UserUpdateService(IUsersRepository usersRepository,
+                IRefreshTokenRepository refreshTokenRepository,
+                IUnitOfWork unitOfWork,
+                IUserValidator userValidator)
         {
-            _accountRepository = accountRepository;
+            _usersRepository = usersRepository;
             _refreshTokenRepository = refreshTokenRepository;
+            _unitOfWork = unitOfWork;
+            _userValidator = userValidator;
         }
 
         /// <summary>
@@ -42,33 +50,24 @@ namespace RestaurantServer.Services.Implementations
         /// <returns>
         /// A response containing the updated account information.
         /// </returns>
-        /// <exception cref="BusinessException">
+        /// <exception cref="ValidationException">
         /// Thrown when the specified user does not exist.
         /// </exception>
-        public async Task<UpdateAccountResponse> UpdateAccountAsync(
+        public async Task<UpdateUserResponse> UpdateAccountAsync(
             long userId,
             UpdateAccountRequest request)
-        {
-            var user = await _accountRepository.GetUserByIdAsync(userId);
+        { 
+            var user = await _usersRepository.GetByIdAsync(userId);
 
-            if (user == null)
-            {
-                throw new BusinessException(
-                    ErrorMessages.NotFound);
-            }
+            _userValidator.ValidateUserExists(user);
 
             user.Name = request.Name.Trim();
             user.MobileNumber = request.MobileNumber;
             user.UpdatedAt = DateTime.UtcNow;
 
-            return new UpdateAccountResponse
-            {
-                UserId = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                MobileNumber = user.MobileNumber,
-                Message = SuccessMessages.AccountUpdateSuccessful
-            };
+            await _unitOfWork.SaveChangesAsync();
+
+            return new UpdateUserResponse(user);
         }
 
         /// <summary>
@@ -81,23 +80,22 @@ namespace RestaurantServer.Services.Implementations
         /// <returns>
         /// A success message confirming that the account was deactivated.
         /// </returns>
-        /// <exception cref="BusinessException">
+        /// <exception cref="ValidationException">
         /// Thrown when the specified user does not exist or the account
         /// is already inactive.
         /// </exception>
         public async Task<string> DeactivateAccountAsync(long userId)
         {
-            var user = await _accountRepository.GetUserByIdAsync(userId);
+            var user = await _usersRepository.GetByIdAsync(userId);
 
             if (user == null)
             {
-                throw new BusinessException(
-                    ValidationMessages.UserNotFound);
+                throw new ValidationException(ValidationMessages.UserNotFound);
             }
 
             if (!user.IsActive)
             {
-                throw new BusinessException(
+                throw new ValidationException(
                     ValidationMessages.UserInactive);
             }
 
@@ -105,7 +103,7 @@ namespace RestaurantServer.Services.Implementations
             user.UpdatedAt = DateTime.UtcNow;
 
             await _refreshTokenRepository.RevokeAllByUserIdAsync(userId);
-            await _accountRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return SuccessMessages.AccountDeactivatedSuccessful;
         }
