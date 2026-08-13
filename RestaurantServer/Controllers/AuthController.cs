@@ -1,20 +1,18 @@
 ﻿using RestaurantServer.Constants;
-using RestaurantServer.DTOs.Requests;  
-using RestaurantServer.Exceptions;
-using System;
-using System.Linq;
+using RestaurantServer.DTOs.Requests;
+using RestaurantServer.Helpers.Interfaces;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace RestaurantServer.Controllers
 {
-    [RoutePrefix("auth")] 
+    [RoutePrefix("auth")]
     public class AuthController : ApiController
     {
         private readonly IAuthService _authService;
+        private readonly ICookieHelper _cookieHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthController"/> class.
@@ -22,9 +20,15 @@ namespace RestaurantServer.Controllers
         /// <param name="authService">
         /// The authentication service used to perform authentication and token operations.
         /// </param>
-        public AuthController(IAuthService authService)
+        /// <param name="cookieHelper">
+        /// The helper used to manage authentication cookies.
+        /// </param>
+        public AuthController(
+            IAuthService authService,
+            ICookieHelper cookieHelper)
         {
             _authService = authService;
+            _cookieHelper = cookieHelper;
         }
 
         /// <summary>
@@ -66,14 +70,8 @@ namespace RestaurantServer.Controllers
                 result.Response
             );
 
-            var cookie = new CookieHeaderValue(
-                "refreshToken",
-                result.RefreshToken
-            );
-
-            cookie.HttpOnly = true;
-            cookie.Secure = true;
-            cookie.Path = "/auth";
+            var cookie = _cookieHelper.CreateRefreshTokenCookie(
+                result.RefreshToken);
 
             response.Headers.AddCookies(new[] { cookie });
 
@@ -86,48 +84,25 @@ namespace RestaurantServer.Controllers
         /// <returns>
         /// An HTTP 200 response containing the new authentication response and refresh token.
         /// </returns>
-        /// <exception cref="ValidationException">
-        /// Thrown when the refresh token cookie is missing or invalid.
-        /// </exception>
         [HttpPost]
         [Route("refresh")]
         public async Task<IHttpActionResult> Refresh()
         {
-            var refreshTokenCookie = Request.Headers
-                .GetCookies("refreshToken")
-                .FirstOrDefault();
+            var refreshToken =
+                _cookieHelper.GetRefreshTokenFromRequest(Request);
 
-            if (refreshTokenCookie == null)
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
-            }
-
-            var refreshToken = refreshTokenCookie["refreshToken"]?.Value;
-
-            if (string.IsNullOrWhiteSpace(refreshToken))
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
-            }
-
-            var result = await _authService.RefreshTokenAsync(refreshToken);
+            var result =
+                await _authService.RefreshTokenAsync(refreshToken);
 
             var response = Request.CreateResponse(
                 HttpStatusCode.OK,
                 result.Response
             );
 
-            var newCookie = new CookieHeaderValue(
-                "refreshToken",
-                result.RefreshToken
-            );
+            var cookie = _cookieHelper.CreateRefreshTokenCookie(
+                result.RefreshToken);
 
-            newCookie.HttpOnly = true;
-            newCookie.Secure = true;
-            newCookie.Path = "/auth";
-
-            response.Headers.AddCookies(new[] { newCookie });
+            response.Headers.AddCookies(new[] { cookie });
 
             return ResponseMessage(response);
         }
@@ -139,31 +114,12 @@ namespace RestaurantServer.Controllers
         /// <returns>
         /// An HTTP 200 response containing a logout confirmation message.
         /// </returns>
-        /// <exception cref="ValidationException">
-        /// Thrown when the refresh token cookie is missing or invalid.
-        /// </exception>
         [HttpPost]
         [Route("logout")]
         public async Task<IHttpActionResult> Logout()
         {
-            var refreshTokenCookie = Request.Headers
-                .GetCookies("refreshToken")
-                .FirstOrDefault();
-
-            if (refreshTokenCookie == null)
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
-            }
-
             var refreshToken =
-                refreshTokenCookie["refreshToken"]?.Value;
-
-            if (string.IsNullOrWhiteSpace(refreshToken))
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
-            }
+                _cookieHelper.GetRefreshTokenFromRequest(Request);
 
             await _authService.LogoutAsync(refreshToken);
 
@@ -174,18 +130,10 @@ namespace RestaurantServer.Controllers
                     Message = SuccessMessages.LogoutSuccessful
                 });
 
-            var expiredCookie = new CookieHeaderValue(
-                "refreshToken",
-                ""
-            );
+            var expiredCookie =
+                _cookieHelper.CreateExpiredRefreshTokenCookie();
 
-            expiredCookie.HttpOnly = true;
-            expiredCookie.Secure = true;
-            expiredCookie.Path = "/auth";
-            expiredCookie.Expires = DateTimeOffset.UtcNow.AddDays(-1);
-
-            response.Headers.AddCookies(
-                new[] { expiredCookie });
+            response.Headers.AddCookies(new[] { expiredCookie });
 
             return ResponseMessage(response);
         }

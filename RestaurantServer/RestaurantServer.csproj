@@ -204,7 +204,7 @@
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
-    <Compile Include="Enums\UserRole.cs" /> 
+    <Compile Include="Enums\UserRole.cs" />
     <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Exceptions\GlobalExceptionHandler.cs" />
     <Compile Include="Filters\CustomAuthorizeAttribute.cs" />
@@ -213,10 +213,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Implementations\AuthenticationValidator.cs" />
+    <Compile Include="Helpers\Implementations\CookieHelper.cs" />
     <Compile Include="Helpers\Implementations\JwtTokenService.cs" />
     <Compile Include="Helpers\Implementations\PasswordHasher.cs" />
     <Compile Include="Helpers\Implementations\UserValidator.cs" />
     <Compile Include="Helpers\Interfaces\IAuthenticationValidator.cs" />
+    <Compile Include="Helpers\Interfaces\ICookieHelper.cs" />
     <Compile Include="Helpers\Interfaces\IJwtTokenService.cs" />
     <Compile Include="Helpers\Interfaces\IPasswordHasher.cs" />
     <Compile Include="Helpers\Interfaces\IUserValidator.cs" />

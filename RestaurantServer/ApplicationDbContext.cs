@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
+﻿using System.Data.Entity; 
 using RestaurantServer.Models;
 
 namespace RestaurantServer

@@ -1,4 +1,5 @@
-﻿using RestaurantServer.Helpers.Implementations;
+﻿using RestaurantServer.Helpers;
+using RestaurantServer.Helpers.Implementations;
 using RestaurantServer.Helpers.Interfaces;
 using RestaurantServer.Repositories.Implementations;
 using RestaurantServer.Repositories.Interfaces;
@@ -46,8 +47,11 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IJwtTokenService, JwtTokenService>(
                 new HierarchicalLifetimeManager());
 
-            Container.RegisterType<IAuthenticationValidator,AuthenticationValidator>(
-                    new HierarchicalLifetimeManager());
+            Container.RegisterType<IAuthenticationValidator, AuthenticationValidator>(
+                new HierarchicalLifetimeManager());
+
+            Container.RegisterType<ICookieHelper, CookieHelper>(
+                new HierarchicalLifetimeManager());
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Results;
 
@@ -44,7 +43,7 @@ namespace RestaurantServer.Exceptions
                     Message = ErrorMessages.InternalServerError
                 };
             }
-
+                
             context.Result = new ResponseMessageResult(
                 context.Request.CreateResponse(statusCode, response)
             );

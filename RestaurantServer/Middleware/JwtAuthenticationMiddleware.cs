@@ -3,6 +3,7 @@ using Microsoft.Owin;
 using System;
 using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,12 +90,12 @@ namespace RestaurantServer.Middleware
                 }
                 catch (SecurityTokenException)
                 {
-                    context.Response.StatusCode = 401;
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     return;
                 }
                 catch (ArgumentException)
                 {
-                    context.Response.StatusCode = 401;
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     return;
                 }
             }
