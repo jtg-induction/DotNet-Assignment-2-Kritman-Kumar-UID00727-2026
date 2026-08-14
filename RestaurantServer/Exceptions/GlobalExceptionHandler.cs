@@ -18,35 +18,28 @@ namespace RestaurantServer.Exceptions
         /// Handles an unhandled exception and creates a standardized
         /// HTTP response.
         /// </summary>
-        public Task HandleAsync(
-            ExceptionHandlerContext context,
-            CancellationToken cancellationToken)
+        public Task HandleAsync(ExceptionHandlerContext context, CancellationToken cancellationToken)
         {
-            HttpStatusCode statusCode;
-            object response;
-
-            if (context.Exception is RestaurantServer.Exceptions.ValidationException validationException)
+            if (context.Exception is ValidationException validationException)
             {
-                statusCode = HttpStatusCode.BadRequest;
-
-                response = new
-                {
-                    Message = validationException.Message
-                };
+                context.Result = new ResponseMessageResult(context.Request
+                    .CreateResponse(HttpStatusCode.BadRequest,
+                        new
+                        {
+                            Message = validationException.Message
+                        }
+                    )
+                );
+                return Task.CompletedTask;
             }
-            else
-            {
-                statusCode = HttpStatusCode.InternalServerError;
 
-                response = new
-                {
-                    Message = ErrorMessages.InternalServerError
-                };
-            }
-                
             context.Result = new ResponseMessageResult(
-                context.Request.CreateResponse(statusCode, response)
-            );
+                context.Request.CreateResponse(
+                    HttpStatusCode.InternalServerError,
+                    new
+                    {
+                        Message = ErrorMessages.InternalServerError
+                    }));
 
             return Task.CompletedTask;
         }

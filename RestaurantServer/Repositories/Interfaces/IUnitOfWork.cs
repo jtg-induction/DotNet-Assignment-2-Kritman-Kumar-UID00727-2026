@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Interfaces
 {
     public interface IUnitOfWork
     {
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

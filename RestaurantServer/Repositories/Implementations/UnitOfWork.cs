@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using RestaurantServer.Repositories.Interfaces;
 
 namespace RestaurantServer.Repositories.Implementations
@@ -12,9 +13,9 @@ namespace RestaurantServer.Repositories.Implementations
             _context = context;
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

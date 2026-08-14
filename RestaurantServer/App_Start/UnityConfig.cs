@@ -18,14 +18,14 @@ namespace RestaurantServer.App_Start
 
         public static void RegisterComponents()
         {
-            Container = new UnityContainer();
+            Container = new UnityContainer(); 
 
             Container.RegisterType<ApplicationDbContext>(
                 new HierarchicalLifetimeManager());
-
+             
             Container.RegisterType<IUnitOfWork, UnitOfWork>(
                 new HierarchicalLifetimeManager());
-
+             
             Container.RegisterType<IAuthRepository, AuthRepository>(
                 new HierarchicalLifetimeManager());
 
@@ -35,23 +35,14 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IRefreshTokenRepository, RefreshTokenRepository>(
                 new HierarchicalLifetimeManager());
 
-            Container.RegisterType<IAuthService, AuthService>(
-                new HierarchicalLifetimeManager());
 
-            Container.RegisterType<IUserUpdateService, UserUpdateService>(
-                new HierarchicalLifetimeManager());
-
-            Container.RegisterType<IPasswordHasher, PasswordHasher>(
-                new HierarchicalLifetimeManager());
-
-            Container.RegisterType<IJwtTokenService, JwtTokenService>(
-                new HierarchicalLifetimeManager());
-
-            Container.RegisterType<IAuthenticationValidator, AuthenticationValidator>(
-                new HierarchicalLifetimeManager());
-
-            Container.RegisterType<ICookieHelper, CookieHelper>(
-                new HierarchicalLifetimeManager());
+            Container.RegisterType<IAuthService, AuthService>();
+            Container.RegisterType<IUserUpdateService, UserUpdateService>(); 
+            Container.RegisterType<IPasswordHasher, PasswordHasher>();
+            Container.RegisterType<IJwtTokenService, JwtTokenService>();
+            Container.RegisterType<ICookieHelper, CookieHelper>(); 
+            Container.RegisterType<IAuthenticationValidator, AuthenticationValidator>();
+            Container.RegisterType<IUserValidator, UserValidator>();
         }
     }
 }

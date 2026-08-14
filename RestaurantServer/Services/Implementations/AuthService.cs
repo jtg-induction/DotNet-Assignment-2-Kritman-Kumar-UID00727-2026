@@ -1,7 +1,6 @@
 ﻿using RestaurantServer.Constants;
 using RestaurantServer.DTOs.Requests;
-using RestaurantServer.DTOs.Responses;
-using RestaurantServer.Enums;
+using RestaurantServer.DTOs.Responses; 
 using RestaurantServer.Exceptions;
 using RestaurantServer.Helpers.Interfaces;
 using RestaurantServer.Models;
@@ -19,7 +18,7 @@ namespace RestaurantServer.Services.Implementations
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAuthenticationValidator _authenticationValidator;
+        private readonly IAuthenticationValidator _authenticationValidator; 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -76,29 +75,12 @@ namespace RestaurantServer.Services.Implementations
             }
              
             var passwordHash = _passwordHasher.HashPassword(request.Password);
-            var user = new User
-            {
-                Name = request.Name.Trim(),
-                Email = request.Email,
-                PasswordHash = passwordHash,
-                Balance = 1000m,
-                Role = (int)UserRole.Customer,
-                IsActive = true,
-                MobileNumber = null,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
-             
+            var user = new User(request.Name.Trim(), request.Email, passwordHash);
+
             await _authRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            return new SignupResponse
-            {
-                UserId = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Message = SuccessMessages.UserRegistered
-            };
+            return new SignupResponse(user);
         }
 
         /// <summary>
@@ -128,13 +110,9 @@ namespace RestaurantServer.Services.Implementations
 
             _authenticationValidator.ValidateUserIsActive(user);
 
-            if (!_passwordHasher.VerifyPassword(
-                request.Password,
-                user.PasswordHash))
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidCredentials);
-            }
+            var isPasswordValid = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
+
+            _authenticationValidator.ValidatePassword(isPasswordValid);
 
             var accessToken = _jwtTokenService.GenerateAccessToken(user);
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
@@ -149,14 +127,7 @@ namespace RestaurantServer.Services.Implementations
 
             return new LoginResult
             {
-                Response = new LoginResponse
-                {
-                    AccessToken = accessToken,
-                    UserId = user.Id,
-                    Name = user.Name,
-                    Role = (UserRole)user.Role,
-                    Message = SuccessMessages.LoginSuccessful
-                },
+                Response = new LoginResponse(user, accessToken, SuccessMessages.LoginSuccessful),
                 RefreshToken = refreshToken
             };
         }
@@ -180,22 +151,11 @@ namespace RestaurantServer.Services.Implementations
             var existingRefreshToken =
                 await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
-            if (existingRefreshToken == null)
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
-            }
-
+            _authenticationValidator.ValidateRefreshToken(existingRefreshToken);
             _authenticationValidator.ValidateRefreshTokenIsNotRevoked(existingRefreshToken);
+            _authenticationValidator.ValidateRefreshTokenIsNotExpired(existingRefreshToken);
 
-            if (existingRefreshToken.ExpiresAt <= DateTime.UtcNow)
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
-            }
-
-            var user = await _authRepository
-                .GetByIdAsync(existingRefreshToken.UserId);
+            var user = await _authRepository.GetByIdAsync(existingRefreshToken.UserId);
 
             _authenticationValidator.ValidateRefreshTokenUser(user);
 
@@ -213,14 +173,7 @@ namespace RestaurantServer.Services.Implementations
 
             return new LoginResult
             {
-                Response = new LoginResponse
-                {
-                    AccessToken = accessToken,
-                    UserId = user.Id,
-                    Name = user.Name,
-                    Role = (UserRole)user.Role,
-                    Message = SuccessMessages.TokenRefreshed
-                },
+                Response = new LoginResponse(user, accessToken, SuccessMessages.TokenRefreshed),
                 RefreshToken = newRefreshToken
             };
         }
@@ -245,15 +198,10 @@ namespace RestaurantServer.Services.Implementations
                     ValidationMessages.InvalidRefreshToken);
             }
 
-            var existingRefreshToken =
-                await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
-            if (existingRefreshToken == null ||
-                existingRefreshToken.IsRevoked)
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
-            }
+            _authenticationValidator.ValidateRefreshToken(existingRefreshToken);
+            _authenticationValidator.ValidateRefreshTokenIsNotRevoked(existingRefreshToken);
 
             existingRefreshToken.IsRevoked = true;
             existingRefreshToken.UpdatedAt = DateTime.UtcNow;

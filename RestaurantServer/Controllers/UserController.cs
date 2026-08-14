@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using RestaurantServer.Enums;
 using RestaurantServer.Filters;
+using System.Threading;
 
 namespace RestaurantServer.Controllers
 {
@@ -42,7 +43,7 @@ namespace RestaurantServer.Controllers
         [Route("{id:long}")]
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
         public async Task<IHttpActionResult> UpdateAccount(
-            UpdateAccountRequest request)
+            UpdateAccountRequest request, CancellationToken cancellationToken = default)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
 
@@ -57,7 +58,7 @@ namespace RestaurantServer.Controllers
                 return Unauthorized();
             }
 
-            var response = await _accountService.UpdateAccountAsync(userId, request);
+            var response = await _accountService.UpdateAccountAsync(userId, request, cancellationToken);
 
             return Ok(response);
         }
@@ -72,7 +73,7 @@ namespace RestaurantServer.Controllers
         [HttpPatch]
         [Route("{id:long}/deactivate")]
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
-        public async Task<IHttpActionResult> DeactivateAccount()
+        public async Task<IHttpActionResult> DeactivateAccount(CancellationToken cancellationToken = default)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
 
@@ -96,7 +97,7 @@ namespace RestaurantServer.Controllers
             }
 
             var response =
-                await _accountService.DeactivateAccountAsync(userId);
+                await _accountService.DeactivateAccountAsync(userId, cancellationToken);
 
             return Ok(new
             {

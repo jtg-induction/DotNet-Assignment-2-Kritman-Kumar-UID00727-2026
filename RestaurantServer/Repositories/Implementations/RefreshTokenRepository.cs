@@ -4,6 +4,8 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
+
 
 namespace RestaurantServer.Repositories.Implementations
 {
@@ -20,6 +22,7 @@ namespace RestaurantServer.Repositories.Implementations
         public RefreshTokenRepository(ApplicationDbContext context)
             : base(context)
         {
+
         }
 
         /// <summary>
@@ -31,11 +34,11 @@ namespace RestaurantServer.Repositories.Implementations
         /// <returns>
         /// The matching refresh token if found; otherwise, <c>null</c>.
         /// </returns>
-        public async Task<RefreshToken> GetByTokenAsync(string token)
+        public async Task<RefreshToken> GetByTokenAsync(string token, CancellationToken cancellationToken = default)
         {
             return await _context.RefreshTokens
                 .FirstOrDefaultAsync(refreshToken =>
-                    refreshToken.Token == token);
+                    refreshToken.Token == token, cancellationToken);
         }
 
         /// <summary>
@@ -48,13 +51,13 @@ namespace RestaurantServer.Repositories.Implementations
         /// <returns>
         /// A task representing the asynchronous revoke operation.
         /// </returns>
-        public async Task RevokeAllByUserIdAsync(long userId)
+        public async Task RevokeAllByUserIdAsync(long userId, CancellationToken cancellationToken = default)
         {
             var refreshTokens = await _context.RefreshTokens
                 .Where(refreshToken =>
                     refreshToken.UserId == userId &&
                     !refreshToken.IsRevoked)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             foreach (var refreshToken in refreshTokens)
             {

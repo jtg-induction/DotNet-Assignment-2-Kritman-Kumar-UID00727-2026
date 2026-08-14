@@ -2,11 +2,11 @@
 using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Exceptions;
-using RestaurantServer.Repositories.Implementations;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RestaurantServer.Services.Implementations
@@ -55,7 +55,8 @@ namespace RestaurantServer.Services.Implementations
         /// </exception>
         public async Task<UpdateUserResponse> UpdateAccountAsync(
             long userId,
-            UpdateAccountRequest request)
+            UpdateAccountRequest request,
+            CancellationToken cancellationToken = default)
         { 
             var user = await _usersRepository.GetByIdAsync(userId);
 
@@ -84,7 +85,7 @@ namespace RestaurantServer.Services.Implementations
         /// Thrown when the specified user does not exist or the account
         /// is already inactive.
         /// </exception>
-        public async Task<string> DeactivateAccountAsync(long userId)
+        public async Task<string> DeactivateAccountAsync(long userId, CancellationToken cancellationToken = default)
         {
             var user = await _usersRepository.GetByIdAsync(userId);
 

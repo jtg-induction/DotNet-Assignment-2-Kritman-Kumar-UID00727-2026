@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Threading.Tasks;
 using RestaurantServer.Repositories.Interfaces;
+using System.Threading;
 
 namespace RestaurantServer.Repositories.Implementations
 {
@@ -13,9 +14,10 @@ namespace RestaurantServer.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<T> GetByIdAsync(long id)
+        public async Task<T> GetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _context.Set<T>().FindAsync(new object[] { id },
+            cancellationToken);
         }
 
         public Task AddAsync(T entity)
