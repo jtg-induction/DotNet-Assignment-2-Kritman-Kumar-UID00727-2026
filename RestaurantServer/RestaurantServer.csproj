@@ -188,6 +188,7 @@
     <Compile Include="ApplicationDbContext.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Constants\CookieConstants.cs" />
     <Compile Include="Constants\ErrorMessages.cs" />
     <Compile Include="Constants\SuccessMessages.cs" />
     <Compile Include="Constants\ValidationConstants.cs" />
@@ -200,6 +201,8 @@
     <Compile Include="DTOs\Requests\UpdateAccountRequest.cs" />
     <Compile Include="DTOs\Responses\LoginResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResult.cs" />
+    <Compile Include="DTOs\Responses\RefreshResponse.cs" />
+    <Compile Include="DTOs\Responses\RefreshResult.cs" />
     <Compile Include="DTOs\Responses\RefreshTokenResponse.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
@@ -214,11 +217,13 @@
     </Compile>
     <Compile Include="Helpers\Implementations\AuthenticationValidator.cs" />
     <Compile Include="Helpers\Implementations\CookieHelper.cs" />
+    <Compile Include="Helpers\Implementations\RefreshTokenHelper.cs" />
     <Compile Include="Helpers\Implementations\JwtTokenService.cs" />
     <Compile Include="Helpers\Implementations\PasswordHasher.cs" />
     <Compile Include="Helpers\Implementations\UserValidator.cs" />
     <Compile Include="Helpers\Interfaces\IAuthenticationValidator.cs" />
     <Compile Include="Helpers\Interfaces\ICookieHelper.cs" />
+    <Compile Include="Helpers\Interfaces\IRefreshTokenHelper.cs" />
     <Compile Include="Helpers\Interfaces\IJwtTokenService.cs" />
     <Compile Include="Helpers\Interfaces\IPasswordHasher.cs" />
     <Compile Include="Helpers\Interfaces\IUserValidator.cs" />
@@ -240,16 +245,16 @@
     <Compile Include="Models\RestaurantOwner.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\Implementations\Repository.cs" />
-    <Compile Include="Repositories\Implementations\UnitOfWork.cs" />
-    <Compile Include="Repositories\Implementations\UsersRepository.cs" />
-    <Compile Include="Repositories\Implementations\AuthRepository.cs" />
-    <Compile Include="Repositories\Implementations\RefreshTokenRepository.cs" />
+    <Compile Include="Repositories\implementations\AuthRepository.cs" />
+    <Compile Include="Repositories\implementations\RefreshTokenRepository.cs" />
+    <Compile Include="Repositories\implementations\Repository.cs" />
+    <Compile Include="Repositories\implementations\UnitOfWork.cs" />
+    <Compile Include="Repositories\implementations\UsersRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IAuthRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IRefreshTokenRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRepository.cs" />
     <Compile Include="Repositories\Interfaces\IUnitOfWork.cs" />
     <Compile Include="Repositories\Interfaces\IUsersRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IAuthRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IRefreshTokenRepository.cs" />
     <Compile Include="Services\Implementations\UserUpdateService.cs" />
     <Compile Include="Services\Implementations\AuthService.cs" />
     <Compile Include="Services\Interfaces\IUserUpdateService.cs" />

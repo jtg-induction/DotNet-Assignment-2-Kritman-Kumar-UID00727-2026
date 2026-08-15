@@ -25,10 +25,15 @@ namespace RestaurantServer.Filters
             if (!actionContext.ModelState.IsValid)
             {
                 var errors = actionContext.ModelState
-                    .Where(x => x.Value.Errors.Count > 0)
+                    .Where(modelState => modelState.Value.Errors.Count > 0)
                     .ToDictionary(
-                        x => x.Key,
-                        x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                        modelState =>
+                            modelState.Key.StartsWith("request.")
+                                ? modelState.Key.Substring("request.".Length)
+                                : modelState.Key,
+                        modelState => modelState.Value.Errors
+                            .Select(modelStateError => modelStateError.ErrorMessage)
+                            .ToArray()
                     );
 
                 actionContext.Response = actionContext.Request.CreateResponse(

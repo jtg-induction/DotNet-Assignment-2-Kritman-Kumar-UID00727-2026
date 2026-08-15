@@ -35,14 +35,14 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IRefreshTokenRepository, RefreshTokenRepository>(
                 new HierarchicalLifetimeManager());
 
-
             Container.RegisterType<IAuthService, AuthService>();
             Container.RegisterType<IUserUpdateService, UserUpdateService>(); 
             Container.RegisterType<IPasswordHasher, PasswordHasher>();
             Container.RegisterType<IJwtTokenService, JwtTokenService>();
-            Container.RegisterType<ICookieHelper, CookieHelper>(); 
+            Container.RegisterType<IRefreshTokenHelper, RefreshTokenHelper>(); 
             Container.RegisterType<IAuthenticationValidator, AuthenticationValidator>();
             Container.RegisterType<IUserValidator, UserValidator>();
+            Container.RegisterType<ICookieHelper, CookieHelper>();
         }
     }
 }

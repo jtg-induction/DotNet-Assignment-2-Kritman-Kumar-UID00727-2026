@@ -1,12 +1,9 @@
-﻿using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers; 
 
 namespace RestaurantServer.Helpers.Interfaces
 {
     public interface ICookieHelper
     {
-        CookieHeaderValue CreateRefreshTokenCookie(string refreshToken);
-        CookieHeaderValue CreateExpiredRefreshTokenCookie();
-        string GetRefreshTokenFromRequest(HttpRequestMessage request);
+        CookieHeaderValue CreateHttpOnlySecureCookie(string cookieName, string cookieValue, string cookiePath);
     }
 }

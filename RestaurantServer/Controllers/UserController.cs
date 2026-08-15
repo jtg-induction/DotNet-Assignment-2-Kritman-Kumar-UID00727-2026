@@ -1,32 +1,35 @@
 ﻿using RestaurantServer.DTOs.Requests;
-using RestaurantServer.Services.Interfaces;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web.Http;
 using RestaurantServer.Enums;
 using RestaurantServer.Filters;
+using RestaurantServer.Services.Interfaces;
+using RestaurantServer.Validators.Interfaces;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace RestaurantServer.Controllers
 {
     /// <summary>
     /// Provides endpoints for managing the authenticated user's account.
     /// </summary>
-    [RoutePrefix("users")]
+    [RoutePrefix("api/users")]
     public class UserController : ApiController
     {
-        private readonly IUserUpdateService _accountService;
+        private readonly IUserUpdateService _userUpdateService;
+        private readonly IUserValidator _userValidator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserController"/> class.
         /// </summary>
-        /// <param name="accountService">
-        /// The account service used to perform account-related operations.
+        /// <param name="userUpdateService">
+        /// The service used to update and deactivate user accounts.
         /// </param>
-        public UserController(IUserUpdateService accountService)
+        public UserController(IUserUpdateService userUpdateService, IUserValidator userValidator)
         {
-            _accountService = accountService;
+            _userUpdateService = userUpdateService;
+            _userValidator = userValidator;
         }
 
         /// <summary>
@@ -35,14 +38,18 @@ namespace RestaurantServer.Controllers
         /// <param name="request">
         /// The account details to be updated.
         /// </param>
+        /// <param name="cancellationToken">
+        /// The token used to cancel the asynchronous operation.
+        /// </param>
         /// <returns>
         /// An HTTP 200 response containing the updated account information.
-        /// Returns HTTP 401 if the authenticated user's identity cannot be determined.
+        /// Returns HTTP 401 if the authenticated user's identity cannot be determined
+        /// or the user ID claim is invalid.
         /// </returns>
         [HttpPatch]
         [Route("{id:long}")]
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
-        public async Task<IHttpActionResult> UpdateAccount(
+        public async Task<IHttpActionResult> UpdateAccount(long id,
             UpdateAccountRequest request, CancellationToken cancellationToken = default)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
@@ -58,7 +65,9 @@ namespace RestaurantServer.Controllers
                 return Unauthorized();
             }
 
-            var response = await _accountService.UpdateAccountAsync(userId, request, cancellationToken);
+            _userValidator.ValidateUserId(userId, id);
+
+            var response = await _userUpdateService.UpdateAccountAsync(userId, request, cancellationToken);
 
             return Ok(response);
         }
@@ -66,9 +75,13 @@ namespace RestaurantServer.Controllers
         /// <summary>
         /// Deactivates the account of the currently authenticated user.
         /// </summary>
+        /// <param name="cancellationToken">
+        /// The token used to cancel the asynchronous operation.
+        /// </param>
         /// <returns>
         /// An HTTP 200 response containing the user's ID and deactivation message.
-        /// Returns HTTP 401 if the authenticated user's identity cannot be determined.
+        /// Returns HTTP 401 if the authenticated user's identity cannot be determined,
+        /// the user ID claim is missing, or the user ID claim is invalid.
         /// </returns>
         [HttpPatch]
         [Route("{id:long}/deactivate")]
@@ -91,13 +104,12 @@ namespace RestaurantServer.Controllers
                 return Unauthorized();
             }
 
-            if (!long.TryParse(userIdClaim.Value,out var userId))
+            if (!long.TryParse(userIdClaim.Value, out var userId))
             {
                 return Unauthorized();
             }
 
-            var response =
-                await _accountService.DeactivateAccountAsync(userId, cancellationToken);
+            var response = await _userUpdateService.DeactivateAccountAsync(userId, cancellationToken);
 
             return Ok(new
             {

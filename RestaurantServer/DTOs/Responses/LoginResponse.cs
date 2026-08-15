@@ -20,10 +20,10 @@ namespace RestaurantServer.DTOs.Responses
             Message = message;
         }
 
-        public string AccessToken {  get; set; }
-        public long UserId {  get; set; }
-        public string Name {  get; set; }
+        public string AccessToken { get; set; }
+        public long UserId { get; set; }
+        public string Name { get; set; }
         public UserRole Role { get; set; }
-        public string Message {  get; set; } 
+        public string Message { get; set; }
     }
 }

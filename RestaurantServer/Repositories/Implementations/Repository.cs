@@ -16,8 +16,7 @@ namespace RestaurantServer.Repositories.Implementations
 
         public async Task<T> GetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            return await _context.Set<T>().FindAsync(new object[] { id },
-            cancellationToken);
+            return await _context.Set<T>().FindAsync(cancellationToken, new object[] { id });
         }
 
         public Task AddAsync(T entity)

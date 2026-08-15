@@ -5,14 +5,49 @@ using RestaurantServer.Validators.Interfaces;
 
 namespace RestaurantServer.Validators.Implementations
 {
+    /// <summary>
+    /// Provides validation methods for user-related operations.
+    /// </summary>
     public class UserValidator : IUserValidator
     {
+        /// <summary>
+        /// Validates that the specified user exists.
+        /// </summary>
+        /// <param name="user">
+        /// The user to validate.
+        /// </param>
+        /// <exception cref="ValidationException">
+        /// Thrown when the specified user does not exist.
+        /// </exception>
         public void ValidateUserExists(User user)
         {
             if (user == null)
             {
                 throw new ValidationException(
                     ValidationMessages.UserNotFound);
+            }
+        }
+
+        /// <summary>
+        /// Validates that the user ID from the request matches the authenticated user's ID.
+        /// </summary>
+        /// <param name="requestedUserId">
+        /// The user ID provided in the request URL.
+        /// </param>
+        /// <param name="authenticatedUserId">
+        /// The user ID obtained from the authenticated user's JWT claims.
+        /// </param>
+        /// <exception cref="ValidationException">
+        /// Thrown when the requested user ID does not match the authenticated user's ID.
+        /// </exception>
+        public void ValidateUserId(
+            long requestedUserId,
+            long authenticatedUserId)
+        {
+            if (requestedUserId != authenticatedUserId)
+            {
+                throw new ValidationException(
+                    ValidationMessages.NotAuthorized);
             }
         }
     }

@@ -1,7 +1,8 @@
-﻿using System.Data.Entity;
-using System.Threading.Tasks;
-using RestaurantServer.Models;
+﻿using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
+using System.Data.Entity;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Implementations
 {
@@ -28,10 +29,10 @@ namespace RestaurantServer.Repositories.Implementations
         /// <returns>
         /// The matching user if found; otherwise, <c>null</c>.
         /// </returns>
-        public async Task<User> GetUserByEmailAsync(string email)
+        public async Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
             return await _context.Users
-                .FirstOrDefaultAsync(user => user.Email == email);
+                .FirstOrDefaultAsync(user => user.Email == email, cancellationToken);
         }
     }
 }

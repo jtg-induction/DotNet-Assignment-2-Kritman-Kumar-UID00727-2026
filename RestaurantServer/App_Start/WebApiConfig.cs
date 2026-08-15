@@ -1,7 +1,7 @@
-﻿using RestaurantServer.Exceptions; 
+﻿using RestaurantServer.Exceptions;
+using RestaurantServer.Filters;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
-using RestaurantServer.Filters;
 
 namespace RestaurantServer
 {
@@ -16,13 +16,6 @@ namespace RestaurantServer
         /// </param>
         public static void Register(HttpConfiguration config)
         {
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
-
             config.MapHttpAttributeRoutes();
 
             config.Filters.Add(new ValidateModelAttribute());

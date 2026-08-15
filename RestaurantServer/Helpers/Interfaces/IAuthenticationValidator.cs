@@ -14,12 +14,12 @@ namespace RestaurantServer.Validators.Interfaces
 
         void ValidateRefreshToken(RefreshToken refreshToken);
 
-        void ValidateRefreshTokenIsNotRevoked(
-            RefreshToken refreshToken);
+        void ValidateRefreshTokenIsNotRevoked(RefreshToken refreshToken);
 
-        void ValidateRefreshTokenIsNotExpired(
-            RefreshToken refreshToken);
+        void ValidateRefreshTokenIsNotExpired(RefreshToken refreshToken);
 
-        void ValidateRefreshTokenUser(User user);
+        void IsUserNullOrDeactivated(User user);
+
+        void ValidateRefreshTokenIsValid(RefreshToken refreshToken); 
     }
 }

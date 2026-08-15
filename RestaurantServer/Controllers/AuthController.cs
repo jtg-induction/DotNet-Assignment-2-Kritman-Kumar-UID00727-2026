@@ -8,10 +8,11 @@ using System.Web.Http;
 
 namespace RestaurantServer.Controllers
 {
-    [RoutePrefix("auth")]
+    [RoutePrefix("api/auth")]
     public class AuthController : ApiController
     {
         private readonly IAuthService _authService;
+        private readonly IRefreshTokenHelper _refreshTokenHelper;
         private readonly ICookieHelper _cookieHelper;
 
         /// <summary>
@@ -25,9 +26,11 @@ namespace RestaurantServer.Controllers
         /// </param>
         public AuthController(
             IAuthService authService,
+            IRefreshTokenHelper refreshTokenHelper,
             ICookieHelper cookieHelper)
         {
             _authService = authService;
+            _refreshTokenHelper = refreshTokenHelper;
             _cookieHelper = cookieHelper;
         }
 
@@ -70,8 +73,7 @@ namespace RestaurantServer.Controllers
                 result.Response
             );
 
-            var cookie = _cookieHelper.CreateRefreshTokenCookie(
-                result.RefreshToken);
+            var cookie = _cookieHelper.CreateHttpOnlySecureCookie("refreshToken", result.RefreshToken, "auth");
 
             response.Headers.AddCookies(new[] { cookie });
 
@@ -89,18 +91,17 @@ namespace RestaurantServer.Controllers
         public async Task<IHttpActionResult> Refresh()
         {
             var refreshToken =
-                _cookieHelper.GetRefreshTokenFromRequest(Request);
+                _refreshTokenHelper.GetRefreshTokenFromRequest(Request, "refreshToken");
 
             var result =
                 await _authService.RefreshTokenAsync(refreshToken);
+
+            var cookie = _cookieHelper.CreateHttpOnlySecureCookie("refreshToken", result.RefreshToken, "auth");
 
             var response = Request.CreateResponse(
                 HttpStatusCode.OK,
                 result.Response
             );
-
-            var cookie = _cookieHelper.CreateRefreshTokenCookie(
-                result.RefreshToken);
 
             response.Headers.AddCookies(new[] { cookie });
 
@@ -118,8 +119,7 @@ namespace RestaurantServer.Controllers
         [Route("logout")]
         public async Task<IHttpActionResult> Logout()
         {
-            var refreshToken =
-                _cookieHelper.GetRefreshTokenFromRequest(Request);
+            var refreshToken = _refreshTokenHelper.GetRefreshTokenFromRequest(Request, "refreshToken");
 
             await _authService.LogoutAsync(refreshToken);
 
@@ -130,8 +130,7 @@ namespace RestaurantServer.Controllers
                     Message = SuccessMessages.LogoutSuccessful
                 });
 
-            var expiredCookie =
-                _cookieHelper.CreateExpiredRefreshTokenCookie();
+            var expiredCookie = _cookieHelper.CreateHttpOnlySecureCookie("refreshToken", string.Empty, "auth");
 
             response.Headers.AddCookies(new[] { expiredCookie });
 
