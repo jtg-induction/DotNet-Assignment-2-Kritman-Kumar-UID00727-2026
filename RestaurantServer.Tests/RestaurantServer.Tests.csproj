@@ -147,6 +147,7 @@
     <Compile Include="Middleware\JwtAuthenticationMiddlewareTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryTests.cs" />
+    <Compile Include="Services\AuthServiceTests.cs.cs" />
     <Compile Include="Services\UserUpdateServiceTests.cs" />
     <Compile Include="Validators\AuthenticationValidatorTests.cs" />
     <Compile Include="Validators\UserValidatorTests.cs" />
