@@ -3,7 +3,6 @@ using RestaurantServer.Constants;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Validators.Implementations;
-using System;
 
 namespace RestaurantServer.Tests.Validators
 {
@@ -40,6 +39,33 @@ namespace RestaurantServer.Tests.Validators
 
             Assert.AreEqual(
                 ValidationMessages.UserNotFound,
+                exception.Message);
+        }
+
+        [TestMethod]
+        public void ValidateUserId_MatchingUserIds_DoesNotThrowException()
+        {
+            long requestedUserId = 1;
+            long authenticatedUserId = 1;
+
+            _userValidator.ValidateUserId(
+                requestedUserId,
+                authenticatedUserId);
+        }
+
+        [TestMethod]
+        public void ValidateUserId_DifferentUserIds_ThrowsValidationException()
+        {
+            long requestedUserId = 1;
+            long authenticatedUserId = 2;
+
+            var exception = Assert.ThrowsException<ValidationException>(
+                () => _userValidator.ValidateUserId(
+                    requestedUserId,
+                    authenticatedUserId));
+
+            Assert.AreEqual(
+                ValidationMessages.NotAuthorized,
                 exception.Message);
         }
     }

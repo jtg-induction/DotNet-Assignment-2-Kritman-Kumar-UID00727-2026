@@ -137,11 +137,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthServiceTests.cs" />
     <Compile Include="ControllerTest\AuthControllerTests.cs" />
     <Compile Include="ControllerTest\UserControllerTests.cs" />
-    <Compile Include="Exceptions\ErrorMessageResultTests.cs" />
     <Compile Include="Exceptions\GlobalExceptionHandlerTests.cs" />
+    <Compile Include="Exceptions\ValidationExceptionTests.cs" />
     <Compile Include="FiltersTest\CustomAuthorizeAttributeTests.cs" />
     <Compile Include="FiltersTest\ValidateModelAttributeTests.cs" />
     <Compile Include="Helpers\PasswordHasherTests.cs" />

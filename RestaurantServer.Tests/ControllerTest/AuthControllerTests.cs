@@ -6,10 +6,12 @@ using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
+using RestaurantServer.Helpers.Interfaces;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -21,16 +23,22 @@ namespace RestaurantServer.Tests.ControllersTest
     public class AuthControllerTests
     {
         private Mock<IAuthService> _authServiceMock;
+        private Mock<IRefreshTokenHelper> _refreshTokenHelperMock;
+        private Mock<ICookieHelper> _cookieHelperMock;
+
         private AuthController _controller;
 
         [TestInitialize]
         public void Setup()
         {
             _authServiceMock = new Mock<IAuthService>();
+            _refreshTokenHelperMock = new Mock<IRefreshTokenHelper>();
+            _cookieHelperMock = new Mock<ICookieHelper>();
 
-            _controller =
-                new AuthController(
-                    _authServiceMock.Object);
+            _controller = new AuthController(
+                _authServiceMock.Object,
+                _refreshTokenHelperMock.Object,
+                _cookieHelperMock.Object);
 
             ConfigureController();
         }
@@ -88,10 +96,7 @@ namespace RestaurantServer.Tests.ControllersTest
                 "access-token",
                 "refresh-token");
 
-            _authServiceMock
-                .Setup(service =>
-                    service.LoginAsync(request))
-                .ReturnsAsync(loginResult);
+            SetupLogin(request, loginResult);
 
             var result =
                 await _controller.Login(request);
@@ -123,10 +128,19 @@ namespace RestaurantServer.Tests.ControllersTest
                 "access-token",
                 "refresh-token");
 
-            _authServiceMock
-                .Setup(service =>
-                    service.LoginAsync(request))
-                .ReturnsAsync(loginResult);
+            SetupLogin(request, loginResult);
+
+            var cookie = CreateCookie(
+                "refreshToken",
+                "refresh-token");
+
+            _cookieHelperMock
+                .Setup(helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        "refresh-token",
+                        "auth"))
+                .Returns(cookie);
 
             var result =
                 await _controller.Login(request);
@@ -161,6 +175,14 @@ namespace RestaurantServer.Tests.ControllersTest
             StringAssert.Contains(
                 cookieHeader.ToLowerInvariant(),
                 "path=/auth");
+
+            _cookieHelperMock.Verify(
+                helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        "refresh-token",
+                        "auth"),
+                Times.Once);
         }
 
         [TestMethod]
@@ -176,10 +198,7 @@ namespace RestaurantServer.Tests.ControllersTest
                 "access-token",
                 "refresh-token");
 
-            _authServiceMock
-                .Setup(service =>
-                    service.LoginAsync(request))
-                .ReturnsAsync(loginResult);
+            SetupLogin(request, loginResult);
 
             await _controller.Login(request);
 
@@ -190,60 +209,26 @@ namespace RestaurantServer.Tests.ControllersTest
         }
 
         [TestMethod]
-        public async Task Refresh_WithoutCookie_ShouldThrowValidationException()
+        public async Task Refresh_ShouldGetRefreshTokenFromHelper()
         {
-            var exception =
-                await Assert.ThrowsExceptionAsync<ValidationException>(
-                    async () =>
-                        await _controller.Refresh());
+            var refreshToken =
+                "old-refresh-token";
 
-            Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
-                exception.Message);
+            var refreshResult =
+                CreateRefreshResult(
+                    "new-access-token",
+                    "new-refresh-token");
 
-            _authServiceMock.Verify(
-                service =>
-                    service.RefreshTokenAsync(
-                        It.IsAny<string>()),
-                Times.Never);
-        }
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Returns(refreshToken);
 
-        [TestMethod]
-        public async Task Refresh_WithEmptyCookie_ShouldThrowValidationException()
-        {
-            AddRefreshTokenCookie("");
-
-            var exception =
-                await Assert.ThrowsExceptionAsync<ValidationException>(
-                    async () =>
-                        await _controller.Refresh());
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
-                exception.Message);
-
-            _authServiceMock.Verify(
-                service =>
-                    service.RefreshTokenAsync(
-                        It.IsAny<string>()),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public async Task Refresh_WithValidCookie_ShouldReturnOkAndNewCookie()
-        {
-            AddRefreshTokenCookie(
-                "old-refresh-token");
-
-            var refreshResult = CreateLoginResult(
-                "new-access-token",
-                "new-refresh-token");
-
-            _authServiceMock
-                .Setup(service =>
-                    service.RefreshTokenAsync(
-                        "old-refresh-token"))
-                .ReturnsAsync(refreshResult);
+            SetupRefresh(
+                refreshToken,
+                refreshResult);
 
             var result =
                 await _controller.Refresh();
@@ -256,11 +241,88 @@ namespace RestaurantServer.Tests.ControllersTest
                 HttpStatusCode.OK,
                 response.StatusCode);
 
+            _refreshTokenHelperMock.Verify(
+                helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task Refresh_ShouldPassRefreshTokenToAuthService()
+        {
+            var refreshToken =
+                "old-refresh-token";
+
+            var refreshResult =
+                CreateRefreshResult(
+                    "new-access-token",
+                    "new-refresh-token");
+
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Returns(refreshToken);
+
+            SetupRefresh(
+                refreshToken,
+                refreshResult);
+
+            await _controller.Refresh();
+
             _authServiceMock.Verify(
                 service =>
                     service.RefreshTokenAsync(
-                        "old-refresh-token"),
+                        refreshToken),
                 Times.Once);
+        }
+
+        [TestMethod]
+        public async Task Refresh_ShouldSetNewRefreshTokenCookie()
+        {
+            var oldRefreshToken =
+                "old-refresh-token";
+
+            var newRefreshToken =
+                "new-refresh-token";
+
+            var refreshResult =
+                CreateRefreshResult(
+                    "new-access-token",
+                    newRefreshToken);
+
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Returns(oldRefreshToken);
+
+            SetupRefresh(
+                oldRefreshToken,
+                refreshResult);
+
+            var cookie = CreateCookie(
+                "refreshToken",
+                newRefreshToken);
+
+            _cookieHelperMock
+                .Setup(helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        newRefreshToken,
+                        "auth"))
+                .Returns(cookie);
+
+            var result =
+                await _controller.Refresh();
+
+            var response =
+                await result.ExecuteAsync(
+                    CancellationToken.None);
 
             var setCookieHeaders =
                 response.Headers
@@ -288,59 +350,65 @@ namespace RestaurantServer.Tests.ControllersTest
             StringAssert.Contains(
                 cookieHeader.ToLowerInvariant(),
                 "path=/auth");
+
+            _cookieHelperMock.Verify(
+                helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        newRefreshToken,
+                        "auth"),
+                Times.Once);
         }
 
         [TestMethod]
-        public async Task Logout_WithoutCookie_ShouldThrowValidationException()
+        public async Task Refresh_WhenHelperThrowsValidationException_ShouldPropagateException()
         {
             var exception =
+                new ValidationException(
+                    ValidationMessages.InvalidRefreshToken);
+
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Throws(exception);
+
+            var actualException =
                 await Assert.ThrowsExceptionAsync<ValidationException>(
                     async () =>
-                        await _controller.Logout());
+                        await _controller.Refresh());
 
             Assert.AreEqual(
                 ValidationMessages.InvalidRefreshToken,
-                exception.Message);
+                actualException.Message);
 
             _authServiceMock.Verify(
                 service =>
-                    service.LogoutAsync(
+                    service.RefreshTokenAsync(
                         It.IsAny<string>()),
                 Times.Never);
         }
 
         [TestMethod]
-        public async Task Logout_WithEmptyCookie_ShouldThrowValidationException()
+        public async Task Logout_ShouldGetRefreshTokenFromHelper()
         {
-            AddRefreshTokenCookie("");
+            var refreshToken =
+                "refresh-token";
 
-            var exception =
-                await Assert.ThrowsExceptionAsync<ValidationException>(
-                    async () =>
-                        await _controller.Logout());
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
-                exception.Message);
-
-            _authServiceMock.Verify(
-                service =>
-                    service.LogoutAsync(
-                        It.IsAny<string>()),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public async Task Logout_WithValidCookie_ShouldReturnOkAndExpireCookie()
-        {
-            AddRefreshTokenCookie(
-                "refresh-token");
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Returns(refreshToken);
 
             _authServiceMock
                 .Setup(service =>
-                    service.LogoutAsync(
-                        "refresh-token"))
+                    service.LogoutAsync(refreshToken))
                 .Returns(Task.CompletedTask);
+
+            SetupLogoutCookie();
 
             var result =
                 await _controller.Logout();
@@ -353,11 +421,117 @@ namespace RestaurantServer.Tests.ControllersTest
                 HttpStatusCode.OK,
                 response.StatusCode);
 
+            _refreshTokenHelperMock.Verify(
+                helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task Logout_ShouldPassRefreshTokenToAuthService()
+        {
+            var refreshToken =
+                "refresh-token";
+
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Returns(refreshToken);
+
+            _authServiceMock
+                .Setup(service =>
+                    service.LogoutAsync(refreshToken))
+                .Returns(Task.CompletedTask);
+
+            SetupLogoutCookie();
+
+            await _controller.Logout();
+
             _authServiceMock.Verify(
                 service =>
-                    service.LogoutAsync(
-                        "refresh-token"),
+                    service.LogoutAsync(refreshToken),
                 Times.Once);
+        }
+
+        [TestMethod]
+        public async Task Logout_ShouldReturnLogoutSuccessMessage()
+        {
+            var refreshToken =
+                "refresh-token";
+
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Returns(refreshToken);
+
+            _authServiceMock
+                .Setup(service =>
+                    service.LogoutAsync(refreshToken))
+                .Returns(Task.CompletedTask);
+
+            SetupLogoutCookie();
+
+            var result =
+                await _controller.Logout();
+
+            var response =
+                await result.ExecuteAsync(
+                    CancellationToken.None);
+
+            var content =
+                await response.Content.ReadAsStringAsync();
+
+            StringAssert.Contains(
+                content,
+                SuccessMessages.LogoutSuccessful);
+        }
+
+        [TestMethod]
+        public async Task Logout_ShouldExpireRefreshTokenCookie()
+        {
+            var refreshToken =
+                "refresh-token";
+
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Returns(refreshToken);
+
+            _authServiceMock
+                .Setup(service =>
+                    service.LogoutAsync(refreshToken))
+                .Returns(Task.CompletedTask);
+
+            var expiredCookie =
+                CreateCookie(
+                    "refreshToken",
+                    string.Empty);
+
+            expiredCookie.Expires =
+                DateTimeOffset.UtcNow.AddDays(-1);
+
+            _cookieHelperMock
+                .Setup(helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        string.Empty,
+                        "auth"))
+                .Returns(expiredCookie);
+
+            var result =
+                await _controller.Logout();
+
+            var response =
+                await result.ExecuteAsync(
+                    CancellationToken.None);
 
             var setCookieHeaders =
                 response.Headers
@@ -389,6 +563,101 @@ namespace RestaurantServer.Tests.ControllersTest
             StringAssert.Contains(
                 cookieHeader.ToLowerInvariant(),
                 "expires=");
+
+            _cookieHelperMock.Verify(
+                helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        string.Empty,
+                        "auth"),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task Logout_WhenHelperThrowsValidationException_ShouldPropagateException()
+        {
+            var exception =
+                new ValidationException(
+                    ValidationMessages.InvalidRefreshToken);
+
+            _refreshTokenHelperMock
+                .Setup(helper =>
+                    helper.GetRefreshTokenFromRequest(
+                        _controller.Request,
+                        "refreshToken"))
+                .Throws(exception);
+
+            var actualException =
+                await Assert.ThrowsExceptionAsync<ValidationException>(
+                    async () =>
+                        await _controller.Logout());
+
+            Assert.AreEqual(
+                ValidationMessages.InvalidRefreshToken,
+                actualException.Message);
+
+            _authServiceMock.Verify(
+                service =>
+                    service.LogoutAsync(
+                        It.IsAny<string>()),
+                Times.Never);
+        }
+
+        private void SetupLogin(
+            LoginRequest request,
+            LoginResult result)
+        {
+            _authServiceMock
+                .Setup(service =>
+                    service.LoginAsync(request))
+                .ReturnsAsync(result);
+
+            _cookieHelperMock
+                .Setup(helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        result.RefreshToken,
+                        "auth"))
+                .Returns(
+                    CreateCookie(
+                        "refreshToken",
+                        result.RefreshToken));
+        }
+
+        private void SetupRefresh(
+            string refreshToken,
+            RefreshResult result)
+        {
+            _authServiceMock
+                .Setup(service =>
+                    service.RefreshTokenAsync(
+                        refreshToken))
+                .ReturnsAsync(result);
+
+            _cookieHelperMock
+                .Setup(helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        result.RefreshToken,
+                        "auth"))
+                .Returns(
+                    CreateCookie(
+                        "refreshToken",
+                        result.RefreshToken));
+        }
+
+        private void SetupLogoutCookie()
+        {
+            _cookieHelperMock
+                .Setup(helper =>
+                    helper.CreateHttpOnlySecureCookie(
+                        "refreshToken",
+                        string.Empty,
+                        "auth"))
+                .Returns(
+                    CreateCookie(
+                        "refreshToken",
+                        string.Empty));
         }
 
         private LoginResult CreateLoginResult(
@@ -410,12 +679,37 @@ namespace RestaurantServer.Tests.ControllersTest
             };
         }
 
-        private void AddRefreshTokenCookie(
+        private RefreshResult CreateRefreshResult(
+            string accessToken,
             string refreshToken)
         {
-            _controller.Request.Headers.Add(
-                "Cookie",
-                "refreshToken=" + refreshToken);
+            return new RefreshResult
+            {
+                Response = new RefreshResponse
+                {
+                    AccessToken = accessToken,
+                    TokenType = "Bearer",
+                    ExpiresInSeconds = 3600
+                },
+
+                RefreshToken = refreshToken
+            };
+        }
+
+        private CookieHeaderValue CreateCookie(
+            string name,
+            string value)
+        {
+            var cookie =
+                new CookieHeaderValue(
+                    name,
+                    value);
+
+            cookie.Path = "/auth";
+            cookie.HttpOnly = true;
+            cookie.Secure = true;
+
+            return cookie;
         }
 
         private void ConfigureController()

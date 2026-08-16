@@ -2,13 +2,13 @@
 using Moq;
 using RestaurantServer.Constants;
 using RestaurantServer.DTOs.Requests;
-using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Implementations;
 using RestaurantServer.Validators.Interfaces;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RestaurantServer.Tests
@@ -20,6 +20,8 @@ namespace RestaurantServer.Tests
         private Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
         private Mock<IUnitOfWork> _unitOfWorkMock;
         private Mock<IUserValidator> _userValidatorMock;
+        private Mock<IAuthenticationValidator> _authenticationValidatorMock;
+
         private UserUpdateService _userUpdateService;
 
         [TestInitialize]
@@ -30,28 +32,35 @@ namespace RestaurantServer.Tests
                 new Mock<IRefreshTokenRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _userValidatorMock = new Mock<IUserValidator>();
+            _authenticationValidatorMock =
+                new Mock<IAuthenticationValidator>();
 
             _unitOfWorkMock
                 .Setup(unitOfWork =>
-                    unitOfWork.SaveChangesAsync())
+                    unitOfWork.SaveChangesAsync(
+                        It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             _refreshTokenRepositoryMock
                 .Setup(repository =>
-                    repository.RevokeAllByUserIdAsync(It.IsAny<long>()))
+                    repository.RevokeAllByUserIdAsync(
+                        It.IsAny<long>(),
+                        It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             _userUpdateService = new UserUpdateService(
                 _usersRepositoryMock.Object,
                 _refreshTokenRepositoryMock.Object,
                 _unitOfWorkMock.Object,
-                _userValidatorMock.Object);
+                _userValidatorMock.Object,
+                _authenticationValidatorMock.Object);
         }
 
         [TestMethod]
         public async Task UpdateAccountAsync_UserNotFound_ThrowsValidationException()
         {
             var userId = 1L;
+
             var request = new UpdateAccountRequest
             {
                 Name = "Updated User",
@@ -63,7 +72,9 @@ namespace RestaurantServer.Tests
 
             _usersRepositoryMock
                 .Setup(repository =>
-                    repository.GetByIdAsync(userId))
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User)null);
 
             _userValidatorMock
@@ -76,7 +87,8 @@ namespace RestaurantServer.Tests
                     userId,
                     request);
 
-            await Assert.ThrowsExceptionAsync<ValidationException>(action);
+            await Assert.ThrowsExceptionAsync<ValidationException>(
+                action);
 
             _userValidatorMock.Verify(
                 validator =>
@@ -85,7 +97,8 @@ namespace RestaurantServer.Tests
 
             _unitOfWorkMock.Verify(
                 unitOfWork =>
-                    unitOfWork.SaveChangesAsync(),
+                    unitOfWork.SaveChangesAsync(
+                        It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -111,7 +124,9 @@ namespace RestaurantServer.Tests
 
             _usersRepositoryMock
                 .Setup(repository =>
-                    repository.GetByIdAsync(userId))
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             var beforeUpdate = DateTime.UtcNow;
@@ -143,7 +158,8 @@ namespace RestaurantServer.Tests
 
             _unitOfWorkMock.Verify(
                 unitOfWork =>
-                    unitOfWork.SaveChangesAsync(),
+                    unitOfWork.SaveChangesAsync(
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -152,24 +168,44 @@ namespace RestaurantServer.Tests
         {
             var userId = 1L;
 
+            var exception = new ValidationException(
+                ValidationMessages.InvalidRefreshToken);
+
             _usersRepositoryMock
                 .Setup(repository =>
-                    repository.GetByIdAsync(userId))
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User)null);
 
-            Func<Task> action = async () =>
-                await _userUpdateService.DeactivateAccountAsync(userId);
+            _authenticationValidatorMock
+                .Setup(validator =>
+                    validator.IsUserNullOrDeactivated(null))
+                .Throws(exception);
 
-            await Assert.ThrowsExceptionAsync<ValidationException>(action);
+            Func<Task> action = async () =>
+                await _userUpdateService.DeactivateAccountAsync(
+                    userId);
+
+            await Assert.ThrowsExceptionAsync<ValidationException>(
+                action);
+
+            _authenticationValidatorMock.Verify(
+                validator =>
+                    validator.IsUserNullOrDeactivated(null),
+                Times.Once);
 
             _refreshTokenRepositoryMock.Verify(
                 repository =>
-                    repository.RevokeAllByUserIdAsync(userId),
+                    repository.RevokeAllByUserIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()),
                 Times.Never);
 
             _unitOfWorkMock.Verify(
                 unitOfWork =>
-                    unitOfWork.SaveChangesAsync(),
+                    unitOfWork.SaveChangesAsync(
+                        It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -186,26 +222,46 @@ namespace RestaurantServer.Tests
                 IsActive = false
             };
 
+            var exception = new ValidationException(
+                ValidationMessages.InvalidRefreshToken);
+
             _usersRepositoryMock
                 .Setup(repository =>
-                    repository.GetByIdAsync(userId))
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
-            Func<Task> action = async () =>
-                await _userUpdateService.DeactivateAccountAsync(userId);
+            _authenticationValidatorMock
+                .Setup(validator =>
+                    validator.IsUserNullOrDeactivated(user))
+                .Throws(exception);
 
-            await Assert.ThrowsExceptionAsync<ValidationException>(action);
+            Func<Task> action = async () =>
+                await _userUpdateService.DeactivateAccountAsync(
+                    userId);
+
+            await Assert.ThrowsExceptionAsync<ValidationException>(
+                action);
+
+            _authenticationValidatorMock.Verify(
+                validator =>
+                    validator.IsUserNullOrDeactivated(user),
+                Times.Once);
 
             Assert.IsFalse(user.IsActive);
 
             _refreshTokenRepositoryMock.Verify(
                 repository =>
-                    repository.RevokeAllByUserIdAsync(userId),
+                    repository.RevokeAllByUserIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()),
                 Times.Never);
 
             _unitOfWorkMock.Verify(
                 unitOfWork =>
-                    unitOfWork.SaveChangesAsync(),
+                    unitOfWork.SaveChangesAsync(
+                        It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -224,13 +280,16 @@ namespace RestaurantServer.Tests
 
             _usersRepositoryMock
                 .Setup(repository =>
-                    repository.GetByIdAsync(userId))
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             var beforeUpdate = DateTime.UtcNow;
 
             var result =
-                await _userUpdateService.DeactivateAccountAsync(userId);
+                await _userUpdateService.DeactivateAccountAsync(
+                    userId);
 
             var afterUpdate = DateTime.UtcNow;
 
@@ -244,14 +303,22 @@ namespace RestaurantServer.Tests
                 user.UpdatedAt >= beforeUpdate &&
                 user.UpdatedAt <= afterUpdate);
 
+            _authenticationValidatorMock.Verify(
+                validator =>
+                    validator.IsUserNullOrDeactivated(user),
+                Times.Once);
+
             _refreshTokenRepositoryMock.Verify(
                 repository =>
-                    repository.RevokeAllByUserIdAsync(userId),
+                    repository.RevokeAllByUserIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
 
             _unitOfWorkMock.Verify(
                 unitOfWork =>
-                    unitOfWork.SaveChangesAsync(),
+                    unitOfWork.SaveChangesAsync(
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
         }
     }

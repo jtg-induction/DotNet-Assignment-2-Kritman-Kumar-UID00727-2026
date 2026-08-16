@@ -16,7 +16,7 @@ namespace RestaurantServer.Tests.Exceptions
     public class GlobalExceptionHandlerTests
     {
         [TestMethod]
-        public async Task Handle_WithValidationException_ShouldReturnBadRequest()
+        public async Task HandleAsync_WithValidationException_ShouldReturnBadRequest()
         {
             var expectedMessage =
                 "Validation failed for the request.";
@@ -30,7 +30,9 @@ namespace RestaurantServer.Tests.Exceptions
             var handler =
                 new GlobalExceptionHandler();
 
-            handler.Handle(context);
+            await handler.HandleAsync(
+                context,
+                CancellationToken.None);
 
             Assert.IsNotNull(context.Result);
 
@@ -44,7 +46,7 @@ namespace RestaurantServer.Tests.Exceptions
         }
 
         [TestMethod]
-        public async Task Handle_WithValidationException_ShouldReturnExceptionMessage()
+        public async Task HandleAsync_WithValidationException_ShouldReturnExceptionMessage()
         {
             var expectedMessage =
                 "Email already exists.";
@@ -58,7 +60,9 @@ namespace RestaurantServer.Tests.Exceptions
             var handler =
                 new GlobalExceptionHandler();
 
-            handler.Handle(context);
+            await handler.HandleAsync(
+                context,
+                CancellationToken.None);
 
             Assert.IsNotNull(context.Result);
 
@@ -74,7 +78,7 @@ namespace RestaurantServer.Tests.Exceptions
         }
 
         [TestMethod]
-        public async Task Handle_WithGeneralException_ShouldReturnInternalServerError()
+        public async Task HandleAsync_WithGeneralException_ShouldReturnInternalServerError()
         {
             var exception =
                 new Exception(
@@ -86,7 +90,9 @@ namespace RestaurantServer.Tests.Exceptions
             var handler =
                 new GlobalExceptionHandler();
 
-            handler.Handle(context);
+            await handler.HandleAsync(
+                context,
+                CancellationToken.None);
 
             Assert.IsNotNull(context.Result);
 
@@ -100,7 +106,7 @@ namespace RestaurantServer.Tests.Exceptions
         }
 
         [TestMethod]
-        public async Task Handle_WithGeneralException_ShouldReturnGenericErrorMessage()
+        public async Task HandleAsync_WithGeneralException_ShouldReturnGenericErrorMessage()
         {
             var exception =
                 new Exception(
@@ -112,7 +118,9 @@ namespace RestaurantServer.Tests.Exceptions
             var handler =
                 new GlobalExceptionHandler();
 
-            handler.Handle(context);
+            await handler.HandleAsync(
+                context,
+                CancellationToken.None);
 
             Assert.IsNotNull(context.Result);
 

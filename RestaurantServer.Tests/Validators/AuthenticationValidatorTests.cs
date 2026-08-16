@@ -93,7 +93,7 @@ namespace RestaurantServer.Tests
         }
 
         [TestMethod]
-        public void ValidateRefreshTokenUser_ActiveUser_DoesNotThrowException()
+        public void IsUserNullOrDeactivated_ActiveUser_DoesNotThrowException()
         {
             var user = new User
             {
@@ -103,11 +103,11 @@ namespace RestaurantServer.Tests
                 IsActive = true
             };
 
-            _authenticationValidator.ValidateRefreshTokenUser(user);
+            _authenticationValidator.IsUserNullOrDeactivated(user);
         }
 
         [TestMethod]
-        public void ValidateRefreshTokenUser_InactiveUser_ThrowsValidationException()
+        public void IsUserNullOrDeactivated_InactiveUser_ThrowsValidationException()
         {
             var user = new User
             {
@@ -119,7 +119,7 @@ namespace RestaurantServer.Tests
 
             var exception = Assert.ThrowsException<ValidationException>(
                 () => _authenticationValidator
-                    .ValidateRefreshTokenUser(user));
+                    .IsUserNullOrDeactivated(user));
 
             Assert.AreEqual(
                 ValidationMessages.InvalidRefreshToken,
@@ -127,11 +127,11 @@ namespace RestaurantServer.Tests
         }
 
         [TestMethod]
-        public void ValidateRefreshTokenUser_NullUser_ThrowsValidationException()
+        public void IsUserNullOrDeactivated_NullUser_ThrowsValidationException()
         {
             var exception = Assert.ThrowsException<ValidationException>(
                 () => _authenticationValidator
-                    .ValidateRefreshTokenUser(null));
+                    .IsUserNullOrDeactivated(null));
 
             Assert.AreEqual(
                 ValidationMessages.InvalidRefreshToken,
