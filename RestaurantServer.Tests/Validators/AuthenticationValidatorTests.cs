@@ -3,7 +3,6 @@ using RestaurantServer.Constants;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Validators.Implementations;
-using System;
 
 namespace RestaurantServer.Tests
 {
@@ -19,13 +18,32 @@ namespace RestaurantServer.Tests
         }
 
         [TestMethod]
+        public void ValidateUser_ValidUser_DoesNotThrowException()
+        {
+            var user = new User
+            {
+                IsActive = true
+            };
+
+            _authenticationValidator.ValidateUser(user);
+        }
+
+        [TestMethod]
+        public void ValidateUser_NullUser_ThrowsValidationException()
+        {
+            var exception = Assert.ThrowsException<ValidationException>(
+                () => _authenticationValidator.ValidateUser(null));
+
+            Assert.AreEqual(
+                ValidationMessages.InvalidCredentials,
+                exception.Message);
+        }
+
+        [TestMethod]
         public void ValidateUserIsActive_ActiveUser_DoesNotThrowException()
         {
             var user = new User
             {
-                Id = 1,
-                Name = "Test User",
-                Email = "test@example.com",
                 IsActive = true
             };
 
@@ -37,9 +55,6 @@ namespace RestaurantServer.Tests
         {
             var user = new User
             {
-                Id = 1,
-                Name = "Inactive User",
-                Email = "inactive@example.com",
                 IsActive = false
             };
 
@@ -52,89 +67,19 @@ namespace RestaurantServer.Tests
         }
 
         [TestMethod]
-        public void ValidateRefreshTokenIsNotRevoked_ActiveToken_DoesNotThrowException()
+        public void ValidatePassword_ValidPassword_DoesNotThrowException()
         {
-            var refreshToken = new RefreshToken
-            {
-                Id = 1,
-                UserId = 1,
-                Token = "valid-refresh-token",
-                IsRevoked = false,
-                CreatedAt = DateTime.UtcNow.AddDays(-1),
-                UpdatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddDays(29)
-            };
-
-            _authenticationValidator.ValidateRefreshTokenIsNotRevoked(
-                refreshToken);
+            _authenticationValidator.ValidatePassword(true);
         }
 
         [TestMethod]
-        public void ValidateRefreshTokenIsNotRevoked_RevokedToken_ThrowsValidationException()
-        {
-            var refreshToken = new RefreshToken
-            {
-                Id = 1,
-                UserId = 1,
-                Token = "revoked-refresh-token",
-                IsRevoked = true,
-                CreatedAt = DateTime.UtcNow.AddDays(-1),
-                UpdatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddDays(29)
-            };
-
-            var exception = Assert.ThrowsException<ValidationException>(
-                () => _authenticationValidator
-                    .ValidateRefreshTokenIsNotRevoked(refreshToken));
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
-                exception.Message);
-        }
-
-        [TestMethod]
-        public void IsUserNullOrDeactivated_ActiveUser_DoesNotThrowException()
-        {
-            var user = new User
-            {
-                Id = 1,
-                Name = "Test User",
-                Email = "test@example.com",
-                IsActive = true
-            };
-
-            _authenticationValidator.IsUserNullOrDeactivated(user);
-        }
-
-        [TestMethod]
-        public void IsUserNullOrDeactivated_InactiveUser_ThrowsValidationException()
-        {
-            var user = new User
-            {
-                Id = 1,
-                Name = "Inactive User",
-                Email = "inactive@example.com",
-                IsActive = false
-            };
-
-            var exception = Assert.ThrowsException<ValidationException>(
-                () => _authenticationValidator
-                    .IsUserNullOrDeactivated(user));
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
-                exception.Message);
-        }
-
-        [TestMethod]
-        public void IsUserNullOrDeactivated_NullUser_ThrowsValidationException()
+        public void ValidatePassword_InvalidPassword_ThrowsValidationException()
         {
             var exception = Assert.ThrowsException<ValidationException>(
-                () => _authenticationValidator
-                    .IsUserNullOrDeactivated(null));
+                () => _authenticationValidator.ValidatePassword(false));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ValidationMessages.InvalidCredentials,
                 exception.Message);
         }
     }

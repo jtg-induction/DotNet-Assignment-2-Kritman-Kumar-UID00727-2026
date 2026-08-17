@@ -7,6 +7,7 @@ using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Helpers.Interfaces;
+using RestaurantServer.Models;
 using System;
 using System.Linq;
 using System.Net;
@@ -53,13 +54,14 @@ namespace RestaurantServer.Tests.ControllersTest
                 Password = "Password@123"
             };
 
-            var expectedResponse = new SignupResponse
+            var user = new User
             {
-                UserId = 1,
+                Id = 1,
                 Name = "Test User",
-                Email = "test@test.com",
-                Message = "Signup successful"
+                Email = "test@test.com"
             };
+
+            var expectedResponse = new SignupResponse(user);
 
             _authServiceMock
                 .Setup(service =>
@@ -664,16 +666,19 @@ namespace RestaurantServer.Tests.ControllersTest
             string accessToken,
             string refreshToken)
         {
+            var user = new User
+            {
+                Id = 1,
+                Name = "Test User",
+                Role = (int)UserRole.Customer
+            };
+
             return new LoginResult
             {
-                Response = new LoginResponse
-                {
-                    AccessToken = accessToken,
-                    UserId = 1,
-                    Name = "Test User",
-                    Role = UserRole.Customer,
-                    Message = "Login successful"
-                },
+                Response = new LoginResponse(
+                    user,
+                    accessToken,
+                    "Login successful"),
 
                 RefreshToken = refreshToken
             };
@@ -685,12 +690,9 @@ namespace RestaurantServer.Tests.ControllersTest
         {
             return new RefreshResult
             {
-                Response = new RefreshResponse
-                {
-                    AccessToken = accessToken,
-                    TokenType = "Bearer",
-                    ExpiresInSeconds = 3600
-                },
+                Response = new RefreshResponse(
+                    accessToken,
+                    "Bearer"),
 
                 RefreshToken = refreshToken
             };

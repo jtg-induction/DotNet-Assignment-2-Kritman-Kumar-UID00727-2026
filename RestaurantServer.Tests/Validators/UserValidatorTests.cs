@@ -1,7 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using RestaurantServer.Constants;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
+using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Validators.Implementations;
 
 namespace RestaurantServer.Tests.Validators
@@ -10,11 +12,13 @@ namespace RestaurantServer.Tests.Validators
     public class UserValidatorTests
     {
         private UserValidator _userValidator;
+        private Mock<IUsersRepository> _usersRepository;
 
         [TestInitialize]
         public void Setup()
         {
-            _userValidator = new UserValidator();
+            _usersRepository = new Mock<IUsersRepository>();
+            _userValidator = new UserValidator(_usersRepository.Object);
         }
 
         [TestMethod]
@@ -22,9 +26,6 @@ namespace RestaurantServer.Tests.Validators
         {
             var user = new User
             {
-                Id = 1,
-                Name = "Test User",
-                Email = "test@example.com",
                 IsActive = true
             };
 
@@ -45,27 +46,86 @@ namespace RestaurantServer.Tests.Validators
         [TestMethod]
         public void ValidateUserId_MatchingUserIds_DoesNotThrowException()
         {
-            long requestedUserId = 1;
-            long authenticatedUserId = 1;
-
-            _userValidator.ValidateUserId(
-                requestedUserId,
-                authenticatedUserId);
+            _userValidator.ValidateUserId(1, 1);
         }
 
         [TestMethod]
         public void ValidateUserId_DifferentUserIds_ThrowsValidationException()
         {
-            long requestedUserId = 1;
-            long authenticatedUserId = 2;
-
             var exception = Assert.ThrowsException<ValidationException>(
-                () => _userValidator.ValidateUserId(
-                    requestedUserId,
-                    authenticatedUserId));
+                () => _userValidator.ValidateUserId(1, 2));
 
             Assert.AreEqual(
                 ValidationMessages.NotAuthorized,
+                exception.Message);
+        }
+
+        [TestMethod]
+        public void IsUserNullOrDeactivated_ActiveUser_DoesNotThrowException()
+        {
+            var user = new User
+            {
+                IsActive = true
+            };
+
+            _userValidator.IsUserNullOrDeactivated(user);
+        }
+
+        [TestMethod]
+        public void IsUserNullOrDeactivated_NullUser_ThrowsValidationException()
+        {
+            var exception = Assert.ThrowsException<ValidationException>(
+                () => _userValidator.IsUserNullOrDeactivated(null));
+
+            Assert.AreEqual(
+                ValidationMessages.InvalidRefreshToken,
+                exception.Message);
+        }
+
+        [TestMethod]
+        public void IsUserNullOrDeactivated_InactiveUser_ThrowsValidationException()
+        {
+            var user = new User
+            {
+                IsActive = false
+            };
+
+            var exception = Assert.ThrowsException<ValidationException>(
+                () => _userValidator.IsUserNullOrDeactivated(user));
+
+            Assert.AreEqual(
+                ValidationMessages.InvalidRefreshToken,
+                exception.Message);
+        }
+
+        [TestMethod]
+        public void ValidateMobileNumberIsUnique_EmptyMobileNumber_DoesNotThrowException()
+        {
+            _userValidator.ValidateMobileNumberIsUnique("", 1);
+        }
+
+        [TestMethod]
+        public void ValidateMobileNumberIsUnique_MobileNumberDoesNotExist_DoesNotThrowException()
+        {
+            _usersRepository
+                .Setup(x => x.IsMobileNumberExists("9876543210", 1))
+                .Returns(false);
+
+            _userValidator.ValidateMobileNumberIsUnique("9876543210", 1);
+        }
+
+        [TestMethod]
+        public void ValidateMobileNumberIsUnique_MobileNumberExists_ThrowsValidationException()
+        {
+            _usersRepository
+                .Setup(x => x.IsMobileNumberExists("9876543210", 1))
+                .Returns(true);
+
+            var exception = Assert.ThrowsException<ValidationException>(
+                () => _userValidator.ValidateMobileNumberIsUnique("9876543210", 1));
+
+            Assert.AreEqual(
+                ValidationMessages.MobileNumberAlreadyExists,
                 exception.Message);
         }
     }

@@ -5,7 +5,6 @@ using RestaurantServer.Controllers;
 using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Enums;
-using RestaurantServer.Exceptions;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
@@ -54,22 +53,18 @@ namespace RestaurantServer.Tests.ControllersTest
                 MobileNumber = "9876543210"
             };
 
-            var expectedResponse = new UpdateUserResponse
+            var user = new RestaurantServer.Models.User
             {
-                UserId = userId,
+                Id = userId,
                 Name = "Updated User",
                 Email = "user@test.com",
-                MobileNumber = "9876543210",
-                Message = "Account updated successfully"
+                MobileNumber = "9876543210"
             };
 
-            SetAuthenticatedUser(userId);
+            var expectedResponse =
+                new UpdateUserResponse(user);
 
-            _userValidatorMock
-                .Setup(validator =>
-                    validator.ValidateUserId(
-                        userId,
-                        userId));
+            SetAuthenticatedUser(userId);
 
             _userUpdateServiceMock
                 .Setup(service =>
@@ -81,7 +76,6 @@ namespace RestaurantServer.Tests.ControllersTest
 
             var result =
                 await _controller.UpdateAccount(
-                    userId,
                     request,
                     CancellationToken.None);
 
@@ -92,13 +86,6 @@ namespace RestaurantServer.Tests.ControllersTest
             Assert.AreEqual(
                 HttpStatusCode.OK,
                 response.StatusCode);
-
-            _userValidatorMock.Verify(
-                validator =>
-                    validator.ValidateUserId(
-                        userId,
-                        userId),
-                Times.Once);
 
             _userUpdateServiceMock.Verify(
                 service =>
@@ -118,12 +105,10 @@ namespace RestaurantServer.Tests.ControllersTest
                 MobileNumber = "9876543210"
             };
 
-            SetAuthenticatedUser(
-                "invalid-user-id");
+            SetAuthenticatedUser("invalid-user-id");
 
             var result =
                 await _controller.UpdateAccount(
-                    1,
                     request,
                     CancellationToken.None);
 
@@ -134,63 +119,6 @@ namespace RestaurantServer.Tests.ControllersTest
             Assert.AreEqual(
                 HttpStatusCode.Unauthorized,
                 response.StatusCode);
-
-            _userValidatorMock.Verify(
-                validator =>
-                    validator.ValidateUserId(
-                        It.IsAny<long>(),
-                        It.IsAny<long>()),
-                Times.Never);
-
-            _userUpdateServiceMock.Verify(
-                service =>
-                    service.UpdateAccountAsync(
-                        It.IsAny<long>(),
-                        It.IsAny<UpdateAccountRequest>(),
-                        It.IsAny<CancellationToken>()),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public async Task UpdateAccount_WithMismatchedUserId_ShouldThrowValidationException()
-        {
-            var authenticatedUserId = 1L;
-            var requestedUserId = 2L;
-
-            var request = new UpdateAccountRequest
-            {
-                Name = "Updated User",
-                MobileNumber = "9876543210"
-            };
-
-            SetAuthenticatedUser(authenticatedUserId);
-
-            _userValidatorMock
-                .Setup(validator =>
-                    validator.ValidateUserId(
-                        authenticatedUserId,
-                        requestedUserId))
-                .Throws(
-                    new ValidationException(
-                        ValidationMessages.NotAuthorized));
-
-            var exception =
-                await Assert.ThrowsExceptionAsync<ValidationException>(
-                    () => _controller.UpdateAccount(
-                        requestedUserId,
-                        request,
-                        CancellationToken.None));
-
-            Assert.AreEqual(
-                ValidationMessages.NotAuthorized,
-                exception.Message);
-
-            _userValidatorMock.Verify(
-                validator =>
-                    validator.ValidateUserId(
-                        authenticatedUserId,
-                        requestedUserId),
-                Times.Once);
 
             _userUpdateServiceMock.Verify(
                 service =>
@@ -291,8 +219,7 @@ namespace RestaurantServer.Tests.ControllersTest
         [TestMethod]
         public async Task DeactivateAccount_WithInvalidUserIdClaim_ShouldReturnUnauthorized()
         {
-            SetAuthenticatedUser(
-                "invalid-user-id");
+            SetAuthenticatedUser("invalid-user-id");
 
             var result =
                 await _controller.DeactivateAccount(
