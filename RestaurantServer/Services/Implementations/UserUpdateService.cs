@@ -4,6 +4,7 @@ using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Interfaces;
+using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Threading;
@@ -17,6 +18,7 @@ namespace RestaurantServer.Services.Implementations
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserValidator _userValidator;
+        private readonly IRequestValidator _requestValidator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserUpdateService"/> class.
@@ -24,19 +26,20 @@ namespace RestaurantServer.Services.Implementations
         /// <param name="accountRepository">
         /// The repository used to access and update user account data.
         /// </param>
-        /// <param name="refreshTokenRepository">
+        /// <param name="refreshTokenRepository">   
         /// The repository used to manage the user's refresh tokens.
         /// </param>
         public UserUpdateService(IUsersRepository usersRepository,
                 IRefreshTokenRepository refreshTokenRepository,
                 IUnitOfWork unitOfWork,
                 IUserValidator userValidator,
-                IAuthenticationValidator authenticationValidator)
+                IRequestValidator requestValidator)
         {
             _usersRepository = usersRepository;
             _refreshTokenRepository = refreshTokenRepository;
             _unitOfWork = unitOfWork;
             _userValidator = userValidator;
+            _requestValidator = requestValidator;
         }
 
         /// <summary>
@@ -54,11 +57,16 @@ namespace RestaurantServer.Services.Implementations
         /// <exception cref="ValidationException">
         /// Thrown when the specified user does not exist.
         /// </exception>
-        public async Task<UpdateUserResponse> UpdateAccountAsync(
-            long userId,
-            UpdateAccountRequest request,
+        public async Task<UpdateUserResponse> UpdateAccountAsync(long userId, UpdateAccountRequest request,
             CancellationToken cancellationToken = default)
         {
+
+            _requestValidator.IsRequestNull(request);
+
+            string MobileNumber = request.MobileNumber.Trim();
+
+            _userValidator.ValidateMobileNumberIsUnique(MobileNumber, userId);
+
             var user = await _usersRepository.GetByIdAsync(userId);
 
             _userValidator.ValidateUserExists(user);

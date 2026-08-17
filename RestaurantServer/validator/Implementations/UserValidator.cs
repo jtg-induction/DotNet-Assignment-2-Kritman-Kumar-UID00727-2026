@@ -1,6 +1,7 @@
 ﻿using RestaurantServer.Constants;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
+using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 
 namespace RestaurantServer.Validators.Implementations
@@ -10,6 +11,16 @@ namespace RestaurantServer.Validators.Implementations
     /// </summary>
     public class UserValidator : IUserValidator
     {
+
+        private readonly IUsersRepository _userReposeroty;
+
+        public UserValidator(IUsersRepository usersRepository)
+        {
+            _userReposeroty = usersRepository;
+        }
+
+
+
         /// <summary>
         /// Validates that the specified user exists.
         /// </summary>
@@ -66,6 +77,20 @@ namespace RestaurantServer.Validators.Implementations
             {
                 throw new ValidationException(
                     ValidationMessages.InvalidRefreshToken);
+            }
+        }
+
+        public void ValidateMobileNumberIsUnique(string mobileNumber, long userId)
+        {
+            if (string.IsNullOrWhiteSpace(mobileNumber))
+            {
+                return;
+            }
+
+            if (_userReposeroty.IsMobileNumberExists(mobileNumber, userId))
+            {
+                throw new ValidationException(
+                    ValidationMessages.MobileNumberAlreadyExists);
             }
         }
     }

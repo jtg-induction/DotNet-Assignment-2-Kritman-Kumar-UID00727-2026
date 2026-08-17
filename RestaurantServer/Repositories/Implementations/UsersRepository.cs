@@ -1,5 +1,6 @@
 ﻿using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
+using System.Linq;
 
 namespace RestaurantServer.Repositories.Implementations
 {
@@ -15,6 +16,13 @@ namespace RestaurantServer.Repositories.Implementations
         public UsersRepository(ApplicationDbContext context)
             : base(context)
         {
+
         }
+
+        public bool IsMobileNumberExists(string mobileNumber, long userId)
+        {
+            return _context.Users.Any(user => user.MobileNumber == mobileNumber && user.Id != userId);
+        }
+
     }
 }

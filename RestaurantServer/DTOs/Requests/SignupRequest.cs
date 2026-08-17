@@ -10,15 +10,13 @@ namespace RestaurantServer.DTOs.Requests
         public string Name { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.EmailRequired)]
-        [EmailAddress(ErrorMessage = ValidationMessages.InvalidEmail)]
         [MaxLength(ValidationConstants.EmailMaxLength, ErrorMessage = ValidationMessages.EmailMaxLength)]
         public string Email { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.PasswordRequired)]
         [MinLength(ValidationConstants.PasswordMinLength, ErrorMessage = ValidationMessages.PasswordMinLength)]
         [MaxLength(ValidationConstants.PasswordMaxLength, ErrorMessage = ValidationMessages.PasswordMaxLength)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-            ErrorMessage = ValidationMessages.InvalidPasswordFormat)]
+        [RegularExpression(ValidationConstants.PasswordRegex, ErrorMessage = ValidationMessages.InvalidPasswordFormat)]
         public string Password { get; set; }
     }
 }

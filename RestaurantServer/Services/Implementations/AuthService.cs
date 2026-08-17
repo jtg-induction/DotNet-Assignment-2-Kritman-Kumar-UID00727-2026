@@ -8,6 +8,7 @@ using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace RestaurantServer.Services.Implementations
@@ -22,6 +23,7 @@ namespace RestaurantServer.Services.Implementations
         private readonly IAuthenticationValidator _authenticationValidator;
         private readonly IRefreshTokenValidator _refreshTokenValidator;
         private readonly IUserValidator _userValidator;
+        private readonly IRequestValidator _requestValidator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -52,7 +54,8 @@ namespace RestaurantServer.Services.Implementations
              IUnitOfWork unitOfWork,
              IAuthenticationValidator authenticationValidator,
             IRefreshTokenValidator refreshTokenValidator,
-            IUserValidator userValidator)
+            IUserValidator userValidator,
+            IRequestValidator requestValidator)
         {
             _authRepository = authRepository;
             _refreshTokenRepository = refreshTokenRepository;
@@ -62,6 +65,7 @@ namespace RestaurantServer.Services.Implementations
             _authenticationValidator = authenticationValidator;
             _refreshTokenValidator = refreshTokenValidator;
             _userValidator = userValidator;
+            _requestValidator = requestValidator;
         }
 
         /// <summary>
@@ -79,6 +83,8 @@ namespace RestaurantServer.Services.Implementations
         /// </exception>
         public async Task<SignupResponse> SignupAsync(SignupRequest request)
         {
+            _requestValidator.IsRequestNull(request);
+
             request.Email = request.Email.Trim().ToLowerInvariant();
 
             var existingUser = await _authRepository.GetUserByEmailAsync(request.Email);
@@ -113,6 +119,8 @@ namespace RestaurantServer.Services.Implementations
         /// </exception>
         public async Task<LoginResult> LoginAsync(LoginRequest request)
         {
+            _requestValidator.IsRequestNull(request);
+
             request.Email = request.Email.Trim().ToLowerInvariant();
 
             var user = await _authRepository.GetUserByEmailAsync(request.Email);

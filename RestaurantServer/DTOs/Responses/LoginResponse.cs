@@ -7,10 +7,6 @@ namespace RestaurantServer.DTOs.Responses
     public class LoginResponse
     {
 
-        public LoginResponse()
-        {
-        }
-
         public LoginResponse(User user, string accessToken, string message)
         {
             AccessToken = accessToken;

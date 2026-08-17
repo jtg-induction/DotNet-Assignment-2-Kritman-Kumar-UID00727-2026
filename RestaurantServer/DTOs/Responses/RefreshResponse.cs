@@ -4,11 +4,6 @@ namespace RestaurantServer.DTOs.Responses
 {
     public class RefreshResponse
     {
-        public RefreshResponse()
-        {
-
-        }
-
         public RefreshResponse(string accessToken, string tokenType)
         {
             var expiryMinutes = int.Parse(ConfigurationManager.AppSettings["JwtAccessTokenExpiryMinutes"]);

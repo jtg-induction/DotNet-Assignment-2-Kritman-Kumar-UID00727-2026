@@ -7,5 +7,6 @@ namespace RestaurantServer.Validators.Interfaces
         void ValidateUserExists(User user);
         void ValidateUserId(long requestedUserId, long authenticatedUserId);
         void IsUserNullOrDeactivated(User user);
+        void ValidateMobileNumberIsUnique(string mobileNumber, long userId);
     }
 }

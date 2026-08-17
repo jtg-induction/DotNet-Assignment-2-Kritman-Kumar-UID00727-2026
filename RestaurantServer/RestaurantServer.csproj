@@ -214,18 +214,24 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202608171746472_AddUniqueMobileNumber.cs" />
+    <Compile Include="Migrations\202608171746472_AddUniqueMobileNumber.Designer.cs">
+      <DependentUpon>202608171746472_AddUniqueMobileNumber.cs</DependentUpon>
+    </Compile>
     <Compile Include="validator\Implementations\AuthenticationValidator.cs" />
     <Compile Include="Helpers\Implementations\CookieHelper.cs" />
     <Compile Include="Helpers\Implementations\RefreshTokenHelper.cs" />
     <Compile Include="Helpers\Implementations\JwtTokenService.cs" />
     <Compile Include="Helpers\Implementations\PasswordHasher.cs" />
     <Compile Include="validator\Implementations\RefreshTokenValidator.cs" />
+    <Compile Include="validator\Implementations\RequestValidator.cs" />
     <Compile Include="validator\Implementations\UserValidator.cs" />
     <Compile Include="validator\Interfaces\IAuthenticationValidator.cs" />
     <Compile Include="Helpers\Interfaces\ICookieHelper.cs" />
     <Compile Include="Helpers\Interfaces\IRefreshTokenHelper.cs" />
     <Compile Include="Helpers\Interfaces\IJwtTokenService.cs" />
     <Compile Include="Helpers\Interfaces\IPasswordHasher.cs" />
+    <Compile Include="validator\Interfaces\IRequestValidator.cs" />
     <Compile Include="validator\Interfaces\IUserValidator.cs" />
     <Compile Include="Middleware\JwtAuthenticationMiddleware.cs" />
     <Compile Include="Migrations\202608052226261_AddConstraintsAndIndexes.cs" />
@@ -333,6 +339,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202608080857406_AddRefreshToken.resx">
       <DependentUpon>202608080857406_AddRefreshToken.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608171746472_AddUniqueMobileNumber.resx">
+      <DependentUpon>202608171746472_AddUniqueMobileNumber.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

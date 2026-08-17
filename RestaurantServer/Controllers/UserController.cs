@@ -47,10 +47,9 @@ namespace RestaurantServer.Controllers
         /// or the user ID claim is invalid.
         /// </returns>
         [HttpPatch]
-        [Route("{id:long}")]
+        [Route("update")]
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
-        public async Task<IHttpActionResult> UpdateAccount(long id,
-            UpdateAccountRequest request, CancellationToken cancellationToken = default)
+        public async Task<IHttpActionResult> UpdateAccount(UpdateAccountRequest request, CancellationToken cancellationToken = default)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
 
@@ -64,8 +63,6 @@ namespace RestaurantServer.Controllers
             {
                 return Unauthorized();
             }
-
-            _userValidator.ValidateUserId(userId, id);
 
             var response = await _userUpdateService.UpdateAccountAsync(userId, request, cancellationToken);
 
@@ -84,7 +81,7 @@ namespace RestaurantServer.Controllers
         /// the user ID claim is missing, or the user ID claim is invalid.
         /// </returns>
         [HttpPatch]
-        [Route("{id:long}/deactivate")]
+        [Route("deactivate")]
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
         public async Task<IHttpActionResult> DeactivateAccount(CancellationToken cancellationToken = default)
         {

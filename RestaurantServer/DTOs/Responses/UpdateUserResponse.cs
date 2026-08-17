@@ -11,11 +11,6 @@ namespace RestaurantServer.DTOs.Responses
         public string MobileNumber {  get; set; }
         public string Message {  get; set; }
 
-        public UpdateUserResponse()
-        {
-
-        }
-
         public UpdateUserResponse(User user)
         {
             UserId = user.Id;

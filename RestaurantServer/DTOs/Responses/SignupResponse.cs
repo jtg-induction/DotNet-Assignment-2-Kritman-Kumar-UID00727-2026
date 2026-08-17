@@ -5,11 +5,6 @@ namespace RestaurantServer.DTOs.Responses
 {
     public class SignupResponse
     {
-
-        public SignupResponse()
-        {
-        }
-
         public SignupResponse(User user)
         {
             UserId = user.Id;
