@@ -203,7 +203,6 @@
     <Compile Include="DTOs\Responses\LoginResult.cs" />
     <Compile Include="DTOs\Responses\RefreshResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResult.cs" />
-    <Compile Include="DTOs\Responses\RefreshTokenResponse.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
@@ -215,18 +214,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\Implementations\AuthenticationValidator.cs" />
+    <Compile Include="validator\Implementations\AuthenticationValidator.cs" />
     <Compile Include="Helpers\Implementations\CookieHelper.cs" />
     <Compile Include="Helpers\Implementations\RefreshTokenHelper.cs" />
     <Compile Include="Helpers\Implementations\JwtTokenService.cs" />
     <Compile Include="Helpers\Implementations\PasswordHasher.cs" />
-    <Compile Include="Helpers\Implementations\UserValidator.cs" />
-    <Compile Include="Helpers\Interfaces\IAuthenticationValidator.cs" />
+    <Compile Include="validator\Implementations\RefreshTokenValidator.cs" />
+    <Compile Include="validator\Implementations\UserValidator.cs" />
+    <Compile Include="validator\Interfaces\IAuthenticationValidator.cs" />
     <Compile Include="Helpers\Interfaces\ICookieHelper.cs" />
     <Compile Include="Helpers\Interfaces\IRefreshTokenHelper.cs" />
     <Compile Include="Helpers\Interfaces\IJwtTokenService.cs" />
     <Compile Include="Helpers\Interfaces\IPasswordHasher.cs" />
-    <Compile Include="Helpers\Interfaces\IUserValidator.cs" />
+    <Compile Include="validator\Interfaces\IUserValidator.cs" />
     <Compile Include="Middleware\JwtAuthenticationMiddleware.cs" />
     <Compile Include="Migrations\202608052226261_AddConstraintsAndIndexes.cs" />
     <Compile Include="Migrations\202608052226261_AddConstraintsAndIndexes.Designer.cs">
@@ -260,6 +260,7 @@
     <Compile Include="Services\Interfaces\IUserUpdateService.cs" />
     <Compile Include="Services\Interfaces\IAuthService.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="validator\Interfaces\IRefreshTokenValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
@@ -272,9 +273,7 @@
     </Content>
     <Content Include="Content\Site.css" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
   </ItemGroup>

@@ -13,12 +13,10 @@ namespace RestaurantServer.Services.Implementations
 {
     public class UserUpdateService : IUserUpdateService
     {
-        private readonly IUsersRepository _usersRepository; 
+        private readonly IUsersRepository _usersRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserValidator _userValidator;
-        private readonly IAuthenticationValidator _authenticationValidator;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserUpdateService"/> class.
@@ -39,7 +37,6 @@ namespace RestaurantServer.Services.Implementations
             _refreshTokenRepository = refreshTokenRepository;
             _unitOfWork = unitOfWork;
             _userValidator = userValidator;
-            _authenticationValidator = authenticationValidator;
         }
 
         /// <summary>
@@ -61,7 +58,7 @@ namespace RestaurantServer.Services.Implementations
             long userId,
             UpdateAccountRequest request,
             CancellationToken cancellationToken = default)
-        { 
+        {
             var user = await _usersRepository.GetByIdAsync(userId);
 
             _userValidator.ValidateUserExists(user);
@@ -93,7 +90,7 @@ namespace RestaurantServer.Services.Implementations
         {
             var user = await _usersRepository.GetByIdAsync(userId);
 
-            _authenticationValidator.IsUserNullOrDeactivated(user);
+            _userValidator.IsUserNullOrDeactivated(user);
 
             user.IsActive = false;
             user.UpdatedAt = DateTime.UtcNow;

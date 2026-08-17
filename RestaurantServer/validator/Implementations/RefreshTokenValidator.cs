@@ -1,67 +1,13 @@
 ﻿using RestaurantServer.Constants;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
-using RestaurantServer.Validators.Interfaces;
+using RestaurantServer.validator.Interfaces;
 using System;
 
 namespace RestaurantServer.Validators.Implementations
 {
-    public class AuthenticationValidator : IAuthenticationValidator
+    public class RefreshTokenValidator : IRefreshTokenValidator
     {
-        /// <summary>
-        /// Validates that the specified user exists.
-        /// </summary>
-        /// <param name="user">
-        /// The user to validate.
-        /// </param>
-        /// <exception cref="ValidationException">
-        /// Thrown when the user is null.
-        /// </exception>
-        public void ValidateUser(User user)
-        {
-            if (user == null)
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidCredentials);
-            }
-        }
-
-        /// <summary>
-        /// Validates that the specified user's account is active.
-        /// </summary>
-        /// <param name="user">
-        /// The user whose account status is being validated.
-        /// </param>
-        /// <exception cref="ValidationException">
-        /// Thrown when the user's account is inactive.
-        /// </exception>
-        public void ValidateUserIsActive(User user)
-        {
-            if (!user.IsActive)
-            {
-                throw new ValidationException(
-                    ValidationMessages.UserInactive);
-            }
-        }
-
-        /// <summary>
-        /// Validates the result of a password verification operation.
-        /// </summary>
-        /// <param name="isValid">
-        /// Indicates whether the provided password matches the stored password.
-        /// </param>
-        /// <exception cref="ValidationException">
-        /// Thrown when the password is invalid.
-        /// </exception>
-        public void ValidatePassword(bool isValid)
-        {
-            if (!isValid)
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidCredentials);
-            }
-        }
-
         /// <summary>
         /// Validates that the refresh token input is not null, empty, or whitespace.
         /// </summary>
@@ -130,24 +76,6 @@ namespace RestaurantServer.Validators.Implementations
             RefreshToken refreshToken)
         {
             if (refreshToken.ExpiresAt <= DateTime.UtcNow)
-            {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
-            }
-        }
-
-        /// <summary>
-        /// Validates that the specified user exists and has an active account.
-        /// </summary>
-        /// <param name="user">
-        /// The user to validate.
-        /// </param>
-        /// <exception cref="ValidationException">
-        /// Thrown when the user does not exist or the user's account is inactive.
-        /// </exception>
-        public void IsUserNullOrDeactivated(User user)
-        {
-            if (user == null || !user.IsActive)
             {
                 throw new ValidationException(
                     ValidationMessages.InvalidRefreshToken);

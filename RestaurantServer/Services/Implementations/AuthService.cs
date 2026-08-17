@@ -5,6 +5,7 @@ using RestaurantServer.Exceptions;
 using RestaurantServer.Helpers.Interfaces;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
+using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ namespace RestaurantServer.Services.Implementations
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthenticationValidator _authenticationValidator;
+        private readonly IRefreshTokenValidator _refreshTokenValidator;
+        private readonly IUserValidator _userValidator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -47,7 +50,9 @@ namespace RestaurantServer.Services.Implementations
              IPasswordHasher passwordHasher,
              IJwtTokenService jwtTokenService,
              IUnitOfWork unitOfWork,
-             IAuthenticationValidator authenticationValidator)
+             IAuthenticationValidator authenticationValidator,
+            IRefreshTokenValidator refreshTokenValidator,
+            IUserValidator userValidator)
         {
             _authRepository = authRepository;
             _refreshTokenRepository = refreshTokenRepository;
@@ -55,6 +60,8 @@ namespace RestaurantServer.Services.Implementations
             _jwtTokenService = jwtTokenService;
             _unitOfWork = unitOfWork;
             _authenticationValidator = authenticationValidator;
+            _refreshTokenValidator = refreshTokenValidator;
+            _userValidator = userValidator;
         }
 
         /// <summary>
@@ -159,11 +166,11 @@ namespace RestaurantServer.Services.Implementations
             var existingRefreshToken =
                 await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
-            _authenticationValidator.ValidateRefreshTokenIsValid(existingRefreshToken);
+            _refreshTokenValidator.ValidateRefreshTokenIsValid(existingRefreshToken);
 
             var user = await _authRepository.GetByIdAsync(existingRefreshToken.UserId);
 
-            _authenticationValidator.IsUserNullOrDeactivated(user);
+            _userValidator.IsUserNullOrDeactivated(user);
 
             var accessToken = _jwtTokenService.GenerateAccessToken(user);
             var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
@@ -208,8 +215,8 @@ namespace RestaurantServer.Services.Implementations
 
             var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
-            _authenticationValidator.ValidateRefreshToken(existingRefreshToken);
-            _authenticationValidator.ValidateRefreshTokenIsNotRevoked(existingRefreshToken);
+            _refreshTokenValidator.ValidateRefreshToken(existingRefreshToken);
+            _refreshTokenValidator.ValidateRefreshTokenIsNotRevoked(existingRefreshToken);
 
             existingRefreshToken.IsRevoked = true;
             existingRefreshToken.UpdatedAt = DateTime.UtcNow;
