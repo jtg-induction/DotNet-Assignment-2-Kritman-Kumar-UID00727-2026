@@ -5,6 +5,20 @@ namespace RestaurantServer.Models
 {
     public class RestaurantOwner
     {
+
+        public RestaurantOwner() 
+        { 
+        
+        }
+
+        public RestaurantOwner(long restaurantId, long userId)
+        {
+            RestaurantId = restaurantId;
+            UserId = userId;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
         [Key]
         public long Id { get; set; }
 

@@ -4,7 +4,6 @@ using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Interfaces;
-using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Threading;

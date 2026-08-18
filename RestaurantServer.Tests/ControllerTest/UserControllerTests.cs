@@ -4,13 +4,11 @@ using RestaurantServer.Constants;
 using RestaurantServer.Controllers;
 using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
-using RestaurantServer.Enums;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -23,6 +21,8 @@ namespace RestaurantServer.Tests.ControllersTest
     {
         private Mock<IUserUpdateService> _userUpdateServiceMock;
         private Mock<IUserValidator> _userValidatorMock;
+        private Mock<ICurrentUserService> _currentUserServiceMock;
+        private Mock<IRequestValidator> _requestValidatorMock;
         private UserController _controller;
 
         [TestInitialize]
@@ -34,10 +34,18 @@ namespace RestaurantServer.Tests.ControllersTest
             _userValidatorMock =
                 new Mock<IUserValidator>();
 
+            _currentUserServiceMock =
+                new Mock<ICurrentUserService>();
+
+            _requestValidatorMock =
+                new Mock<IRequestValidator>();
+
             _controller =
                 new UserController(
                     _userUpdateServiceMock.Object,
-                    _userValidatorMock.Object);
+                    _userValidatorMock.Object,
+                    _currentUserServiceMock.Object,
+                    _requestValidatorMock.Object);
 
             ConfigureController();
         }
@@ -64,7 +72,10 @@ namespace RestaurantServer.Tests.ControllersTest
             var expectedResponse =
                 new UpdateUserResponse(user);
 
-            SetAuthenticatedUser(userId);
+            _currentUserServiceMock
+                .Setup(service =>
+                    service.GetUserId())
+                .Returns(userId);
 
             _userUpdateServiceMock
                 .Setup(service =>
@@ -105,7 +116,10 @@ namespace RestaurantServer.Tests.ControllersTest
                 MobileNumber = "9876543210"
             };
 
-            SetAuthenticatedUser("invalid-user-id");
+            _currentUserServiceMock
+                .Setup(service =>
+                    service.GetUserId())
+                .Returns((long?)null);
 
             var result =
                 await _controller.UpdateAccount(
@@ -137,7 +151,10 @@ namespace RestaurantServer.Tests.ControllersTest
             var expectedMessage =
                 SuccessMessages.AccountDeactivatedSuccessful;
 
-            SetAuthenticatedUser(userId);
+            _currentUserServiceMock
+                .Setup(service =>
+                    service.GetUserId())
+                .Returns(userId);
 
             _userUpdateServiceMock
                 .Setup(service =>
@@ -169,7 +186,10 @@ namespace RestaurantServer.Tests.ControllersTest
         [TestMethod]
         public async Task DeactivateAccount_WithoutPrincipal_ShouldReturnUnauthorized()
         {
-            _controller.User = null;
+            _currentUserServiceMock
+                .Setup(service =>
+                    service.GetUserId())
+                .Returns((long?)null);
 
             var result =
                 await _controller.DeactivateAccount(
@@ -194,7 +214,10 @@ namespace RestaurantServer.Tests.ControllersTest
         [TestMethod]
         public async Task DeactivateAccount_WithMissingUserIdClaim_ShouldReturnUnauthorized()
         {
-            SetAuthenticatedUserWithoutUserIdClaim();
+            _currentUserServiceMock
+                .Setup(service =>
+                    service.GetUserId())
+                .Returns((long?)null);
 
             var result =
                 await _controller.DeactivateAccount(
@@ -219,7 +242,10 @@ namespace RestaurantServer.Tests.ControllersTest
         [TestMethod]
         public async Task DeactivateAccount_WithInvalidUserIdClaim_ShouldReturnUnauthorized()
         {
-            SetAuthenticatedUser("invalid-user-id");
+            _currentUserServiceMock
+                .Setup(service =>
+                    service.GetUserId())
+                .Returns((long?)null);
 
             var result =
                 await _controller.DeactivateAccount(
@@ -256,66 +282,6 @@ namespace RestaurantServer.Tests.ControllersTest
                 configuration;
 
             _controller.Request = request;
-        }
-
-        private void SetAuthenticatedUser(long userId)
-        {
-            SetAuthenticatedUserClaim(
-                userId.ToString());
-        }
-
-        private void SetAuthenticatedUser(string userId)
-        {
-            SetAuthenticatedUserClaim(userId);
-        }
-
-        private void SetAuthenticatedUserClaim(
-            string userId)
-        {
-            var claims = new[]
-            {
-                new Claim(
-                    ClaimTypes.NameIdentifier,
-                    userId),
-
-                new Claim(
-                    ClaimTypes.Name,
-                    "Test User"),
-
-                new Claim(
-                    ClaimTypes.Role,
-                    ((int)UserRole.Customer).ToString())
-            };
-
-            var identity =
-                new ClaimsIdentity(
-                    claims,
-                    "TestAuthentication");
-
-            _controller.User =
-                new ClaimsPrincipal(identity);
-        }
-
-        private void SetAuthenticatedUserWithoutUserIdClaim()
-        {
-            var claims = new[]
-            {
-                new Claim(
-                    ClaimTypes.Name,
-                    "Test User"),
-
-                new Claim(
-                    ClaimTypes.Role,
-                    ((int)UserRole.Customer).ToString())
-            };
-
-            var identity =
-                new ClaimsIdentity(
-                    claims,
-                    "TestAuthentication");
-
-            _controller.User =
-                new ClaimsPrincipal(identity);
         }
     }
 }

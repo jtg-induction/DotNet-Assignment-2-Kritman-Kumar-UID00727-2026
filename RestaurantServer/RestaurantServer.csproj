@@ -193,14 +193,19 @@
     <Compile Include="Constants\SuccessMessages.cs" />
     <Compile Include="Constants\ValidationConstants.cs" />
     <Compile Include="Constants\ValidationMessages.cs" />
+    <Compile Include="Controllers\AdminRestaurantController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="DTOs\Requests\CreateRestaurantRequest.cs" />
     <Compile Include="DTOs\Requests\LoginRequest.cs" />
+    <Compile Include="DTOs\Requests\OnboardRestaurantOwnerRequest.cs" />
     <Compile Include="DTOs\Requests\RefreshTokenRequest.cs" />
     <Compile Include="DTOs\Requests\SignupRequest.cs" />
     <Compile Include="DTOs\Requests\UpdateAccountRequest.cs" />
+    <Compile Include="DTOs\Responses\CreateRestaurantResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResult.cs" />
+    <Compile Include="DTOs\Responses\OnboardRestaurantOwnerResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResult.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
@@ -218,6 +223,13 @@
     <Compile Include="Migrations\202608171746472_AddUniqueMobileNumber.Designer.cs">
       <DependentUpon>202608171746472_AddUniqueMobileNumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\implementations\RestaurantRepository.cs" />
+    <Compile Include="Services\Implementations\AdminService.cs" />
+    <Compile Include="Repositories\Interfaces\IRestaurantOwnerRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IRestaurantRepository.cs" />
+    <Compile Include="Services\Implementations\CurrentUserService.cs" />
+    <Compile Include="Services\Interfaces\ICurrentUserService.cs" />
+    <Compile Include="Services\Interfaces\IRestaurantService.cs" />
     <Compile Include="validator\Implementations\AuthenticationValidator.cs" />
     <Compile Include="Helpers\Implementations\CookieHelper.cs" />
     <Compile Include="Helpers\Implementations\RefreshTokenHelper.cs" />
@@ -225,6 +237,7 @@
     <Compile Include="Helpers\Implementations\PasswordHasher.cs" />
     <Compile Include="validator\Implementations\RefreshTokenValidator.cs" />
     <Compile Include="validator\Implementations\RequestValidator.cs" />
+    <Compile Include="validator\Implementations\RestaurantValidator.cs" />
     <Compile Include="validator\Implementations\UserValidator.cs" />
     <Compile Include="validator\Interfaces\IAuthenticationValidator.cs" />
     <Compile Include="Helpers\Interfaces\ICookieHelper.cs" />
@@ -232,6 +245,7 @@
     <Compile Include="Helpers\Interfaces\IJwtTokenService.cs" />
     <Compile Include="Helpers\Interfaces\IPasswordHasher.cs" />
     <Compile Include="validator\Interfaces\IRequestValidator.cs" />
+    <Compile Include="validator\Interfaces\IRestaurantValidator.cs" />
     <Compile Include="validator\Interfaces\IUserValidator.cs" />
     <Compile Include="Middleware\JwtAuthenticationMiddleware.cs" />
     <Compile Include="Migrations\202608052226261_AddConstraintsAndIndexes.cs" />
@@ -332,6 +346,7 @@
     <Content Include="ConnectionStrings.config" />
     <Content Include="AppSettings.config" />
     <None Include="packages.config" />
+    <Compile Include="Repositories\implementations\RestaurantOwnerRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202608052226261_AddConstraintsAndIndexes.resx">

@@ -27,5 +27,8 @@
         public const string NotAuthorized = "You are not authorized to access this resource.";
         public const string InvalidPasswordFormat = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
         public const string EmptyRequest = "Request body cannot be empty.";
+        public const string RestaurantNotExists = "Restaurant does not exist.";
+        public const string RestaurantNotavailable = "Restaurant is not available.";
+        public const string AlreadyOwner = "User is already an owner of this restaurant.";
     }
 }
