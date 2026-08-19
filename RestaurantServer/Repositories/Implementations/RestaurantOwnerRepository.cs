@@ -18,7 +18,8 @@ namespace RestaurantServer.Repositories.Implementations
 
         public async Task<RestaurantOwner> GetAsync(long restaurantId, long userId, CancellationToken cancellationToken = default)
         {
-            return await _context.Set<RestaurantOwner>().FirstOrDefaultAsync(x => x.RestaurantId == restaurantId && x.UserId == userId, cancellationToken);
+            return await _context.Set<RestaurantOwner>()
+                .FirstOrDefaultAsync(restaurantOwner => restaurantOwner.RestaurantId == restaurantId && restaurantOwner.UserId == userId, cancellationToken);
         }
 
         public Task AddAsync(RestaurantOwner restaurantOwner, CancellationToken cancellationToken = default)

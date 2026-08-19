@@ -13,6 +13,7 @@ namespace RestaurantServer.DTOs.Requests
         public string Description { get; set; }
 
         [MaxLength(ValidationConstants.MobileNumberMaxLength)]
+        [RegularExpression(ValidationConstants.MobileNumberRgex, ErrorMessage = ValidationMessages.InvalidMobileNumber)]
         public string MobileNumber { get; set; }
 
         [Required]

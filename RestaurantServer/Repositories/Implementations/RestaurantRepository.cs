@@ -10,24 +10,21 @@ namespace RestaurantServer.Repositories.Implementations
     {
         private readonly ApplicationDbContext _context;
 
-        public RestaurantRepository(
-            ApplicationDbContext context)
+        public RestaurantRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public Task AddAsync(
-            Restaurant restaurant,
-            CancellationToken cancellationToken = default)
+        public Task AddAsync(Restaurant restaurant, CancellationToken cancellationToken = default)
         {
             _context.Set<Restaurant>().Add(restaurant);
 
             return Task.CompletedTask;
         }
 
-        public async Task<Restaurant> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+        public async Task<Restaurant> GetByIdAsync(long restaurantId, CancellationToken cancellationToken = default)
         {
-            return await _context.Set<Restaurant>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            return await _context.Set<Restaurant>().FirstOrDefaultAsync(restaurant => restaurant.Id == restaurantId, cancellationToken);
         }
     }
 }

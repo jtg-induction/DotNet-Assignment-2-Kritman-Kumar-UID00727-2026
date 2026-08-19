@@ -6,12 +6,8 @@ namespace RestaurantServer.Repositories.Interfaces
 {
     public interface IRestaurantRepository
     {
-        Task AddAsync(
-            Restaurant restaurant,
-            CancellationToken cancellationToken = default);
+        Task AddAsync(Restaurant restaurant, CancellationToken cancellationToken = default);
 
-        Task<Restaurant> GetByIdAsync(
-            long id,
-            CancellationToken cancellationToken = default);
+        Task<Restaurant> GetByIdAsync(long restaurantId, CancellationToken cancellationToken = default);
     }
 }

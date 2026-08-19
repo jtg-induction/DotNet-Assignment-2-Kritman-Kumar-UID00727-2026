@@ -68,15 +68,11 @@ namespace RestaurantServer.Services.Implementations
 
             var restaurantOwner = new RestaurantOwner(restaurantId, user.Id);
 
-            await _restaurantOwnerRepository.AddAsync(
-                restaurantOwner,
-                cancellationToken);
+            await _restaurantOwnerRepository.AddAsync(restaurantOwner, cancellationToken);
 
-            await _unitOfWork.SaveChangesAsync(
-                cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new OnboardRestaurantOwnerResponse(
-                restaurantOwner);
+            return new OnboardRestaurantOwnerResponse(restaurantOwner);
         }
     }
 }
