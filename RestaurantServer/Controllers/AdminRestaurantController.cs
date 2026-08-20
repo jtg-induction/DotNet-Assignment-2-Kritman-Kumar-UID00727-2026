@@ -19,7 +19,7 @@ namespace RestaurantServer.Controllers
     [CustomAuthorize(UserRole.Admin)]
     public class AdminRestaurantController : ApiController
     {
-        private readonly AdminService _restaurantService;
+        private readonly IAdminService _restaurantService;
         private readonly IRequestValidator _requestValidator;
         private readonly IUserSessionService _currentUserService;
 
@@ -30,7 +30,7 @@ namespace RestaurantServer.Controllers
         /// <param name="requestValidator">The validator checking incoming request payloads.</param>
         /// <param name="currentUserService">The service retrieving current user session data.</param>
         public AdminRestaurantController(
-            AdminService restaurantService,
+            IAdminService restaurantService,
             IRequestValidator requestValidator,
             IUserSessionService currentUserService)
         {

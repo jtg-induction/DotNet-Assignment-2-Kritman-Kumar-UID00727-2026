@@ -1,5 +1,4 @@
-﻿using Microsoft.Ajax.Utilities;
-using RestaurantServer.Constants;
+﻿using RestaurantServer.Constants;
 using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
@@ -7,7 +6,6 @@ using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -20,7 +18,6 @@ namespace RestaurantServer.Validators.Implementations
     {
 
         private readonly IRestaurantRepository _restaurantRepository;
-        private CancellationToken cancellationToken;
 
         public RestaurantValidator(IRestaurantRepository restaurantRepository)
         {
@@ -65,7 +62,7 @@ namespace RestaurantServer.Validators.Implementations
             mobileNumber = mobileNumber?.Trim();
 
             var mobileExists = await _restaurantRepository
-                .ExistsByMobileNumberAsync(mobileNumber, cancellationToken);
+                .ExistsByMobileNumberAsync(mobileNumber);
 
             if (mobileExists)
             {

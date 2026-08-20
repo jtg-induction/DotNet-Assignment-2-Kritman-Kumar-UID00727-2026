@@ -14,6 +14,11 @@ namespace RestaurantServer.DTOs.Responses
         public string PostalCode { get; set; }
         public string Country { get; set; }
 
+        public CreateRestaurantResponse()
+        {
+
+        }
+
         public CreateRestaurantResponse(Restaurant restaurant)
         {
             Id = restaurant.Id;

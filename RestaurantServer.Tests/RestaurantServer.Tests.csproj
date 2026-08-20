@@ -137,6 +137,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControllerTest\AdminRestaurantControllerTests.cs" />
     <Compile Include="ControllerTest\AuthControllerTests.cs" />
     <Compile Include="ControllerTest\UserControllerTests.cs" />
     <Compile Include="Exceptions\GlobalExceptionHandlerTests.cs" />
@@ -147,9 +148,12 @@
     <Compile Include="Middleware\JwtAuthenticationMiddlewareTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryTests.cs" />
+    <Compile Include="Repositories\RestaurantRepositoriesTests.cs" />
+    <Compile Include="Services\AdminServiceTests.cs" />
     <Compile Include="Services\AuthServiceTests.cs.cs" />
     <Compile Include="Services\UserUpdateServiceTests.cs" />
     <Compile Include="Validators\AuthenticationValidatorTests.cs" />
+    <Compile Include="Validators\RestaurantValidatorTests.cs" />
     <Compile Include="Validators\UserValidatorTests.cs" />
     <Compile Include="Helpers\JwtTokenServiceTests.cs" />
   </ItemGroup>
