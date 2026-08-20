@@ -96,6 +96,11 @@ namespace RestaurantServer
             base.OnModelCreating(modelBuilder);
         }
 
+        /// <summary>
+        /// Saves all pending changes and updates the modification timestamp.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The number of affected records.</returns>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             SetUpdatedAt();
@@ -103,6 +108,9 @@ namespace RestaurantServer
             return await base.SaveChangesAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Sets the <c>UpdatedAt</c> property for modified entities.
+        /// </summary>
         private void SetUpdatedAt()
         {
             var now = DateTime.UtcNow;

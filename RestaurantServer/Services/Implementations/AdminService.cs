@@ -16,6 +16,9 @@ using System.Text.RegularExpressions;
 
 namespace RestaurantServer.Services.Implementations
 {
+    /// <summary>
+    /// Provides administrative services for creating restaurants and onboarding owners.
+    /// </summary>
     public class AdminService : IAdminService
     {
         private readonly IRestaurantRepository _restaurantRepository;
@@ -25,6 +28,15 @@ namespace RestaurantServer.Services.Implementations
         private readonly IRestaurantValidator _restaurantValidator;
         private readonly IUserValidator _userValidator;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AdminService"/> class.
+        /// </summary>
+        /// <param name="restaurantRepository">The data repository for managing restaurants.</param>
+        /// <param name="restaurantOwnerRepository">The data repository for managing restaurant-to-owner relationships.</param>
+        /// <param name="authRepository">The data repository for managing user records and login details.</param>
+        /// <param name="unitOfWork">The transaction boundary manager for saving multi-repository database state changes.</param>
+        /// <param name="restaurantValidator">The validation rules engine for restaurant properties and entities.</param>
+        /// <param name="userValidator">The validation rules engine for user record properties and checks.</param>
         public AdminService(
             IRestaurantRepository restaurantRepository,
             IRestaurantOwnerRepository restaurantOwnerRepository,
@@ -41,32 +53,35 @@ namespace RestaurantServer.Services.Implementations
             _userValidator = userValidator;
         }
 
+        /// <summary>
+        /// Creates a new restaurant and assigns an existing user as its owner.
+        /// </summary>
+        /// <param name="request">Restaurant and owner details.</param>
+        /// <param name="createdBy">ID of the user creating the restaurant.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The created restaurant details.</returns>
+        /// <exception cref="ValidationException">
+        /// Thrown when the owner is invalid or cannot be assigned as an owner.
+        /// </exception>
         public async Task<CreateRestaurantResponse> CreateRestaurantAsync(
-    CreateRestaurantRequest request,
-    long createdBy,
-    CancellationToken cancellationToken = default)
+            CreateRestaurantRequest request,
+            long createdBy,
+            CancellationToken cancellationToken = default)
         {
-            var owner = await _authRepository.GetUserByEmailAsync(
-                request.OwnerEmail,
-                cancellationToken);
+            var owner = await _authRepository.GetUserByEmailAsync(request.OwnerEmail, cancellationToken);
 
-            _userValidator.IsUserNullOrDeactivated(
-                owner,
-                ValidationMessages.UserNotFound);
+            _userValidator.IsUserNullOrDeactivated(owner, ValidationMessages.UserNotFound);
 
             if (owner.Role == (int)UserRole.Admin)
             {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRestaurantOwner);
+                throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
             }
 
             var restaurant = new Restaurant(request, createdBy);
 
             await _restaurantRepository.Add(restaurant);
 
-            var restaurantOwner = new RestaurantOwner(
-                restaurant.Id,
-                owner.Id);
+            var restaurantOwner = new RestaurantOwner(restaurant.Id, owner.Id);
 
             await _restaurantOwnerRepository.Add(restaurantOwner);
 
@@ -77,6 +92,16 @@ namespace RestaurantServer.Services.Implementations
             return new CreateRestaurantResponse(restaurant);
         }
 
+        /// <summary>
+        /// Onboards users as owners of an existing restaurant.
+        /// </summary>
+        /// <param name="restaurantId">ID of the restaurant.</param>
+        /// <param name="request">Owner email addresses.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The restaurant owner onboarding result.</returns>
+        /// <exception cref="ValidationException">
+        /// Thrown when the restaurant, email, user, or owner relationship is invalid.
+        /// </exception>
         public async Task<RestaurantOwnerResult> OnboardRestaurantOwnerAsync(
             long restaurantId,
             OnboardRestaurantOwnerRequest request,
@@ -116,8 +141,7 @@ namespace RestaurantServer.Services.Implementations
                 var existingRelationship = await _restaurantOwnerRepository
                     .GetOwnerWithRestaurantIdAsync(restaurantId, user.Id, cancellationToken);
 
-                _restaurantValidator.ValidateOwnerRelationshipDoesNotExist(
-                    existingRelationship);
+                _restaurantValidator.ValidateOwnerRelationshipDoesNotExist(existingRelationship);
 
                 users.Add(user);
             }
@@ -128,9 +152,7 @@ namespace RestaurantServer.Services.Implementations
             {
                 user.Role = (int)UserRole.Owner;
 
-                var restaurantOwner = new RestaurantOwner(
-                    restaurantId,
-                    user.Id);
+                var restaurantOwner = new RestaurantOwner(restaurantId, user.Id);
 
                 await _restaurantOwnerRepository.Add(restaurantOwner);
 
