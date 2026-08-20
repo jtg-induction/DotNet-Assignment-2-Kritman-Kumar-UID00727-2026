@@ -21,7 +21,7 @@ namespace RestaurantServer.Tests.ControllersTest
     {
         private Mock<IUserUpdateService> _userUpdateServiceMock;
         private Mock<IUserValidator> _userValidatorMock;
-        private Mock<ICurrentUserService> _currentUserServiceMock;
+        private Mock<IUserSessionService> _currentUserServiceMock;
         private Mock<IRequestValidator> _requestValidatorMock;
         private UserController _controller;
 
@@ -35,7 +35,7 @@ namespace RestaurantServer.Tests.ControllersTest
                 new Mock<IUserValidator>();
 
             _currentUserServiceMock =
-                new Mock<ICurrentUserService>();
+                new Mock<IUserSessionService>();
 
             _requestValidatorMock =
                 new Mock<IRequestValidator>();

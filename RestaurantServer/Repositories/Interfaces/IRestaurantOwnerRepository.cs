@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Interfaces
 {
-    public interface IRestaurantOwnerRepository
+    public interface IRestaurantOwnerRepository: IRepository<RestaurantOwner>
     {
-         Task<RestaurantOwner> GetAsync(long restaurantId,long userId,CancellationToken cancellationToken = default);
-
-         Task AddAsync(RestaurantOwner restaurantOwner, CancellationToken cancellationToken = default);
+         Task<RestaurantOwner> GetOwnerWithRestaurantIdAsync(long restaurantId,long userId,CancellationToken cancellationToken = default);
     }
 }

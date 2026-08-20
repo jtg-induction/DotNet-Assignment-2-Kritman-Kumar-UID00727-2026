@@ -17,7 +17,7 @@ namespace RestaurantServer.Controllers
     {
         private readonly IUserUpdateService _userUpdateService;
         private readonly IUserValidator _userValidator;
-        private readonly ICurrentUserService _currentUserService;
+        private readonly IUserSessionService _currentUserService;
         private readonly IRequestValidator _requestValidator;
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace RestaurantServer.Controllers
         /// </param>
         public UserController(IUserUpdateService userUpdateService, 
             IUserValidator userValidator, 
-            ICurrentUserService currentUserService,
+            IUserSessionService currentUserService,
             IRequestValidator requestValidator)
         {
             _userUpdateService = userUpdateService;

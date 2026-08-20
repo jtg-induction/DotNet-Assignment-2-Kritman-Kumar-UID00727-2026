@@ -19,7 +19,7 @@ namespace RestaurantServer.Repositories.Implementations
             return await _context.Set<T>().FindAsync(cancellationToken, new object[] { id });
         }
 
-        public Task AddAsync(T entity)
+        public Task Add(T entity)
         {
             _context.Set<T>().Add(entity);
             return Task.CompletedTask;

@@ -112,7 +112,7 @@ namespace RestaurantServer.Tests
 
             _authRepositoryMock
                 .Setup(repository =>
-                    repository.AddAsync(It.IsAny<User>()))
+                    repository.Add(It.IsAny<User>()))
                 .Callback<User>(user =>
                 {
                     user.Id = 10008;
@@ -142,7 +142,7 @@ namespace RestaurantServer.Tests
 
             _authRepositoryMock.Verify(
                 repository =>
-                    repository.AddAsync(
+                    repository.Add(
                         It.Is<User>(user =>
                             user.Name == "New User" &&
                             user.Email == "newuser@example.com" &&
@@ -287,7 +287,7 @@ namespace RestaurantServer.Tests
 
             _refreshTokenRepositoryMock.Verify(
                 repository =>
-                    repository.AddAsync(
+                    repository.Add(
                         It.IsAny<RefreshToken>()),
                 Times.Never);
         }
@@ -337,7 +337,7 @@ namespace RestaurantServer.Tests
 
             _refreshTokenRepositoryMock
                 .Setup(repository =>
-                    repository.AddAsync(
+                    repository.Add(
                         It.IsAny<RefreshToken>()))
                 .Returns(Task.CompletedTask);
 
@@ -372,7 +372,7 @@ namespace RestaurantServer.Tests
 
             _refreshTokenRepositoryMock.Verify(
                 repository =>
-                    repository.AddAsync(
+                    repository.Add(
                         It.Is<RefreshToken>(token =>
                             token.UserId == user.Id &&
                             token.Token == "refresh-token")),
@@ -451,7 +451,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(null))
+                    validator.IsUserNullOrDeactivated(null, ""))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRefreshToken));
@@ -510,7 +510,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(inactiveUser))
+                    validator.IsUserNullOrDeactivated(inactiveUser, ""))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRefreshToken));

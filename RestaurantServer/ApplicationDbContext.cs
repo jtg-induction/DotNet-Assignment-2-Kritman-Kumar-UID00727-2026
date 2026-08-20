@@ -1,5 +1,8 @@
-﻿using System.Data.Entity; 
-using RestaurantServer.Models;
+﻿using RestaurantServer.Models;
+using System;
+using System.Data.Entity;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RestaurantServer
 {
@@ -93,5 +96,31 @@ namespace RestaurantServer
             base.OnModelCreating(modelBuilder);
         }
 
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            SetUpdatedAt();
+
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void SetUpdatedAt()
+        {
+            var now = DateTime.UtcNow;
+
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.State == EntityState.Modified)
+                {
+                    var updatedAtProperty = entry.Entity
+                        .GetType()
+                        .GetProperty("UpdatedAt");
+
+                    if (updatedAtProperty != null)
+                    {
+                        updatedAtProperty.SetValue(entry.Entity, now);
+                    }
+                }
+            }
+        }
     }
 }

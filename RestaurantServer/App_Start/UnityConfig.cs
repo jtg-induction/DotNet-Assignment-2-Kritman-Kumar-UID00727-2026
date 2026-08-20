@@ -42,7 +42,7 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IRequestValidator, RequestValidator>();
             Container.RegisterType<IRestaurantService, AdminService>();
             Container.RegisterType<IRestaurantValidator, RestaurantValidator>();
-            Container.RegisterType<ICurrentUserService, CurrentUserService>();
+            Container.RegisterType<IUserSessionService, UserSessionService>();
         }
     }
 }

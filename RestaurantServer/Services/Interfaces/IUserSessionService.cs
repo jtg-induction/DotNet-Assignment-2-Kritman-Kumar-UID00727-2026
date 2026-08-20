@@ -1,6 +1,6 @@
 ﻿namespace RestaurantServer.Services.Interfaces
 {
-    public interface ICurrentUserService
+    public interface IUserSessionService
     {
         long? GetUserId();
     }

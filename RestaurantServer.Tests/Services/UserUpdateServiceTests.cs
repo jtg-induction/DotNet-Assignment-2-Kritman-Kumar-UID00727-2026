@@ -230,7 +230,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(null))
+                    validator.IsUserNullOrDeactivated(null, ""))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRefreshToken));
@@ -244,7 +244,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(null),
+                    validator.IsUserNullOrDeactivated(null, ""),
                 Times.Once);
 
             _refreshTokenRepositoryMock.Verify(
@@ -283,7 +283,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(user))
+                    validator.IsUserNullOrDeactivated(user, ""))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRefreshToken));
@@ -297,7 +297,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(user),
+                    validator.IsUserNullOrDeactivated(user, ""),
                 Times.Once);
 
             Assert.IsFalse(user.IsActive);
@@ -354,7 +354,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(user),
+                    validator.IsUserNullOrDeactivated(user, ""),
                 Times.Once);
 
             _refreshTokenRepositoryMock.Verify(

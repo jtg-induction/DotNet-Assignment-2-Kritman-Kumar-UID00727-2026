@@ -1,4 +1,5 @@
-﻿using RestaurantServer.DTOs.Requests;
+﻿using RestaurantServer.Constants;
+using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Enums;
 using RestaurantServer.Models;
@@ -6,6 +7,7 @@ using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,19 +20,22 @@ namespace RestaurantServer.Services.Implementations
         private readonly IAuthRepository _authRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRestaurantValidator _restaurantValidator;
+        private readonly IUserValidator _userValidator;
 
         public AdminService(
             IRestaurantRepository restaurantRepository,
             IRestaurantOwnerRepository restaurantOwnerRepository,
             IAuthRepository authRepository,
             IUnitOfWork unitOfWork,
-            IRestaurantValidator restaurantValidator)
+            IRestaurantValidator restaurantValidator,
+            IUserValidator userValidator)
         {
             _restaurantRepository = restaurantRepository;
             _restaurantOwnerRepository = restaurantOwnerRepository;
             _authRepository = authRepository;
             _unitOfWork = unitOfWork;
             _restaurantValidator = restaurantValidator;
+            _userValidator = userValidator;
         }
 
         public async Task<CreateRestaurantResponse> CreateRestaurantAsync(
@@ -40,7 +45,7 @@ namespace RestaurantServer.Services.Implementations
         {
             var restaurant = new Restaurant(request, createdBy);
 
-            await _restaurantRepository.AddAsync(restaurant, cancellationToken);
+            await _restaurantRepository.Add(restaurant);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -57,18 +62,17 @@ namespace RestaurantServer.Services.Implementations
 
             var user = await _authRepository.GetUserByEmailAsync(request.Email);
 
-            _restaurantValidator.ValidateUserCanBeOwner(user);
+            _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
 
-            var existingRelationship = await _restaurantOwnerRepository.GetAsync(restaurantId, user.Id, cancellationToken);
+            var existingRelationship = await _restaurantOwnerRepository.GetOwnerWithRestaurantIdAsync(restaurantId, user.Id, cancellationToken);
 
             _restaurantValidator.ValidateOwnerRelationshipDoesNotExist(existingRelationship);
 
             user.Role = (int)UserRole.Owner;
-            user.UpdatedAt = DateTime.UtcNow;
 
             var restaurantOwner = new RestaurantOwner(restaurantId, user.Id);
 
-            await _restaurantOwnerRepository.AddAsync(restaurantOwner, cancellationToken);
+            await _restaurantOwnerRepository.Add(restaurantOwner);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

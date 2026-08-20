@@ -5,7 +5,7 @@ using System.Web;
 
 namespace RestaurantServer.Services
 {
-    public class CurrentUserService : ICurrentUserService
+    public class UserSessionService : IUserSessionService
     {
         public long? GetUserId()
         {

@@ -17,12 +17,12 @@ namespace RestaurantServer.Controllers
     {
         private readonly IRestaurantService _restaurantService;
         private readonly IRequestValidator _requestValidator;
-        private readonly ICurrentUserService _currentUserService;
+        private readonly IUserSessionService _currentUserService;
 
         public AdminRestaurantController(
             IRestaurantService restaurantService,
             IRequestValidator requestValidator,
-            ICurrentUserService currentUserService)
+            IUserSessionService currentUserService)
         {
             _restaurantService = restaurantService;
             _requestValidator = requestValidator;
@@ -31,7 +31,7 @@ namespace RestaurantServer.Controllers
 
         [HttpPost]
         [Route("restaurants")]
-        public async Task<IHttpActionResult> CreateRestaurant(CreateRestaurantRequest request, CancellationToken cancellationToken = default)
+        public async Task<IHttpActionResult> CreateRestaurantAsync(CreateRestaurantRequest request, CancellationToken cancellationToken = default)
         {
             _requestValidator.IsRequestNull(request);
 
@@ -49,7 +49,7 @@ namespace RestaurantServer.Controllers
 
         [HttpPost]
         [Route("restaurants/{restaurantId:long}/owners")]
-        public async Task<IHttpActionResult> OnboardRestaurantOwner(
+        public async Task<IHttpActionResult> OnboardRestaurantOwnerAsync(
             long restaurantId,
             OnboardRestaurantOwnerRequest request,
             CancellationToken cancellationToken = default)
@@ -57,7 +57,7 @@ namespace RestaurantServer.Controllers
             _requestValidator.IsRequestNull(request);
 
             var response = await _restaurantService.OnboardRestaurantOwnerAsync(restaurantId, request, cancellationToken);
-    
+
             return Content(HttpStatusCode.Created, response);
         }
     }

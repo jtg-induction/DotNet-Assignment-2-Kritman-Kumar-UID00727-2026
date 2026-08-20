@@ -71,12 +71,12 @@ namespace RestaurantServer.Validators.Implementations
         /// <exception cref="ValidationException">
         /// Thrown when the user does not exist or the user's account is inactive.
         /// </exception>
-        public void IsUserNullOrDeactivated(User user)
+        public void IsUserNullOrDeactivated(User user, string message = ValidationMessages.InvalidRefreshToken)
         {
+
             if (user == null || !user.IsActive)
             {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                throw new ValidationException(message);
             }
         }
 

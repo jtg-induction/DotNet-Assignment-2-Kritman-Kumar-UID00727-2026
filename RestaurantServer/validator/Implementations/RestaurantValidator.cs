@@ -21,20 +21,6 @@ namespace RestaurantServer.Validators.Implementations
             }
         }
 
-        public void ValidateUserCanBeOwner(
-            User user)
-        {
-            if (user == null)
-            {
-                throw new ValidationException(ValidationMessages.UserNotFound);
-            }
-
-            if (!user.IsActive)
-            {
-                throw new ValidationException(ValidationMessages.UserInactive);
-            }
-        }
-
         public void ValidateOwnerRelationshipDoesNotExist(
             RestaurantOwner restaurantOwner)
         {

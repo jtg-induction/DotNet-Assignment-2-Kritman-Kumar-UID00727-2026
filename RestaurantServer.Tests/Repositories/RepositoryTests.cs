@@ -86,7 +86,7 @@ namespace RestaurantServer.Tests.Repositories
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await _repository.AddAsync(user);
+            await _repository.Add(user);
             await _context.SaveChangesAsync();
 
             var result = await _context.Users

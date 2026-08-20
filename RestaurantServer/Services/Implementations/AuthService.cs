@@ -97,7 +97,7 @@ namespace RestaurantServer.Services.Implementations
             var passwordHash = _passwordHasher.HashPassword(request.Password);
             var user = new User(request.Name.Trim(), request.Email, passwordHash);
 
-            await _authRepository.AddAsync(user);
+            await _authRepository.Add(user);
             await _unitOfWork.SaveChangesAsync();
 
             return new SignupResponse(user);
@@ -140,7 +140,7 @@ namespace RestaurantServer.Services.Implementations
             var accessToken = _jwtTokenService.GenerateAccessToken(user);
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
-            await _refreshTokenRepository.AddAsync(
+            await _refreshTokenRepository.Add(
                 new RefreshToken(user.Id)
                 {
                     Token = refreshToken

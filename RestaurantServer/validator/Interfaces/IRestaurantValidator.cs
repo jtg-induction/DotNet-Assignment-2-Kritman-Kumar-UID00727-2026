@@ -6,8 +6,6 @@ namespace RestaurantServer.Validators.Interfaces
     {
         void ValidateRestaurantExists(Restaurant restaurant);
 
-        void ValidateUserCanBeOwner(User user);
-
         void ValidateOwnerRelationshipDoesNotExist(RestaurantOwner restaurantOwner);
     }
 }

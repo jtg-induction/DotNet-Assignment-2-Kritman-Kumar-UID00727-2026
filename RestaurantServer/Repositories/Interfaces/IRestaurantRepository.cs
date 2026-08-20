@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Interfaces
 {
-    public interface IRestaurantRepository
+    public interface IRestaurantRepository: IRepository<Restaurant>
     {
-        Task AddAsync(Restaurant restaurant, CancellationToken cancellationToken = default);
 
-        Task<Restaurant> GetByIdAsync(long restaurantId, CancellationToken cancellationToken = default);
     }
 }
