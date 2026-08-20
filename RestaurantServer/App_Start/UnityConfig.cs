@@ -40,7 +40,7 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IUserValidator, UserValidator>();
             Container.RegisterType<ICookieHelper, CookieHelper>();
             Container.RegisterType<IRequestValidator, RequestValidator>();
-            Container.RegisterType<IRestaurantService, AdminService>();
+            Container.RegisterType<IAdminService, AdminService>();
             Container.RegisterType<IRestaurantValidator, RestaurantValidator>();
             Container.RegisterType<IUserSessionService, UserSessionService>();
         }

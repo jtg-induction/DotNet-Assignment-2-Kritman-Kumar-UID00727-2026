@@ -34,5 +34,9 @@ namespace RestaurantServer.DTOs.Requests
         [Required]
         [MaxLength(ValidationConstants.CountryMaxLength)]
         public string Country { get; set; }
+
+        [Required]
+        [MaxLength(ValidationConstants.EmailMaxLength)]
+        public string OwnerEmail { get; set; }
     }
 }

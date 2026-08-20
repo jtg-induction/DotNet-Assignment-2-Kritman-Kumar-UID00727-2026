@@ -1,4 +1,6 @@
-﻿namespace RestaurantServer.Constants
+﻿using RestaurantServer.Models;
+
+namespace RestaurantServer.Constants
 {
     public static class SuccessMessages
     {
@@ -8,5 +10,6 @@
         public const string AccountUpdateSuccessful = "Account Updated Successfully.";
         public const string AccountDeactivatedSuccessful = "Account Deactivated Successfully.";
         public const string LogoutSuccessful = "Logout successful.";
+        public const string ownersOnboardedSuccessful = "Restaurant owners onboarded successfully.";
     }
 }

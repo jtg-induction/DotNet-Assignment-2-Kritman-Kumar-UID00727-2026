@@ -1,4 +1,5 @@
 ﻿using RestaurantServer.Constants;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace RestaurantServer.DTOs.Requests
@@ -6,8 +7,7 @@ namespace RestaurantServer.DTOs.Requests
     public class OnboardRestaurantOwnerRequest
     {
         [Required(ErrorMessage = ValidationMessages.EmailRequired)]
-        [MaxLength(ValidationConstants.EmailMaxLength, ErrorMessage = ValidationMessages.EmailMaxLength)]
-        [RegularExpression(ValidationConstants.EmailRegex, ErrorMessage = ValidationMessages.InvalidEmail)]
-        public string Email { get; set; }
+        [MinLength(1, ErrorMessage = ValidationMessages.EmailRequired)]
+        public List<string> Emails { get; set; }
     }
 }

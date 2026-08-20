@@ -5,16 +5,14 @@ using System.Threading.Tasks;
 
 namespace RestaurantServer.Services.Interfaces
 {
-    public interface IRestaurantService
+    public interface IAdminService
     {
         Task<CreateRestaurantResponse> CreateRestaurantAsync(
             CreateRestaurantRequest request,
             long createdBy,
             CancellationToken cancellationToken = default);
 
-        Task<OnboardRestaurantOwnerResponse> OnboardRestaurantOwnerAsync(
-            long restaurantId,
-            OnboardRestaurantOwnerRequest request,
+        Task<RestaurantOwnerResult> OnboardRestaurantOwnerAsync(long restaurantId, OnboardRestaurantOwnerRequest request,
             CancellationToken cancellationToken = default);
     }
 }

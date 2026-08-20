@@ -208,6 +208,7 @@
     <Compile Include="DTOs\Responses\OnboardRestaurantOwnerResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResult.cs" />
+    <Compile Include="DTOs\Responses\RestaurantOwnerResult.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
@@ -229,7 +230,7 @@
     <Compile Include="Repositories\Interfaces\IRestaurantRepository.cs" />
     <Compile Include="Services\Implementations\UserSessionService.cs" />
     <Compile Include="Services\Interfaces\IUserSessionService.cs" />
-    <Compile Include="Services\Interfaces\IRestaurantService.cs" />
+    <Compile Include="Services\Interfaces\IAdminService.cs" />
     <Compile Include="validator\Implementations\AuthenticationValidator.cs" />
     <Compile Include="Helpers\Implementations\CookieHelper.cs" />
     <Compile Include="Helpers\Implementations\RefreshTokenHelper.cs" />

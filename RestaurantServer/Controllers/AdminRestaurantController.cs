@@ -1,6 +1,7 @@
 ﻿using RestaurantServer.DTOs.Requests;
 using RestaurantServer.Enums;
 using RestaurantServer.Filters;
+using RestaurantServer.Services.Implementations;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
@@ -15,12 +16,12 @@ namespace RestaurantServer.Controllers
     [CustomAuthorize(UserRole.Admin)]
     public class AdminRestaurantController : ApiController
     {
-        private readonly IRestaurantService _restaurantService;
+        private readonly AdminService _restaurantService;
         private readonly IRequestValidator _requestValidator;
         private readonly IUserSessionService _currentUserService;
 
         public AdminRestaurantController(
-            IRestaurantService restaurantService,
+            AdminService restaurantService,
             IRequestValidator requestValidator,
             IUserSessionService currentUserService)
         {

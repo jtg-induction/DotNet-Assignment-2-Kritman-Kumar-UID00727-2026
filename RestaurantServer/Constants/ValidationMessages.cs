@@ -30,5 +30,7 @@
         public const string RestaurantNotExists = "Restaurant does not exist.";
         public const string RestaurantNotavailable = "Restaurant is not available.";
         public const string AlreadyOwner = "User is already an owner of this restaurant.";
+        public const string InvalidRestaurantOwner = "Admin users cannot be assigned as restaurant owners.";
+        public const string DuplicateOwnerEmail = "Duplicate owner email found in the request.";
     }
 }
