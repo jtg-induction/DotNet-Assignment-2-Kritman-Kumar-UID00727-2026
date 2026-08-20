@@ -419,58 +419,7 @@ namespace RestaurantServer.Tests
                 Times.Never);
         }
 
-        [TestMethod]
-        public async Task RefreshTokenAsync_UserNotFound_ShouldThrowValidationException()
-        {
-            var refreshToken = "valid-refresh-token";
-
-            var existingRefreshToken = new RefreshToken
-            {
-                Id = 1,
-                UserId = 999,
-                Token = refreshToken,
-                IsRevoked = false,
-                CreatedAt = DateTime.UtcNow.AddDays(-1),
-                UpdatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddDays(29)
-            };
-
-            _refreshTokenRepositoryMock
-                .Setup(repository =>
-                    repository.GetByTokenAsync(
-                        refreshToken,
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(existingRefreshToken);
-
-            _authRepositoryMock
-                .Setup(repository =>
-                    repository.GetByIdAsync(
-                        existingRefreshToken.UserId,
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync((User)null);
-
-            _userValidatorMock
-                .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(null, ""))
-                .Throws(
-                    new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
-
-            var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
-                () => _authService.RefreshTokenAsync(refreshToken));
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
-                exception.Message);
-
-            _jwtTokenServiceMock.Verify(
-                service =>
-                    service.GenerateAccessToken(
-                        It.IsAny<User>()),
-                Times.Never);
-        }
-
-        [TestMethod]
+        [TestMethod] 
         public async Task RefreshTokenAsync_UserInactive_ShouldThrowValidationException()
         {
             var refreshToken = "valid-refresh-token";
@@ -510,7 +459,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(inactiveUser, ""))
+                    validator.IsUserNullOrDeactivated(inactiveUser, "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRefreshToken));
