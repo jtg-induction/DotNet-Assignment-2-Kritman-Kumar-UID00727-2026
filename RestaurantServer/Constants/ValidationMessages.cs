@@ -9,12 +9,12 @@
         public const string RefreshTokenRequired = "Refresh token is required.";
         public const string MobileNumberRequired = "Mobile number is required.";
         public const string AuthenticationRequired = "Authentication is required.";
-        public const string PostalCodeRequired = "PostalCode is reqired.";
-        public const string CityRequired = "City is required.";
-        public const string CountryRequired = "Country is required.";
-        public const string AddressLine1Required = "AddressLine1 is required";
-        public const string AddressLine2Required = "AddressLine2 is required";
-        public const string RestaurantNameRequired = "MobileNumber is required";
+        public const string PostalCodeRequired = "Postal Code is reqired.";
+        public const string CityRequired = "City name is required.";
+        public const string CountryRequired = "Country name is required.";
+        public const string AddressLine1Required = "Address line 1 is required";
+        public const string AddressLine2Required = "Address line 2 is required";
+        public const string RestaurantNameRequired = "Mobile number is required";
         public const string DescriptionRequired = "Description is required";
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
