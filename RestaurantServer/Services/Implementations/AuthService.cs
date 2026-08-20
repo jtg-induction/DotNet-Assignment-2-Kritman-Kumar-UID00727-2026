@@ -184,7 +184,6 @@ namespace RestaurantServer.Services.Implementations
             var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
 
             existingRefreshToken.Token = newRefreshToken;
-            existingRefreshToken.UpdatedAt = DateTime.UtcNow;
             existingRefreshToken.ExpiresAt = DateTime.UtcNow.AddDays(CookieConstants.ExpiresAtInDays);
             existingRefreshToken.IsRevoked = false;
 
@@ -227,7 +226,6 @@ namespace RestaurantServer.Services.Implementations
             _refreshTokenValidator.ValidateRefreshTokenIsNotRevoked(existingRefreshToken);
 
             existingRefreshToken.IsRevoked = true;
-            existingRefreshToken.UpdatedAt = DateTime.UtcNow;
 
             _refreshTokenRepository.Update(existingRefreshToken);
 

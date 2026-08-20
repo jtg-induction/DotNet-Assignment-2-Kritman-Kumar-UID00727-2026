@@ -72,7 +72,6 @@ namespace RestaurantServer.Services.Implementations
 
             user.Name = request.Name.Trim();
             user.MobileNumber = request.MobileNumber;
-            user.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -100,7 +99,6 @@ namespace RestaurantServer.Services.Implementations
             _userValidator.IsUserNullOrDeactivated(user);
 
             user.IsActive = false;
-            user.UpdatedAt = DateTime.UtcNow;
 
             await _refreshTokenRepository.RevokeAllByUserIdAsync(userId);
             await _unitOfWork.SaveChangesAsync();

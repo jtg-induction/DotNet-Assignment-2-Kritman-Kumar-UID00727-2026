@@ -1,7 +1,14 @@
-﻿using RestaurantServer.Constants; 
+﻿using Microsoft.Ajax.Utilities;
+using RestaurantServer.Constants;
+using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
-using RestaurantServer.Models; 
-using RestaurantServer.Validators.Interfaces; 
+using RestaurantServer.Models;
+using RestaurantServer.Repositories.Interfaces;
+using RestaurantServer.Validators.Interfaces;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 namespace RestaurantServer.Validators.Implementations
@@ -11,6 +18,15 @@ namespace RestaurantServer.Validators.Implementations
     /// </summary>
     public class RestaurantValidator : IRestaurantValidator
     {
+
+        private readonly IRestaurantRepository _restaurantRepository;
+        private CancellationToken cancellationToken;
+
+        public RestaurantValidator(IRestaurantRepository restaurantRepository)
+        {
+            _restaurantRepository = restaurantRepository;
+        }
+
         /// <summary>
         /// Validates that a restaurant exists and has not been deleted.
         /// </summary>
@@ -43,5 +59,44 @@ namespace RestaurantServer.Validators.Implementations
                 throw new ValidationException(ValidationMessages.AlreadyOwner);
             }
         }
+
+        public async Task ValidateMobileNumber(string mobileNumber)
+        {
+            mobileNumber = mobileNumber?.Trim();
+
+            var mobileExists = await _restaurantRepository
+                .ExistsByMobileNumberAsync(mobileNumber, cancellationToken);
+
+            if (mobileExists)
+            {
+                throw new ValidationException(ValidationMessages.RestaurantMobileNumberAlreadyExists);
+            }
+        }
+
+        public void ValidateEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email) ||
+                    !Regex.IsMatch(email.Trim(), ValidationConstants.EmailRegex))
+            {
+                throw new ValidationException(ValidationMessages.InvalidEmail);
+            }
+        }
+
+        public void ValidateAdminRole(int role)
+        {
+            if (role == (int)UserRole.Admin)
+            {
+                throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
+            }
+        }
+
+        public void IsOwnersEmailEmpty(List<string> emails)
+        {
+            if(0 == emails.Count)
+            {
+                throw new ValidationException(ValidationMessages.OnboardRestaurantOwnerEmailsMinLength);
+            }
+        }
+
     }
 }

@@ -6,15 +6,16 @@ namespace RestaurantServer.Models
     public class RestaurantOwner
     {
 
-        public RestaurantOwner() 
-        { 
-        
+        public RestaurantOwner()
+        {
+
         }
 
-        public RestaurantOwner(long restaurantId, long userId)
+        public RestaurantOwner(Restaurant restaurant, User user)
         {
-            RestaurantId = restaurantId;
-            UserId = userId;
+            Restaurant = restaurant;
+            User = user;
+
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }

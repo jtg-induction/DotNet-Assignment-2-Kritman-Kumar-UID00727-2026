@@ -95,29 +95,41 @@ namespace RestaurantServer
 
             base.OnModelCreating(modelBuilder);
         }
-
-        /// <summary>
-        /// Saves all pending changes and updates the modification timestamp.
-        /// </summary>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>The number of affected records.</returns>
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        public override async Task<int> SaveChangesAsync(
+    CancellationToken cancellationToken)
         {
-            SetUpdatedAt();
+            SetTimestamps();
 
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        /// <summary>
-        /// Sets the <c>UpdatedAt</c> property for modified entities.
-        /// </summary>
-        private void SetUpdatedAt()
+        private void SetTimestamps()
         {
             var now = DateTime.UtcNow;
 
             foreach (var entry in ChangeTracker.Entries())
             {
-                if (entry.State == EntityState.Modified)
+                if (entry.State == EntityState.Added)
+                {
+                    var createdAtProperty = entry.Entity
+                        .GetType()
+                        .GetProperty("CreatedAt");
+
+                    var updatedAtProperty = entry.Entity
+                        .GetType()
+                        .GetProperty("UpdatedAt");
+
+                    if (createdAtProperty != null)
+                    {
+                        createdAtProperty.SetValue(entry.Entity, now);
+                    }
+
+                    if (updatedAtProperty != null)
+                    {
+                        updatedAtProperty.SetValue(entry.Entity, now);
+                    }
+                }
+                else if (entry.State == EntityState.Modified)
                 {
                     var updatedAtProperty = entry.Entity
                         .GetType()

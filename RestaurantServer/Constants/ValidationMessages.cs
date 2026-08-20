@@ -41,5 +41,6 @@
         public const string AlreadyOwner = "User is already an owner of this restaurant.";
         public const string InvalidRestaurantOwner = "Admin users cannot be assigned as restaurant owners.";
         public const string DuplicateOwnerEmail = "Duplicate owner email found in the request.";
+        public const string RestaurantMobileNumberAlreadyExists = "A restaurant with this mobile number already exists.";
     }
 }

@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace RestaurantServer.Services.Implementations
 {
@@ -72,16 +71,15 @@ namespace RestaurantServer.Services.Implementations
 
             _userValidator.IsUserNullOrDeactivated(owner, ValidationMessages.UserNotFound);
 
-            if (owner.Role == (int)UserRole.Admin)
-            {
-                throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
-            }
+            _restaurantValidator.ValidateAdminRole(owner.Role);
+
+             await _restaurantValidator.ValidateMobileNumber(request.MobileNumber);
 
             var restaurant = new Restaurant(request, createdBy);
 
             await _restaurantRepository.Add(restaurant);
 
-            var restaurantOwner = new RestaurantOwner(restaurant.Id, owner.Id);
+            var restaurantOwner = new RestaurantOwner(restaurant, owner);
 
             await _restaurantOwnerRepository.Add(restaurantOwner);
 
@@ -107,6 +105,8 @@ namespace RestaurantServer.Services.Implementations
             OnboardRestaurantOwnerRequest request,
             CancellationToken cancellationToken = default)
         {
+            _restaurantValidator.IsOwnersEmailEmpty(request.Emails);
+
             var restaurant = await _restaurantRepository.GetByIdAsync(restaurantId, cancellationToken);
 
             _restaurantValidator.ValidateRestaurantExists(restaurant);
@@ -116,11 +116,8 @@ namespace RestaurantServer.Services.Implementations
 
             foreach (var email in request.Emails)
             {
-                if (string.IsNullOrWhiteSpace(email) ||
-                    !Regex.IsMatch(email.Trim(), ValidationConstants.EmailRegex))
-                {
-                    throw new ValidationException(ValidationMessages.InvalidEmail);
-                }
+
+                _restaurantValidator.ValidateEmail(email);
 
                 var normalizedEmail = email.Trim();
 
@@ -133,10 +130,7 @@ namespace RestaurantServer.Services.Implementations
 
                 _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
 
-                if (user.Role == (int)UserRole.Admin)
-                {
-                    throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
-                }
+                _restaurantValidator.ValidateAdminRole(user.Role);
 
                 var existingRelationship = await _restaurantOwnerRepository
                     .GetOwnerWithRestaurantIdAsync(restaurantId, user.Id, cancellationToken);
@@ -152,7 +146,7 @@ namespace RestaurantServer.Services.Implementations
             {
                 user.Role = (int)UserRole.Owner;
 
-                var restaurantOwner = new RestaurantOwner(restaurantId, user.Id);
+                var restaurantOwner = new RestaurantOwner(restaurant, user);
 
                 await _restaurantOwnerRepository.Add(restaurantOwner);
 

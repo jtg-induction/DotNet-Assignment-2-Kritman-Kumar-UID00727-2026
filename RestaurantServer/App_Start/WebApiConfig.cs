@@ -18,12 +18,12 @@ namespace RestaurantServer
         {
             config.MapHttpAttributeRoutes();
 
-            //config.Filters.Add(new ValidateModelAttribute());
+            config.Filters.Add(new ValidateModelAttribute());
 
-            //config.Services.Replace(
-            //   typeof(IExceptionHandler),
-            //   new GlobalExceptionHandler()
-            //);
+            config.Services.Replace(
+               typeof(IExceptionHandler),
+               new GlobalExceptionHandler()
+            );
         }
     }
 }
