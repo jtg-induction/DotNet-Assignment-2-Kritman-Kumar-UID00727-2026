@@ -22,7 +22,7 @@ namespace RestaurantServer.Models
 
             RestaurantName = request.RestaurantName.Trim();
             Description = request.Description?.Trim();
-            MobileNumber = request.MobileNumber?.Trim();
+            MobileNumber = request.MobileNumber.Trim();
             AddressLine1 = request.AddressLine1.Trim();
             AddressLine2 = request.AddressLine2?.Trim();
             City = request.City.Trim();
@@ -30,7 +30,7 @@ namespace RestaurantServer.Models
             Country = request.Country.Trim();
 
             CreatedAt = now;
-            CreatedBy = createdBy;
+            CreatedBy = createdBy; 
             UpdatedAt = now;
             UpdatedBy = createdBy;
             IsDeleted = false;
@@ -47,6 +47,7 @@ namespace RestaurantServer.Models
         public string Description { get; set; }
 
         [MaxLength(ValidationConstants.MobileNumberMaxLength)]
+        [Index("IX_Restaurant_MobileNumber", IsUnique = true)]
         public string MobileNumber { get; set; }
 
         [Required]

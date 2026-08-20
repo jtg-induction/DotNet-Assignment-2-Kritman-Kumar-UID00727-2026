@@ -7,7 +7,7 @@ namespace RestaurantServer.DTOs.Requests
     public class OnboardRestaurantOwnerRequest
     {
         [Required(ErrorMessage = ValidationMessages.EmailRequired)]
-        [MinLength(1, ErrorMessage = ValidationMessages.EmailRequired)]
+        [MinLength(1, ErrorMessage = ValidationMessages.OnboardRestaurantOwnerEmailsMinLength)]
         public List<string> Emails { get; set; }
     }
 }
