@@ -39,7 +39,6 @@ namespace RestaurantServer.Tests
         [TestMethod]
         public async Task CreateRestaurantAsync_ValidRequest_ReturnsCreated()
         {
-            // Arrange
             var request = new CreateRestaurantRequest();
 
             var createdBy = 1L;
@@ -59,12 +58,10 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(response);
 
-            // Act
             var result = await _controller.CreateRestaurantAsync(
                 request,
                 CancellationToken.None);
 
-            // Assert
             Assert.IsNotNull(result);
 
             var contentResult = result as NegotiatedContentResult<CreateRestaurantResponse>;
@@ -108,12 +105,10 @@ namespace RestaurantServer.Tests
                     service.GetUserId())
                 .Returns((long?)null);
 
-            // Act
             var result = await _controller.CreateRestaurantAsync(
                 request,
                 CancellationToken.None);
 
-            // Assert
             Assert.IsNotNull(result);
 
             Assert.IsInstanceOfType(
