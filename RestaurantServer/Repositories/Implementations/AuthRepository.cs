@@ -37,6 +37,11 @@ namespace RestaurantServer.Repositories.Implementations
                 .FirstOrDefaultAsync(user => user.Email == email, cancellationToken);
         }
 
+        /// <summary>
+        /// returns List of users of given owners emails
+        /// </summary>
+        /// <param name="emails"> IEnumerable of emails</param>
+        /// <returns>List of users</returns>
         public async Task<List<User>> GetUsersByEmailsAsync(
            IEnumerable<string> emails,
            CancellationToken cancellationToken = default)

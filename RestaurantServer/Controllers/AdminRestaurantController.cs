@@ -53,11 +53,6 @@ namespace RestaurantServer.Controllers
 
             var createdBy = _currentUserService.GetUserId();
 
-            if (!createdBy.HasValue)
-            {
-                return Unauthorized();
-            }
-
             var response = await _restaurantService.CreateRestaurantAsync(request, createdBy.Value, cancellationToken);
 
             return Content(HttpStatusCode.Created, response);

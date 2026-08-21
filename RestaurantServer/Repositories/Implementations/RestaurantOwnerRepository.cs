@@ -16,6 +16,12 @@ namespace RestaurantServer.Repositories.Implementations
         {
         }
 
+        /// <summary>
+        /// Provides the Restaurant Owners by RestaurantId and UserId
+        /// </summary>
+        /// <param name="restaurantId">restaurantId of current restaurant</param>
+        /// <param name="userIds">onboarding restaurant owners userId</param>
+        /// <returns>returns List of Restaurant Owner</returns>
         public async Task<List<RestaurantOwner>> GetOwnersByRestaurantAndUserIdsAsync(
             long restaurantId, IEnumerable<long> userIds, CancellationToken cancellationToken = default)
         {

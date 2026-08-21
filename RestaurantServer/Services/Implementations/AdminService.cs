@@ -150,9 +150,7 @@ namespace RestaurantServer.Services.Implementations
                 _restaurantValidator.ValidateAdminRole(user.Role);
             }
 
-            var userIds = users
-                .Select(user => user.Id)
-                .ToList();
+            var userIds = users.Select(user => user.Id).ToList();
 
             var existingOwners = await _restaurantOwnerRepository
                 .GetOwnersByRestaurantAndUserIdsAsync(restaurantId, userIds, cancellationToken);
