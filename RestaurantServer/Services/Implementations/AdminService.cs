@@ -100,7 +100,7 @@ namespace RestaurantServer.Services.Implementations
         /// <exception cref="ValidationException">
         /// Thrown when the restaurant, email, user, or owner relationship is invalid.
         /// </exception>
-        public async Task<RestaurantOwnerResult> OnboardRestaurantOwnerAsync(
+        public async Task<OnboardRestaurantResponses> OnboardRestaurantOwnerAsync(
             long restaurantId,
             OnboardRestaurantOwnerRequest request,
             CancellationToken cancellationToken = default)
@@ -116,7 +116,6 @@ namespace RestaurantServer.Services.Implementations
 
             foreach (var email in request.Emails)
             {
-
                 _restaurantValidator.ValidateEmail(email);
 
                 var normalizedEmail = email.Trim();
@@ -155,13 +154,13 @@ namespace RestaurantServer.Services.Implementations
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new RestaurantOwnerResult
+            return new OnboardRestaurantResponses
             {
                 RestaurantId = restaurantId,
                 Message = SuccessMessages.ownersOnboardedSuccessful,
                 Owners = restaurantOwners
             .Select((restaurantOwner, index) =>
-                new OnboardRestaurantOwnerResponse(restaurantOwner)).ToList()
+                new OwnerDto(restaurantOwner)).ToList()
             };
         }
     }

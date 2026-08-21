@@ -205,10 +205,10 @@
     <Compile Include="DTOs\Responses\CreateRestaurantResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResult.cs" />
-    <Compile Include="DTOs\Responses\OnboardRestaurantOwnerResponse.cs" />
+    <Compile Include="DTOs\Responses\OwnerDto.cs" />
     <Compile Include="DTOs\Responses\RefreshResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResult.cs" />
-    <Compile Include="DTOs\Responses\RestaurantOwnerResult.cs" />
+    <Compile Include="DTOs\Responses\OnboardRestaurantResponses.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
     <Compile Include="Enums\OrderStatus.cs" />

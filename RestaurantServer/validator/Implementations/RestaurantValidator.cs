@@ -60,6 +60,11 @@ namespace RestaurantServer.Validators.Implementations
             }
         }
 
+        /// <summary>
+        /// Validates the mobile number to check whether the mobile number exists or not. If it already exists then throw an exception: RestaurantMobileNumberAlreadyExists
+        /// </summary>
+        /// <param name="mobileNumber">string new restaurant mobile number</param>
+        /// <exception cref="ValidationException">thrown when mobile number allready exists</exception>
         public async Task ValidateMobileNumber(string mobileNumber)
         {
             mobileNumber = mobileNumber?.Trim();
@@ -73,6 +78,11 @@ namespace RestaurantServer.Validators.Implementations
             }
         }
 
+        /// <summary>
+        /// Validates the email using Regex.
+        /// </summary>
+        /// <param name="email">owner email</param>
+        /// <exception cref="ValidationException">throws exception when email is empty or when email is invlaid.</exception>
         public void ValidateEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email) ||
@@ -82,6 +92,12 @@ namespace RestaurantServer.Validators.Implementations
             }
         }
 
+
+        /// <summary>
+        /// validate user role Allow only customer and owner.
+        /// </summary>
+        /// <param name="role"> intiger user role only from ENUM USER_ROLE</param>
+        /// <exception cref="ValidationException"> thows exception when user role is addmin </exception>
         public void ValidateAdminRole(int role)
         {
             if (role == (int)UserRole.Admin)
@@ -90,9 +106,15 @@ namespace RestaurantServer.Validators.Implementations
             }
         }
 
+
+        /// <summary>
+        ///  validate the emails count.
+        /// </summary>
+        /// <param name="emails"> list of string </param>
+        /// <exception cref="ValidationException">throws exception when emails count is 0</exception>
         public void IsOwnersEmailEmpty(List<string> emails)
         {
-            if(0 == emails.Count)
+            if (0 == emails.Count)
             {
                 throw new ValidationException(ValidationMessages.OnboardRestaurantOwnerEmailsMinLength);
             }
