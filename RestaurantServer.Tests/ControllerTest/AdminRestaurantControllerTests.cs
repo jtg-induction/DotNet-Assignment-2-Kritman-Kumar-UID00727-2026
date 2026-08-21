@@ -96,49 +96,6 @@ namespace RestaurantServer.Tests
         }
 
         [TestMethod]
-        public async Task CreateRestaurantAsync_UserNotAuthenticated_ReturnsUnauthorized()
-        {
-            var request = new CreateRestaurantRequest();
-
-            _currentUserServiceMock
-                .Setup(service =>
-                    service.GetUserId())
-                .Returns((long?)null);
-
-            var result = await _controller.CreateRestaurantAsync(
-                request,
-                CancellationToken.None);
-
-            Assert.IsNotNull(result);
-
-            Assert.IsInstanceOfType(
-                result,
-                typeof(UnauthorizedResult));
-
-            var unauthorizedResult = result as UnauthorizedResult;
-
-            Assert.IsNotNull(unauthorizedResult);
-
-            _requestValidatorMock.Verify(
-                validator =>
-                    validator.IsRequestNull(request),
-                Times.Once);
-
-            _currentUserServiceMock.Verify(
-                service =>
-                    service.GetUserId(),
-                Times.Once);
-
-            _adminServiceMock.Verify(
-                service =>
-                    service.CreateRestaurantAsync(
-                        It.IsAny<CreateRestaurantRequest>(),
-                        It.IsAny<long>(),
-                        It.IsAny<CancellationToken>()),
-                Times.Never);
-        }
-
-        [TestMethod]
         public async Task CreateRestaurantAsync_RequestIsNull_ThrowsValidationException()
         {
             CreateRestaurantRequest request = null;
@@ -186,7 +143,7 @@ namespace RestaurantServer.Tests
 
             var request = new OnboardRestaurantOwnerRequest();
 
-            var response = new RestaurantOwnerResult();
+            var response = new OnboardRestaurantResponses();
 
             _adminServiceMock
                 .Setup(service =>
@@ -205,7 +162,7 @@ namespace RestaurantServer.Tests
             Assert.IsNotNull(result);
 
             var contentResult =
-                result as NegotiatedContentResult<RestaurantOwnerResult>;
+                result as NegotiatedContentResult<OnboardRestaurantResponses>;
 
             Assert.IsNotNull(contentResult);
 

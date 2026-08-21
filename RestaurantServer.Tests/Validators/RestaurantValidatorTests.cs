@@ -83,7 +83,7 @@ namespace RestaurantServer.Tests
                             restaurantOwner));
 
             Assert.AreEqual(
-                ValidationMessages.AlreadyOwner,
+                ValidationMessages.OwnerRelationshipAlreadyExists,
                 exception.Message);
         }
 
