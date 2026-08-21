@@ -12,7 +12,7 @@ namespace RestaurantServer.Services.Interfaces
             long createdBy,
             CancellationToken cancellationToken = default);
 
-        Task<RestaurantOwnerResult> OnboardRestaurantOwnerAsync(long restaurantId, OnboardRestaurantOwnerRequest request,
+        Task<OnboardRestaurantResponses> OnboardRestaurantOwnerAsync(long restaurantId, OnboardRestaurantOwnerRequest request,
             CancellationToken cancellationToken = default);
     }
 }

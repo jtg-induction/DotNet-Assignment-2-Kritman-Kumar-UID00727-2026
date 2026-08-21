@@ -2,9 +2,9 @@
 
 namespace RestaurantServer.DTOs.Responses
 {
-    public class OnboardRestaurantOwnerResponse
+    public class OwnerDto
     {
-        public OnboardRestaurantOwnerResponse(RestaurantOwner restaurantOwner)
+        public OwnerDto(RestaurantOwner restaurantOwner)
         {
             UserId = restaurantOwner.UserId;
             UserName = restaurantOwner.User.Name;

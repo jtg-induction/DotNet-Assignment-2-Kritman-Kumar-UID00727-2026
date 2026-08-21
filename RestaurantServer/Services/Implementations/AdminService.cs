@@ -73,7 +73,7 @@ namespace RestaurantServer.Services.Implementations
 
             _restaurantValidator.ValidateAdminRole(owner.Role);
 
-             await _restaurantValidator.ValidateMobileNumber(request.MobileNumber);
+            await _restaurantValidator.ValidateMobileNumber(request.MobileNumber);
 
             var restaurant = new Restaurant(request, createdBy);
 
@@ -100,23 +100,24 @@ namespace RestaurantServer.Services.Implementations
         /// <exception cref="ValidationException">
         /// Thrown when the restaurant, email, user, or owner relationship is invalid.
         /// </exception>
-        public async Task<RestaurantOwnerResult> OnboardRestaurantOwnerAsync(
-            long restaurantId,
-            OnboardRestaurantOwnerRequest request,
+        public async Task<OnboardRestaurantResponses> OnboardRestaurantOwnerAsync(
+            long restaurantId, OnboardRestaurantOwnerRequest request,
             CancellationToken cancellationToken = default)
         {
+
             _restaurantValidator.IsOwnersEmailEmpty(request.Emails);
 
-            var restaurant = await _restaurantRepository.GetByIdAsync(restaurantId, cancellationToken);
+            var restaurant = await _restaurantRepository
+                .GetByIdAsync(restaurantId, cancellationToken);
 
             _restaurantValidator.ValidateRestaurantExists(restaurant);
 
-            var users = new List<User>();
+            var normalizedEmails = new List<string>();
+
             var emailSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var email in request.Emails)
             {
-
                 _restaurantValidator.ValidateEmail(email);
 
                 var normalizedEmail = email.Trim();
@@ -126,18 +127,43 @@ namespace RestaurantServer.Services.Implementations
                     throw new ValidationException(ValidationMessages.DuplicateOwnerEmail);
                 }
 
-                var user = await _authRepository.GetUserByEmailAsync(normalizedEmail, cancellationToken);
+                normalizedEmails.Add(normalizedEmail);
+            }
+
+            var users = await _authRepository
+                .GetUsersByEmailsAsync(normalizedEmails, cancellationToken);
+
+            var usersByEmail = users.ToDictionary(
+                user => user.Email.Trim(),
+                StringComparer.OrdinalIgnoreCase);
+
+
+            foreach (var email in normalizedEmails)
+            {
+                if (!usersByEmail.TryGetValue(email, out var user))
+                {
+                    throw new ValidationException(ValidationMessages.UserNotFound);
+                }
 
                 _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
 
                 _restaurantValidator.ValidateAdminRole(user.Role);
+            }
 
-                var existingRelationship = await _restaurantOwnerRepository
-                    .GetOwnerWithRestaurantIdAsync(restaurantId, user.Id, cancellationToken);
+            var userIds = users.Select(user => user.Id).ToList();
 
-                _restaurantValidator.ValidateOwnerRelationshipDoesNotExist(existingRelationship);
+            var existingOwners = await _restaurantOwnerRepository
+                .GetOwnersByRestaurantAndUserIdsAsync(restaurantId, userIds, cancellationToken);
 
-                users.Add(user);
+            var existingOwnerUserIds = existingOwners
+                .Select(owner => owner.UserId).ToHashSet();
+
+            foreach (var user in users)
+            {
+                if (existingOwnerUserIds.Contains(user.Id))
+                {
+                    throw new ValidationException(ValidationMessages.OwnerRelationshipAlreadyExists);
+                }
             }
 
             var restaurantOwners = new List<RestaurantOwner>();
@@ -148,21 +174,23 @@ namespace RestaurantServer.Services.Implementations
 
                 var restaurantOwner = new RestaurantOwner(restaurant, user);
 
-                await _restaurantOwnerRepository.Add(restaurantOwner);
-
                 restaurantOwners.Add(restaurantOwner);
+
+                await _restaurantOwnerRepository.Add(restaurantOwner);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new RestaurantOwnerResult
+            return new OnboardRestaurantResponses
             {
                 RestaurantId = restaurantId,
                 Message = SuccessMessages.ownersOnboardedSuccessful,
                 Owners = restaurantOwners
-            .Select((restaurantOwner, index) =>
-                new OnboardRestaurantOwnerResponse(restaurantOwner)).ToList()
+                    .Select(restaurantOwner =>
+                        new OwnerDto(restaurantOwner))
+                    .ToList()
             };
         }
+
     }
 }

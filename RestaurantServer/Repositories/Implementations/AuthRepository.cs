@@ -1,6 +1,8 @@
 ﻿using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,6 +35,24 @@ namespace RestaurantServer.Repositories.Implementations
         {
             return await _context.Users
                 .FirstOrDefaultAsync(user => user.Email == email, cancellationToken);
+        }
+
+        /// <summary>
+        /// returns List of users of given owners emails
+        /// </summary>
+        /// <param name="emails"> IEnumerable of emails</param>
+        /// <returns>List of users</returns>
+        public async Task<List<User>> GetUsersByEmailsAsync(
+           IEnumerable<string> emails,
+           CancellationToken cancellationToken = default)
+        {
+            var emailList = emails
+                .Select(email => email.Trim())
+                .ToList();
+
+            return await _context.Users
+                .Where(user => emailList.Contains(user.Email))
+                .ToListAsync(cancellationToken);
         }
     }
 }

@@ -19,10 +19,10 @@
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
         public const string EmailMaxLength = "Email cannot exceed the maximum allowed length.";
-        public const string PasswordMinLength = "Password must be at least {1} characters long.";
+        public const string PasswordMinLength = "Password must be at least 1 characters long.";
         public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length.";
         public const string MobileNumberMaxLength = "Mobile number cannot exceed the maximum allowed length.";
-        public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include {1} email.";
+        public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include 1 email.";
 
 
         public const string InvalidEmail = "Please enter a valid email address.";
@@ -38,7 +38,7 @@
         public const string EmptyRequest = "Request body cannot be empty.";
         public const string RestaurantNotExists = "Restaurant does not exist.";
         public const string RestaurantNotavailable = "Restaurant is not available.";
-        public const string AlreadyOwner = "User is already an owner of this restaurant.";
+        public const string OwnerRelationshipAlreadyExists = "User is already an owner of this restaurant.";
         public const string InvalidRestaurantOwner = "Admin users cannot be assigned as restaurant owners.";
         public const string DuplicateOwnerEmail = "Duplicate owner email found in the request.";
         public const string RestaurantMobileNumberAlreadyExists = "A restaurant with this mobile number already exists.";
