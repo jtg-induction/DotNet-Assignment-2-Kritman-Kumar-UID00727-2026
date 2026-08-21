@@ -56,7 +56,7 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (restaurantOwner != null)
             {
-                throw new ValidationException(ValidationMessages.AlreadyOwner);
+                throw new ValidationException(ValidationMessages.OwnerRelationshipAlreadyExists);
             }
         }
 

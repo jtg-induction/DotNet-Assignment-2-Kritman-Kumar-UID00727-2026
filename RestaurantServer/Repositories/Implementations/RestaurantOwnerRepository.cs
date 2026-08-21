@@ -1,24 +1,30 @@
 ﻿using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Implementations
 {
-    public class RestaurantOwnerRepository : Repository<RestaurantOwner>,IRestaurantOwnerRepository
+    public class RestaurantOwnerRepository
+        : Repository<RestaurantOwner>, IRestaurantOwnerRepository
     {
         public RestaurantOwnerRepository(ApplicationDbContext context)
             : base(context)
         {
-
         }
 
-        public async Task<RestaurantOwner> GetOwnerWithRestaurantIdAsync(long restaurantId, long userId, CancellationToken cancellationToken = default)
+        public async Task<List<RestaurantOwner>> GetOwnersByRestaurantAndUserIdsAsync(
+            long restaurantId, IEnumerable<long> userIds, CancellationToken cancellationToken = default)
         {
+            var ids = userIds.ToList();
+
             return await _context.Set<RestaurantOwner>()
-                .FirstOrDefaultAsync(restaurantOwner => 
-                restaurantOwner.RestaurantId == restaurantId && restaurantOwner.UserId == userId, cancellationToken);
+                .Where(restaurant =>
+                    restaurant.RestaurantId == restaurantId && ids.Contains(restaurant.UserId))
+                .ToListAsync(cancellationToken);
         }
     }
 }
