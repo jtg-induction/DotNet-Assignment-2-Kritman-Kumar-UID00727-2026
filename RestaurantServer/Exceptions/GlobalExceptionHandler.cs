@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Results;
 
@@ -17,29 +16,30 @@ namespace RestaurantServer.Exceptions
     {
         /// <summary>
         /// Handles an unhandled exception and creates a standardized
-        /// HTTP 500 Internal Server Error response.
+        /// HTTP response.
         /// </summary>
-        /// <param name="context">
-        /// The exception handling context containing the request and exception information.
-        /// </param>
-        /// <param name="cancellationToken">
-        /// A token that can be used to cancel the operation.
-        /// </param>
-        /// <returns>
-        /// A task representing the exception handling operation.
-        /// </returns>
-        public Task HandleAsync(
-            ExceptionHandlerContext context,
-            CancellationToken cancellationToken)
+        public Task HandleAsync(ExceptionHandlerContext context, CancellationToken cancellationToken)
         {
-            var response = context.Request.CreateResponse(
-                HttpStatusCode.InternalServerError,
-                new
-                {
-                    Message = ErrorMessages.InternalServerError
-                });
+            if (context.Exception is ValidationException validationException)
+            {
+                context.Result = new ResponseMessageResult(context.Request
+                    .CreateResponse(HttpStatusCode.BadRequest,
+                        new
+                        {
+                            Message = validationException.Message
+                        }
+                    )
+                );
+                return Task.CompletedTask;
+            }
 
-            context.Result = new ResponseMessageResult(response);
+            context.Result = new ResponseMessageResult(
+                context.Request.CreateResponse(
+                    HttpStatusCode.InternalServerError,
+                    new
+                    {
+                        Message = ErrorMessages.InternalServerError
+                    }));
 
             return Task.CompletedTask;
         }

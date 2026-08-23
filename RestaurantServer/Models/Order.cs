@@ -11,7 +11,7 @@ namespace RestaurantServer.Models
         {
             OrderItems = new HashSet<OrderItem>();
         }
-
+        
         [Key]
         public long Id { get; set; }
 

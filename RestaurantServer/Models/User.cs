@@ -1,4 +1,5 @@
 ﻿using RestaurantServer.Constants;
+using RestaurantServer.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,24 @@ namespace RestaurantServer.Models
         {
             Orders = new HashSet<Order>();
             RestaurantOwners = new HashSet<RestaurantOwner>();
+            RefreshTokens = new HashSet<RefreshToken>();
+        }
+
+        public User(
+           string name,
+           string email,
+           string passwordHash)
+           : this()
+        {
+            Name = name;
+            Email = email;
+            PasswordHash = passwordHash;
+            Balance = 1000m;
+            Role = (int)UserRole.Customer;
+            IsActive = true;
+            MobileNumber = null;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         [Key]
@@ -51,5 +70,7 @@ namespace RestaurantServer.Models
         public virtual ICollection<Order> Orders { get; set; }
 
         public virtual ICollection<RestaurantOwner> RestaurantOwners { get; set; }
+
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }
