@@ -29,6 +29,7 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IRefreshTokenRepository, RefreshTokenRepository>(new HierarchicalLifetimeManager());
             Container.RegisterType<IRestaurantOwnerRepository, RestaurantOwnerRepository>(new HierarchicalLifetimeManager());
             Container.RegisterType<IRestaurantRepository, RestaurantRepository>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IItemRepository, ItemRepository>(new HierarchicalLifetimeManager());
 
             Container.RegisterType<IAuthService, AuthService>();
             Container.RegisterType<IUserUpdateService, UserUpdateService>();

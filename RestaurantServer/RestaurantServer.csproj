@@ -204,6 +204,7 @@
     <Compile Include="DTOs\Requests\SignupRequest.cs" />
     <Compile Include="DTOs\Requests\UpdateAccountRequest.cs" />
     <Compile Include="DTOs\Responses\CreateRestaurantResponse.cs" />
+    <Compile Include="DTOs\Responses\ItemDto.cs" />
     <Compile Include="DTOs\Responses\LoginResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResult.cs" />
     <Compile Include="DTOs\Responses\OwnerDto.cs" />
@@ -211,6 +212,7 @@
     <Compile Include="DTOs\Responses\RefreshResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResult.cs" />
     <Compile Include="DTOs\Responses\RestaurantDto.cs" />
+    <Compile Include="DTOs\Responses\RestaurantItemListResponse.cs" />
     <Compile Include="DTOs\Responses\RestaurantListResponse.cs" />
     <Compile Include="DTOs\Responses\OnboardRestaurantResponses.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
@@ -228,9 +230,11 @@
     <Compile Include="Migrations\202608171746472_AddUniqueMobileNumber.Designer.cs">
       <DependentUpon>202608171746472_AddUniqueMobileNumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\implementations\ItemRepository.cs" />
     <Compile Include="Repositories\implementations\RestaurantRepository.cs" />
     <Compile Include="Services\Implementations\AdminService.cs" />
     <Compile Include="Services\Implementations\RestaurantService.cs" />
+    <Compile Include="Repositories\Interfaces\IItemRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantOwnerRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantRepository.cs" />
     <Compile Include="Services\Implementations\UserSessionService.cs" />

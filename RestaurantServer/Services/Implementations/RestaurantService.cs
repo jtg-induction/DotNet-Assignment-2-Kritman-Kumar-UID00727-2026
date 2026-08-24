@@ -13,13 +13,16 @@ namespace RestaurantServer.Services.Implementations
     public class RestaurantService : IRestaurantService
     {
         private readonly IRestaurantRepository _restaurantRepository;
+        private readonly IItemRepository _itemRepository;
         private readonly IRestaurantValidator _restaurantValidator;
 
         public RestaurantService(
             IRestaurantRepository restaurantRepository,
+            IItemRepository itemRepository,
             IRestaurantValidator restaurantValidator)
         {
             _restaurantRepository = restaurantRepository;
+            _itemRepository = itemRepository;
             _restaurantValidator = restaurantValidator;
         }
 
@@ -44,6 +47,35 @@ namespace RestaurantServer.Services.Implementations
 
             return new RestaurantListResponse(SuccessMessages.RestaurantsRetrieved,
                 restaurantDtos, pagination);
+        }
+
+        public async Task<RestaurantItemListResponse> GetRestaurantItemsAsync(
+            long restaurantId,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            _restaurantValidator.ValidatePagination(page, pageSize);
+
+            var restaurant = await _restaurantRepository.GetByIdAsync(restaurantId, cancellationToken);
+
+            _restaurantValidator.ValidateRestaurantExists(restaurant);
+
+            var totalRecords = await _itemRepository.CountAvailableItemsByRestaurantIdAsync(restaurantId, cancellationToken);
+
+            var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            var items = await _itemRepository.GetAvailableItemsByRestaurantIdAsync(restaurantId, page, pageSize, cancellationToken);
+
+            var itemDtos = items
+                .Select(item => new ItemDto(item))
+                .ToList();
+
+            var pagination = new PaginationResponse(page, pageSize, totalRecords, totalPages);
+
+            return new RestaurantItemListResponse(
+                SuccessMessages.MenuItemsRetrieved,
+                restaurantId, itemDtos, pagination);
         }
     }
 }

@@ -26,5 +26,18 @@ namespace RestaurantServer.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("{restaurantId:long}/items")]
+        public async Task<IHttpActionResult> GetRestaurantItems(
+            long restaurantId,
+            int page = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default)
+        {
+            var response = await _restaurantService.GetRestaurantItemsAsync(restaurantId, page, pageSize, cancellationToken);
+
+            return Ok(response);
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace RestaurantServer.DTOs.Responses
         public bool HasPrevious => CurrentPage > 1;
 
         public int? NextPage => HasNext ? CurrentPage + 1 : (int?)null;
+
         public int? PreviousPage => HasPrevious ? CurrentPage - 1 : (int?)null;
     }
 }

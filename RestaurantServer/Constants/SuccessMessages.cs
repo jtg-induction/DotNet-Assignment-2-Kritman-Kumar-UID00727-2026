@@ -12,5 +12,6 @@ namespace RestaurantServer.Constants
         public const string LogoutSuccessful = "Logout successful.";
         public const string ownersOnboardedSuccessful = "Restaurant owners onboarded successfully.";
         public const string RestaurantsRetrieved = "Restaurants retrieved successfully.";
+        public const string MenuItemsRetrieved = "Menu items retrieved successfully.";
     }
 }
