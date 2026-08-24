@@ -34,5 +34,27 @@ namespace RestaurantServer.Repositories.Implementations
             return await _context.Items
                 .CountAsync(item => item.RestaurantId == restaurantId && !item.IsDeleted, cancellationToken);
         }
+
+        public async Task<List<Item>> GetItemsForUpdateAsync(
+            IEnumerable<long> itemIds,
+            CancellationToken cancellationToken = default)
+        {
+            var sortedIds = itemIds.OrderBy(id => id).Distinct().ToList();
+            var items = new List<Item>();
+
+            foreach (var itemId in sortedIds)
+            {
+                var item = await _context.Items
+                    .SqlQuery("SELECT * FROM Items WITH (UPDLOCK, ROWLOCK) WHERE Id = @p0", itemId)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (item != null)
+                {
+                    items.Add(item);
+                }
+            }
+
+            return items;
+        }
     }
 }

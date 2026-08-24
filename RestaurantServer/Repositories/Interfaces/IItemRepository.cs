@@ -14,5 +14,9 @@ namespace RestaurantServer.Repositories.Interfaces
         Task<int> CountAvailableItemsByRestaurantIdAsync(
             long restaurantId,
             CancellationToken cancellationToken = default);
+
+        Task<List<Item>> GetItemsForUpdateAsync(
+            IEnumerable<long> itemIds,
+            CancellationToken cancellationToken = default);
     }
 }

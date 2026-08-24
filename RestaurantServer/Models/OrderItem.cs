@@ -6,6 +6,16 @@ namespace RestaurantServer.Models
 {
     public class OrderItem
     {
+        public OrderItem() { 
+        
+        }
+
+        public OrderItem(Item item, int quantity) {
+            ItemId = item.Id;
+            Name = item.Name;
+            PriceAtPurchase = item.Price;
+            Quantity = quantity;
+        }
 
         [Key]
         public long Id { get; set; }

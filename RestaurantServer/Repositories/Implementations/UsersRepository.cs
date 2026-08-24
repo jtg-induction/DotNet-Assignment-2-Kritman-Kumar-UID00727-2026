@@ -1,6 +1,9 @@
-﻿using RestaurantServer.Models;
+using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Implementations
 {
@@ -24,5 +27,11 @@ namespace RestaurantServer.Repositories.Implementations
             return _context.Users.Any(user => user.MobileNumber == mobileNumber && user.Id != userId);
         }
 
+        public async Task<User> GetUserForUpdateAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Users
+                .SqlQuery("SELECT * FROM Users WITH (UPDLOCK, ROWLOCK) WHERE Id = @p0", userId)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

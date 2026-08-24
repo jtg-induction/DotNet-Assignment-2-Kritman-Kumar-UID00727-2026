@@ -1,3 +1,5 @@
+using RestaurantServer.Models;
+
 namespace RestaurantServer.Constants
 {
     public static class ValidationMessages
@@ -16,6 +18,8 @@ namespace RestaurantServer.Constants
         public const string AddressLine2Required = "Address line 2 is required";
         public const string RestaurantNameRequired = "Mobile number is required";
         public const string DescriptionRequired = "Description is required";
+        public const string QuantityRequired = "Quantity id required.";
+        public const string ItemIdRequired = "ItemId is required.";
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
         public const string EmailMaxLength = "Email cannot exceed the maximum allowed length.";
@@ -23,7 +27,6 @@ namespace RestaurantServer.Constants
         public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length.";
         public const string MobileNumberMaxLength = "Mobile number cannot exceed the maximum allowed length.";
         public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include 1 email.";
-
 
         public const string InvalidEmail = "Please enter a valid email address.";
         public const string EmailAlreadyExists = "An account with this email already exists.";
@@ -44,5 +47,14 @@ namespace RestaurantServer.Constants
         public const string RestaurantMobileNumberAlreadyExists = "A restaurant with this mobile number already exists.";
         public const string InvalidPageNumber = "Page number must be greater than or equal to 1.";
         public const string InvalidPageSize = "Page size must be greater than or equal to 1.";
+        public const string OrderItemsRequired = "Order must contain at least one item.";
+        public const string InvalidItemId = "Item ID is invalid.";
+        public const string InvalidQuantity = "Quantity must be at least 1.";
+        public const string InsufficientStock = "Insufficient stock for item.";
+        public const string InsufficientBalance = "Insufficient balance to place order.";
+        public const string ItemNotFound = "Item not found.";
+        public const string ItemNotAvailable = "Item is not available.";
+        public const string ItemDoesNotBelongToRestaurant = "Item does not belong to the specified restaurant.";
+        public const string InvalidRole = "User role is not allowed to place an order.";
     }
 }
