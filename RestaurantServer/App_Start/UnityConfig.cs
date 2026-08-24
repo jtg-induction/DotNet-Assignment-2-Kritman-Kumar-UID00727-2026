@@ -1,4 +1,4 @@
-﻿using RestaurantServer.Helpers;
+using RestaurantServer.Helpers;
 using RestaurantServer.Helpers.Implementations;
 using RestaurantServer.Helpers.Interfaces;
 using RestaurantServer.Repositories.Implementations;
@@ -20,7 +20,7 @@ namespace RestaurantServer.App_Start
 
         public static void RegisterComponents()
         {
-            Container = new UnityContainer(); 
+            Container = new UnityContainer();
 
             Container.RegisterType<ApplicationDbContext>(new HierarchicalLifetimeManager());
             Container.RegisterType<IUnitOfWork, UnitOfWork>(new HierarchicalLifetimeManager());
@@ -31,10 +31,10 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IRestaurantRepository, RestaurantRepository>(new HierarchicalLifetimeManager());
 
             Container.RegisterType<IAuthService, AuthService>();
-            Container.RegisterType<IUserUpdateService, UserUpdateService>(); 
+            Container.RegisterType<IUserUpdateService, UserUpdateService>();
             Container.RegisterType<IPasswordHasher, PasswordHasher>();
             Container.RegisterType<IJwtTokenService, JwtTokenService>();
-            Container.RegisterType<IRefreshTokenHelper, RefreshTokenHelper>(); 
+            Container.RegisterType<IRefreshTokenHelper, RefreshTokenHelper>();
             Container.RegisterType<IAuthenticationValidator, AuthenticationValidator>();
             Container.RegisterType<IRefreshTokenValidator, RefreshTokenValidator>();
             Container.RegisterType<IUserValidator, UserValidator>();
@@ -43,6 +43,7 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IAdminService, AdminService>();
             Container.RegisterType<IRestaurantValidator, RestaurantValidator>();
             Container.RegisterType<IUserSessionService, UserSessionService>();
+            Container.RegisterType<IRestaurantService, RestaurantService>();
         }
     }
 }

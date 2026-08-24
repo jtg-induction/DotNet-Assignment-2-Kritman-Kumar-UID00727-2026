@@ -1,4 +1,4 @@
-﻿using RestaurantServer.Models;
+using RestaurantServer.Models;
 
 namespace RestaurantServer.Constants
 {
@@ -11,5 +11,6 @@ namespace RestaurantServer.Constants
         public const string AccountDeactivatedSuccessful = "Account Deactivated Successfully.";
         public const string LogoutSuccessful = "Logout successful.";
         public const string ownersOnboardedSuccessful = "Restaurant owners onboarded successfully.";
+        public const string RestaurantsRetrieved = "Restaurants retrieved successfully.";
     }
 }

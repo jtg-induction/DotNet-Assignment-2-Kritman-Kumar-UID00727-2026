@@ -1,4 +1,4 @@
-﻿namespace RestaurantServer.DTOs.Responses
+namespace RestaurantServer.DTOs.Responses
 {
     public class PaginationResponse
     {

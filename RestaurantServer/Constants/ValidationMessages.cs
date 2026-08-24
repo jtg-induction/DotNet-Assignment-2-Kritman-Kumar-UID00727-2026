@@ -1,4 +1,4 @@
-﻿namespace RestaurantServer.Constants
+namespace RestaurantServer.Constants
 {
     public static class ValidationMessages
     {
@@ -42,5 +42,7 @@
         public const string InvalidRestaurantOwner = "Admin users cannot be assigned as restaurant owners.";
         public const string DuplicateOwnerEmail = "Duplicate owner email found in the request.";
         public const string RestaurantMobileNumberAlreadyExists = "A restaurant with this mobile number already exists.";
+        public const string InvalidPageNumber = "Page number must be greater than or equal to 1.";
+        public const string InvalidPageSize = "Page size must be greater than or equal to 1.";
     }
 }

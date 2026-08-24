@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -210,6 +210,8 @@
     <Compile Include="DTOs\Responses\PaginationResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResult.cs" />
+    <Compile Include="DTOs\Responses\RestaurantDto.cs" />
+    <Compile Include="DTOs\Responses\RestaurantListResponse.cs" />
     <Compile Include="DTOs\Responses\OnboardRestaurantResponses.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
@@ -228,11 +230,13 @@
     </Compile>
     <Compile Include="Repositories\implementations\RestaurantRepository.cs" />
     <Compile Include="Services\Implementations\AdminService.cs" />
+    <Compile Include="Services\Implementations\RestaurantService.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantOwnerRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantRepository.cs" />
     <Compile Include="Services\Implementations\UserSessionService.cs" />
     <Compile Include="Services\Interfaces\IUserSessionService.cs" />
     <Compile Include="Services\Interfaces\IAdminService.cs" />
+    <Compile Include="Services\Interfaces\IRestaurantService.cs" />
     <Compile Include="validator\Implementations\AuthenticationValidator.cs" />
     <Compile Include="Helpers\Implementations\CookieHelper.cs" />
     <Compile Include="Helpers\Implementations\RefreshTokenHelper.cs" />
