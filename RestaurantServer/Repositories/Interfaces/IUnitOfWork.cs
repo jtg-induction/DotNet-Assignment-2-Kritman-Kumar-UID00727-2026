@@ -5,6 +5,6 @@ namespace RestaurantServer.Repositories.Interfaces
 {
     public interface IUnitOfWork
     {
-        Task SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task SaveChangesAsync(long? personId = null, CancellationToken cancellationToken = default);
     }
 }

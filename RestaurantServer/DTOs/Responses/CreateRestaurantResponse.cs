@@ -1,4 +1,5 @@
 ﻿using RestaurantServer.Models;
+using System.Collections.Generic;
 
 namespace RestaurantServer.DTOs.Responses
 {
@@ -13,8 +14,9 @@ namespace RestaurantServer.DTOs.Responses
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
+        public List<OwnerDto> Owners { get; set; }
 
-        public CreateRestaurantResponse(Restaurant restaurant)
+        public CreateRestaurantResponse(Restaurant restaurant, List<OwnerDto> owners)
         {
             Id = restaurant.Id;
             RestaurantName = restaurant.RestaurantName;
@@ -25,6 +27,7 @@ namespace RestaurantServer.DTOs.Responses
             City = restaurant.City;
             PostalCode = restaurant.PostalCode;
             Country = restaurant.Country;
+            Owners = owners;
         }
     }
 }
