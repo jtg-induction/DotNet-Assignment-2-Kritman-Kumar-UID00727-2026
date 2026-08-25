@@ -7,7 +7,7 @@ namespace RestaurantServer.Validators.Interfaces
     public interface IOrderValidator
     {
         void ValidateOrderRequest(CreateOrderRequest request);
-        void ValidateUserForOrder(User user);
+        void ValidateUserRoleForOrder(User user);
         void ValidateItemsForOrder(
             long restaurantId,
             List<OrderItemRequest> consolidatedItems,

@@ -75,7 +75,7 @@ namespace RestaurantServer.Services.Implementations
                 {
                     var user = await _usersRepository.GetUserForUpdateAsync(userId, cancellationToken);
 
-                    _orderValidator.ValidateUserForOrder(user);
+                    _orderValidator.ValidateUserRoleForOrder(user);
 
                     var restaurant = await _restaurantRepository.GetByIdAsync(restaurantId, cancellationToken);
 

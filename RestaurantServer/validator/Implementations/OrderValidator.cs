@@ -39,7 +39,7 @@ namespace RestaurantServer.Validators.Implementations
             }
         }
 
-        public void ValidateUserForOrder(User user)
+        public void ValidateUserRoleForOrder(User user)
         {
             _userValidator.IsUserNullOrDeactivated(user);
 
