@@ -1,4 +1,4 @@
-﻿using RestaurantServer.Models;
+using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -31,6 +31,13 @@ namespace RestaurantServer.Repositories.Implementations
                 .Where(restaurant =>
                     restaurant.RestaurantId == restaurantId && ids.Contains(restaurant.UserId))
                 .ToListAsync(cancellationToken);
+        }
+
+        public async Task<bool> IsOwnerAsync(
+            long restaurantId, long userId, CancellationToken cancellationToken = default)
+        {
+            return await _context.RestaurantOwners
+                .AnyAsync(ro => ro.RestaurantId == restaurantId && ro.UserId == userId, cancellationToken);
         }
     }
 }

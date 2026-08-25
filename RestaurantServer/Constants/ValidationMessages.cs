@@ -56,5 +56,7 @@ namespace RestaurantServer.Constants
         public const string ItemNotAvailable = "Item is not available.";
         public const string ItemDoesNotBelongToRestaurant = "Item does not belong to the specified restaurant.";
         public const string InvalidRole = "User role is not allowed to place an order.";
+        public const string OrderNotFound = "Order not found.";
+        public const string InvalidOrderId = "Order ID is invalid.";
     }
 }

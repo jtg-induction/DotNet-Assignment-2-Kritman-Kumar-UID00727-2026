@@ -13,5 +13,8 @@ namespace RestaurantServer.Validators.Interfaces
             List<OrderItemRequest> consolidatedItems,
             Dictionary<long, Item> lockedItemsById);
         void ValidateUserBalance(User user, decimal totalPrice);
+        void ValidateOrderId(long orderId);
+        void ValidateOrderExists(Order order);
+        void ValidateOrderAccess(Order order, User user, bool isRestaurantOwner = false);
     }
 }

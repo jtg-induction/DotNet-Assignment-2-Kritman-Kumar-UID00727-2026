@@ -1,5 +1,7 @@
+using RestaurantServer.Constants;
 using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
+using RestaurantServer.Enums;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Interfaces;
@@ -18,8 +20,10 @@ namespace RestaurantServer.Services.Implementations
         private readonly IUsersRepository _usersRepository;
         private readonly IRestaurantRepository _restaurantRepository;
         private readonly IItemRepository _itemRepository;
+        private readonly IRestaurantOwnerRepository _restaurantOwnerRepository;
         private readonly IOrderValidator _orderValidator;
         private readonly IRestaurantValidator _restaurantValidator;
+        private readonly IUserValidator _userValidator;
 
         public OrderService(
             IUnitOfWork unitOfWork,
@@ -27,16 +31,20 @@ namespace RestaurantServer.Services.Implementations
             IUsersRepository usersRepository,
             IRestaurantRepository restaurantRepository,
             IItemRepository itemRepository,
+            IRestaurantOwnerRepository restaurantOwnerRepository,
             IOrderValidator orderValidator,
-            IRestaurantValidator restaurantValidator)
+            IRestaurantValidator restaurantValidator,
+            IUserValidator userValidator)
         {
             _unitOfWork = unitOfWork;
             _orderRepository = orderRepository;
             _usersRepository = usersRepository;
             _restaurantRepository = restaurantRepository;
             _itemRepository = itemRepository;
+            _restaurantOwnerRepository = restaurantOwnerRepository;
             _orderValidator = orderValidator;
             _restaurantValidator = restaurantValidator;
+            _userValidator = userValidator;
         }
 
         public async Task<CreateOrderResponse> PlaceOrderAsync(
@@ -111,6 +119,33 @@ namespace RestaurantServer.Services.Implementations
                     throw;
                 }
             }
+        }
+
+        public async Task<OrderDetailsResponse> GetOrderDetailsAsync(
+            long orderId,
+            long userId,
+            CancellationToken cancellationToken = default)
+        {
+            _orderValidator.ValidateOrderId(orderId);
+
+            var user = await _usersRepository.GetByIdAsync(userId, cancellationToken);
+
+            _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
+
+            var order = await _orderRepository.GetOrderWithItemsByIdAsync(orderId, cancellationToken);
+
+            _orderValidator.ValidateOrderExists(order);
+
+            bool isRestaurantOwner = false;
+
+            if (user.Role == (int)UserRole.Owner && order.UserId != user.Id)
+            {
+                isRestaurantOwner = await _restaurantOwnerRepository.IsOwnerAsync(order.RestaurantId, user.Id, cancellationToken);
+            }
+
+            _orderValidator.ValidateOrderAccess(order, user, isRestaurantOwner);
+
+            return new OrderDetailsResponse(order);
         }
     }
 }

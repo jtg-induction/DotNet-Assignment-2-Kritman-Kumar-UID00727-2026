@@ -194,6 +194,7 @@
     <Compile Include="Constants\ValidationConstants.cs" />
     <Compile Include="Constants\ValidationMessages.cs" />
     <Compile Include="Controllers\AdminRestaurantController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\RestaurantController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
@@ -210,6 +211,8 @@
     <Compile Include="DTOs\Responses\ItemDto.cs" />
     <Compile Include="DTOs\Responses\LoginResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResult.cs" />
+    <Compile Include="DTOs\Responses\OrderDetailItemDto.cs" />
+    <Compile Include="DTOs\Responses\OrderDetailsResponse.cs" />
     <Compile Include="DTOs\Responses\OrderItemDto.cs" />
     <Compile Include="DTOs\Responses\OwnerDto.cs" />
     <Compile Include="DTOs\Responses\PaginationResponse.cs" />

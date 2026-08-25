@@ -47,7 +47,7 @@ namespace RestaurantServer.Validators.Implementations
                 user.Role != (int)UserRole.Owner &&
                 user.Role != (int)UserRole.Admin)
             {
-                    throw new ValidationException(ValidationMessages.InvalidRole);
+                throw new ValidationException(ValidationMessages.InvalidRole);
             }
         }
 
@@ -86,6 +86,52 @@ namespace RestaurantServer.Validators.Implementations
             {
                 throw new ValidationException(ValidationMessages.InsufficientBalance);
             }
+        }
+
+        public void ValidateOrderId(long orderId)
+        {
+            if (orderId <= 0)
+            {
+                throw new ValidationException(ValidationMessages.InvalidOrderId);
+            }
+        }
+
+        public void ValidateOrderExists(Order order)
+        {
+            if (order == null)
+            {
+                throw new ValidationException(ValidationMessages.OrderNotFound);
+            }
+        }
+
+        public void ValidateOrderAccess(Order order, User user, bool isRestaurantOwner = false)
+        {
+            if (user.Role == (int)UserRole.Admin)
+            {
+                return;
+            }
+
+            if (user.Role == (int)UserRole.Owner)
+            {
+                if (order.UserId == user.Id || isRestaurantOwner)
+                {
+                    return;
+                }
+
+                throw new ValidationException(ValidationMessages.NotAuthorized);
+            }
+
+            if (user.Role == (int)UserRole.Customer)
+            {
+                if (order.UserId == user.Id)
+                {
+                    return;
+                }
+
+                throw new ValidationException(ValidationMessages.NotAuthorized);
+            }
+
+            throw new ValidationException(ValidationMessages.NotAuthorized);
         }
     }
 }

@@ -1,5 +1,8 @@
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
+using System.Data.Entity;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Implementations
 {
@@ -8,6 +11,13 @@ namespace RestaurantServer.Repositories.Implementations
         public OrderRepository(ApplicationDbContext context)
             : base(context)
         {
+        }
+
+        public async Task<Order> GetOrderWithItemsByIdAsync(long orderId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Orders
+                .Include(order => order.OrderItems)
+                .FirstOrDefaultAsync(order => order.Id == orderId, cancellationToken);
         }
     }
 }
