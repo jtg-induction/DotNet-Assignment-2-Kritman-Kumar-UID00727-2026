@@ -133,5 +133,21 @@ namespace RestaurantServer.Validators.Implementations
 
             throw new ValidationException(ValidationMessages.NotAuthorized);
         }
+
+        public void ValidateOrderOwnership(Order order, long userId)
+        {
+            if (order.UserId != userId)
+            {
+                throw new ValidationException(ValidationMessages.NotAuthorized);
+            }
+        }
+
+        public void ValidateOrderStatusForCancellation(Order order)
+        {
+            if (order.Status != (int)OrderStatus.Placed && order.Status != (int)OrderStatus.Accepted)
+            {
+                throw new ValidationException(ValidationMessages.OrderCannotBeCancelled);
+            }
+        }
     }
 }

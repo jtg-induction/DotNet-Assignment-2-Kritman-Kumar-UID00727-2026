@@ -17,5 +17,10 @@ namespace RestaurantServer.Services.Interfaces
             long orderId,
             long userId,
             CancellationToken cancellationToken = default);
+
+        Task<CancelOrderResponse> CancelOrderAsync(
+            long orderId,
+            long userId,
+            CancellationToken cancellationToken = default);
     }
 }

@@ -58,5 +58,6 @@ namespace RestaurantServer.Constants
         public const string InvalidRole = "User role is not allowed to place an order.";
         public const string OrderNotFound = "Order not found.";
         public const string InvalidOrderId = "Order ID is invalid.";
+        public const string OrderCannotBeCancelled = "Order can only be cancelled when it is in Placed or Accepted status.";
     }
 }

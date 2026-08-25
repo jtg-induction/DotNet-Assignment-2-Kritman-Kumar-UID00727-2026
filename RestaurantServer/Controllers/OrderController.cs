@@ -37,5 +37,22 @@ namespace RestaurantServer.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost]
+        [Route("{orderId:long}/cancel")]
+        [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
+        public async Task<IHttpActionResult> CancelOrder(
+            long orderId,
+            CancellationToken cancellationToken = default)
+        {
+            var userId = _currentUserService.GetUserId();
+
+            var response = await _orderService.CancelOrderAsync(
+                orderId,
+                userId.Value,
+                cancellationToken);
+
+            return Ok(response);
+        }
     }
 }

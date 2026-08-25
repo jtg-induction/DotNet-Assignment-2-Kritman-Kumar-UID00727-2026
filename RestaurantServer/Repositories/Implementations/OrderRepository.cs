@@ -19,5 +19,12 @@ namespace RestaurantServer.Repositories.Implementations
                 .Include(order => order.OrderItems)
                 .FirstOrDefaultAsync(order => order.Id == orderId, cancellationToken);
         }
+
+        public async Task<Order> GetOrderForUpdateAsync(long orderId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Orders
+                .SqlQuery("SELECT * FROM Orders WITH (UPDLOCK, ROWLOCK) WHERE Id = @p0", orderId)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

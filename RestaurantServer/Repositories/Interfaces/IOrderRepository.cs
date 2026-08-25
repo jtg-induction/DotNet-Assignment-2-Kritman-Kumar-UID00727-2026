@@ -7,5 +7,6 @@ namespace RestaurantServer.Repositories.Interfaces
     public interface IOrderRepository : IRepository<Order>
     {
         Task<Order> GetOrderWithItemsByIdAsync(long orderId, CancellationToken cancellationToken = default);
+        Task<Order> GetOrderForUpdateAsync(long orderId, CancellationToken cancellationToken = default);
     }
 }

@@ -100,7 +100,7 @@ namespace RestaurantServer.Services.Implementations
                         var item = lockedItemsById[ci.ItemId];
                         item.Stock -= ci.Quantity;
 
-                        orderItems.Add(new OrderItem(item,  ci.Quantity));
+                        orderItems.Add(new OrderItem(item, ci.Quantity));
                     }
 
                     var order = new Order(restaurantId, userId, totalPrice, request, orderItems);
@@ -146,6 +146,45 @@ namespace RestaurantServer.Services.Implementations
             _orderValidator.ValidateOrderAccess(order, user, isRestaurantOwner);
 
             return new OrderDetailsResponse(order);
+        }
+
+        public async Task<CancelOrderResponse> CancelOrderAsync(
+            long orderId,
+            long userId,
+            CancellationToken cancellationToken = default)
+        {
+            _orderValidator.ValidateOrderId(orderId);
+
+            using (var transaction = _unitOfWork.BeginTransaction())
+            {
+                try
+                {
+                    var user = await _usersRepository.GetByIdAsync(userId, cancellationToken);
+
+                    _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
+
+                    var order = await _orderRepository.GetOrderForUpdateAsync(orderId, cancellationToken);
+
+                    _orderValidator.ValidateOrderExists(order);
+
+                    _orderValidator.ValidateOrderOwnership(order, userId);
+
+                    _orderValidator.ValidateOrderStatusForCancellation(order);
+
+                    order.Status = (int)OrderStatus.Cancelled;
+
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                    transaction.Commit();
+
+                    return new CancelOrderResponse(order);
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
     }
 }
