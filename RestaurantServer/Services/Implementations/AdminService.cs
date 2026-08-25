@@ -194,7 +194,7 @@ namespace RestaurantServer.Services.Implementations
             var userIds = users.Select(user => user.Id).ToList();
 
             var existingOwners = await _restaurantOwnerRepository
-                .GetOwnersByRestaurantAndUserIdsAsync(restaurantId, userIds, cancellationToken);
+                .GetOwnersByRestaurantAndUserIdsAsync(restaurantId, userIds, true, cancellationToken);
 
             var existingOwnerUserIds = existingOwners
                 .Select(owner => owner.UserId).ToHashSet();

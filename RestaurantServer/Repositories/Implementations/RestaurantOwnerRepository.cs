@@ -23,12 +23,18 @@ namespace RestaurantServer.Repositories.Implementations
         /// <param name="userIds">onboarding restaurant owners userId</param>
         /// <returns>returns List of Restaurant Owner</returns>
         public async Task<List<RestaurantOwner>> GetOwnersByRestaurantAndUserIdsAsync(
-            long restaurantId, List<long> userIds, CancellationToken cancellationToken = default)
+            long restaurantId, List<long> userIds, bool disableTracking = false, CancellationToken cancellationToken = default)
         {
-            return await _context.Set<RestaurantOwner>()
-                .Where(restaurant =>
-                    restaurant.RestaurantId == restaurantId && ids.Contains(restaurant.UserId))
-                .ToListAsync(cancellationToken);
+            var query = _context.Set<RestaurantOwner>()
+                .Where(owner => owner.RestaurantId == restaurantId &&
+                userIds.Contains(owner.UserId));
+
+            if (disableTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.ToListAsync(cancellationToken);
         }
-    }   
+    }
 }
