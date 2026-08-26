@@ -2,6 +2,7 @@
 using RestaurantServer.Enums;
 using RestaurantServer.Filters;
 using RestaurantServer.Services.Implementations;
+using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Net;
