@@ -10,7 +10,7 @@ namespace RestaurantServer.DTOs.Requests
         public long ItemId { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.QuantityRequired)]
-        [Range(1, int.MaxValue)]
+        [Range(1, ValidationConstants.MaxQuantity)]
         public int Quantity { get; set; }
     }
 }

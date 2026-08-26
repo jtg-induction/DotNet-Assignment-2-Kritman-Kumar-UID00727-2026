@@ -66,11 +66,7 @@ namespace RestaurantServer.Controllers
         {
             _requestValidator.IsRequestNull(request);
 
-            var userId = _currentUserService.GetUserId();
-
-            var response = await _orderService.PlaceOrderAsync(
-                userId.Value, restaurantId, request,
-                cancellationToken);
+            var response = await _orderService.PlaceOrderAsync(restaurantId, request, cancellationToken);
 
             return Content(HttpStatusCode.Created, response);
         }

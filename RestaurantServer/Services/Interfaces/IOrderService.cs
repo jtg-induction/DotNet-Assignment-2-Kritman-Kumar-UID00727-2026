@@ -8,19 +8,13 @@ namespace RestaurantServer.Services.Interfaces
     public interface IOrderService
     {
         Task<CreateOrderResponse> PlaceOrderAsync(
-            long userId,
-            long restaurantId,
-            CreateOrderRequest request,
+            long restaurantId, CreateOrderRequest request,
             CancellationToken cancellationToken = default);
 
         Task<OrderDetailsResponse> GetOrderDetailsAsync(
-            long orderId,
-            long userId,
-            CancellationToken cancellationToken = default);
+            long orderId, CancellationToken cancellationToken = default);
 
         Task<CancelOrderResponse> CancelOrderAsync(
-            long orderId,
-            long userId,
-            CancellationToken cancellationToken = default);
+            long orderId, CancellationToken cancellationToken = default);
     }
 }

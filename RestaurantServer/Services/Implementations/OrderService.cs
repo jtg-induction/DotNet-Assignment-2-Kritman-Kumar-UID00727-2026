@@ -24,6 +24,7 @@ namespace RestaurantServer.Services.Implementations
         private readonly IOrderValidator _orderValidator;
         private readonly IRestaurantValidator _restaurantValidator;
         private readonly IUserValidator _userValidator;
+        private readonly IUserSessionService _userSessionService;
 
         public OrderService(
             IUnitOfWork unitOfWork,
@@ -34,7 +35,8 @@ namespace RestaurantServer.Services.Implementations
             IRestaurantOwnerRepository restaurantOwnerRepository,
             IOrderValidator orderValidator,
             IRestaurantValidator restaurantValidator,
-            IUserValidator userValidator)
+            IUserValidator userValidator,
+            IUserSessionService userSessionService)
         {
             _unitOfWork = unitOfWork;
             _orderRepository = orderRepository;
@@ -45,17 +47,19 @@ namespace RestaurantServer.Services.Implementations
             _orderValidator = orderValidator;
             _restaurantValidator = restaurantValidator;
             _userValidator = userValidator;
+            _userSessionService = userSessionService;
         }
 
         public async Task<CreateOrderResponse> PlaceOrderAsync(
-            long userId,
             long restaurantId,
             CreateOrderRequest request,
             CancellationToken cancellationToken = default)
         {
             _orderValidator.ValidateOrderRequest(request);
 
-            var consolidatedItems = request.Items
+            var userId = _userSessionService.GetUserId().Value;
+
+            var groupedItems = request.Items
                 .GroupBy(item => item.ItemId)
                 .Select(g => new OrderItemRequest
                 {
@@ -64,7 +68,7 @@ namespace RestaurantServer.Services.Implementations
                 })
                 .ToList();
 
-            var sortedItemIds = consolidatedItems
+            var sortedItemIds = groupedItems
                 .Select(item => item.ItemId)
                 .OrderBy(id => id)
                 .ToList();
@@ -85,22 +89,22 @@ namespace RestaurantServer.Services.Implementations
 
                     var lockedItemsById = lockedItems.ToDictionary(item => item.Id);
 
-                    _orderValidator.ValidateItemsForOrder(restaurantId, consolidatedItems, lockedItemsById);
+                    _orderValidator.ValidateItemsForOrder(restaurantId, groupedItems, lockedItemsById);
 
-                    decimal totalPrice = consolidatedItems.Sum(ci => lockedItemsById[ci.ItemId].Price * ci.Quantity);
+                    decimal totalPrice = groupedItems.Sum(item => lockedItemsById[item.ItemId].Price * item.Quantity);
 
-                    _orderValidator.ValidateUserBalance(user, totalPrice);
+                    _userValidator.ValidateUserBalance(user, totalPrice);
 
                     user.Balance -= totalPrice;
 
                     var orderItems = new List<OrderItem>();
 
-                    foreach (var ci in consolidatedItems)
+                    foreach (var groupedItem in groupedItems)
                     {
-                        var item = lockedItemsById[ci.ItemId];
-                        item.Stock -= ci.Quantity;
+                        var item = lockedItemsById[groupedItem.ItemId];
+                        item.Stock -= groupedItem.Quantity;
 
-                        orderItems.Add(new OrderItem(item, ci.Quantity));
+                        orderItems.Add(new OrderItem(item, groupedItem.Quantity));
                     }
 
                     var order = new Order(restaurantId, userId, totalPrice, request, orderItems);
@@ -122,11 +126,12 @@ namespace RestaurantServer.Services.Implementations
         }
 
         public async Task<OrderDetailsResponse> GetOrderDetailsAsync(
-            long orderId,
-            long userId,
+            long orderId, 
             CancellationToken cancellationToken = default)
         {
             _orderValidator.ValidateOrderId(orderId);
+
+            var userId = _userSessionService.GetUserId().Value;
 
             var user = await _usersRepository.GetByIdAsync(userId, cancellationToken);
 
@@ -149,11 +154,12 @@ namespace RestaurantServer.Services.Implementations
         }
 
         public async Task<CancelOrderResponse> CancelOrderAsync(
-            long orderId,
-            long userId,
+            long orderId, 
             CancellationToken cancellationToken = default)
         {
             _orderValidator.ValidateOrderId(orderId);
+
+            var userId = _userSessionService.GetUserId().Value;
 
             using (var transaction = _unitOfWork.BeginTransaction())
             {

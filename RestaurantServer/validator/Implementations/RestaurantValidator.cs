@@ -97,7 +97,7 @@ namespace RestaurantServer.Validators.Implementations
         /// <exception cref="ValidationException"> thows exception when user role is addmin </exception>
         public void ValidateAdminRole(int role)
         {
-            if (role == (int)UserRole.Admin)
+            if ((int)UserRole.Admin == role)
             {
                 throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
             }

@@ -10,15 +10,12 @@ namespace RestaurantServer.Controllers
     [RoutePrefix("api/orders")]
     public class OrderController : ApiController
     {
-        private readonly IOrderService _orderService;
-        private readonly IUserSessionService _currentUserService;
+        private readonly IOrderService _orderService; 
 
         public OrderController(
-            IOrderService orderService,
-            IUserSessionService currentUserService)
+            IOrderService orderService)
         {
-            _orderService = orderService;
-            _currentUserService = currentUserService;
+            _orderService = orderService; 
         }
 
         [HttpGet]
@@ -28,12 +25,8 @@ namespace RestaurantServer.Controllers
             long orderId,
             CancellationToken cancellationToken = default)
         {
-            var userId = _currentUserService.GetUserId();
-
             var response = await _orderService.GetOrderDetailsAsync(
-                orderId,
-                userId.Value,
-                cancellationToken);
+                orderId, cancellationToken);
 
             return Ok(response);
         }
@@ -45,12 +38,9 @@ namespace RestaurantServer.Controllers
             long orderId,
             CancellationToken cancellationToken = default)
         {
-            var userId = _currentUserService.GetUserId();
 
             var response = await _orderService.CancelOrderAsync(
-                orderId,
-                userId.Value,
-                cancellationToken);
+                orderId, cancellationToken);
 
             return Ok(response);
         }

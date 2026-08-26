@@ -80,14 +80,6 @@ namespace RestaurantServer.Validators.Implementations
             }
         }
 
-        public void ValidateUserBalance(User user, decimal totalPrice)
-        {
-            if (user.Balance < totalPrice)
-            {
-                throw new ValidationException(ValidationMessages.InsufficientBalance);
-            }
-        }
-
         public void ValidateOrderId(long orderId)
         {
             if (orderId <= 0)
