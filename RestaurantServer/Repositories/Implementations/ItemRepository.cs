@@ -36,7 +36,7 @@ namespace RestaurantServer.Repositories.Implementations
         }
 
         public async Task<List<Item>> GetItemsForUpdateAsync(
-            IEnumerable<long> itemIds,
+            List<long> itemIds,
             CancellationToken cancellationToken = default)
         {
             var sortedIds = itemIds.OrderBy(id => id).Distinct().ToList();

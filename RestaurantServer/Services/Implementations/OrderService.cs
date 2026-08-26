@@ -70,8 +70,7 @@ namespace RestaurantServer.Services.Implementations
 
             var sortedItemIds = groupedItems
                 .Select(item => item.ItemId)
-                .OrderBy(id => id)
-                .ToList();
+                .OrderBy(id => id).ToList();
 
             using (var transaction = _unitOfWork.BeginTransaction())
             {
@@ -178,6 +177,7 @@ namespace RestaurantServer.Services.Implementations
                     _orderValidator.ValidateOrderStatusForCancellation(order);
 
                     order.Status = (int)OrderStatus.Cancelled;
+                    user.Balance += order.TotalPrice;
 
                     await _unitOfWork.SaveChangesAsync(null, cancellationToken);
 

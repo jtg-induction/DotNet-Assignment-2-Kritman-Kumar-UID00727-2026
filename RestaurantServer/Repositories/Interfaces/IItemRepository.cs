@@ -16,7 +16,7 @@ namespace RestaurantServer.Repositories.Interfaces
             CancellationToken cancellationToken = default);
 
         Task<List<Item>> GetItemsForUpdateAsync(
-            IEnumerable<long> itemIds,
+            List<long> itemIds,
             CancellationToken cancellationToken = default);
     }
 }

@@ -40,8 +40,7 @@ namespace RestaurantServer.Services.Implementations
             var restaurants = await _restaurantRepository.GetAvailableRestaurantsAsync(page, pageSize, cancellationToken);
 
             var restaurantDtos = restaurants
-                .Select(restaurant => new RestaurantDto(restaurant))
-                .ToList();
+                .Select(restaurant => new RestaurantDto(restaurant)).ToList();
 
             var pagination = new PaginationResponse(page, pageSize, totalRecords, totalPages);
 

@@ -20,7 +20,6 @@ namespace RestaurantServer.Controllers
         public RestaurantController(
             IRestaurantService restaurantService,
             IOrderService orderService,
-            IUserSessionService currentUserService,
             IRequestValidator requestValidator)
         {
             _restaurantService = restaurantService;
