@@ -21,22 +21,18 @@ namespace RestaurantServer.Controllers
     {
         private readonly IAdminService _restaurantService;
         private readonly IRequestValidator _requestValidator;
-        private readonly IUserSessionService _currentUserService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdminRestaurantController"/> class.
         /// </summary>
         /// <param name="restaurantService">The service handling restaurant administration business logic.</param>
         /// <param name="requestValidator">The validator checking incoming request payloads.</param>
-        /// <param name="currentUserService">The service retrieving current user session data.</param>
         public AdminRestaurantController(
-            IAdminService restaurantService,
-            IRequestValidator requestValidator,
-            IUserSessionService currentUserService)
+            AdminService restaurantService,
+            IRequestValidator requestValidator)
         {
             _restaurantService = restaurantService;
             _requestValidator = requestValidator;
-            _currentUserService = currentUserService;
         }
 
         /// <summary>
@@ -51,9 +47,7 @@ namespace RestaurantServer.Controllers
         {
             _requestValidator.IsRequestNull(request);
 
-            var createdBy = _currentUserService.GetUserId();
-
-            var response = await _restaurantService.CreateRestaurantAsync(request, createdBy.Value, cancellationToken);
+            var response = await _restaurantService.CreateRestaurantAsync(request, cancellationToken);
 
             return Content(HttpStatusCode.Created, response);
         }

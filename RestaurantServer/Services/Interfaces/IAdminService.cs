@@ -9,7 +9,6 @@ namespace RestaurantServer.Services.Interfaces
     {
         Task<CreateRestaurantResponse> CreateRestaurantAsync(
             CreateRestaurantRequest request,
-            long createdBy,
             CancellationToken cancellationToken = default);
 
         Task<OnboardRestaurantResponses> OnboardRestaurantOwnerAsync(long restaurantId, OnboardRestaurantOwnerRequest request,

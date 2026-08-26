@@ -23,8 +23,7 @@ namespace RestaurantServer.App_Start
             Container = new UnityContainer();
 
             Container.RegisterType<ApplicationDbContext>(new HierarchicalLifetimeManager());
-            Container.RegisterType<IUnitOfWork, UnitOfWork>(new HierarchicalLifetimeManager());
-            Container.RegisterType<IAuthRepository, AuthRepository>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IUnitOfWork, UnitOfWork>(new HierarchicalLifetimeManager()); 
             Container.RegisterType<IUsersRepository, UsersRepository>(new HierarchicalLifetimeManager());
             Container.RegisterType<IRefreshTokenRepository, RefreshTokenRepository>(new HierarchicalLifetimeManager());
             Container.RegisterType<IRestaurantOwnerRepository, RestaurantOwnerRepository>(new HierarchicalLifetimeManager());

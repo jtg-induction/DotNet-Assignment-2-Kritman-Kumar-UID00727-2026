@@ -16,7 +16,7 @@ namespace RestaurantServer.Models
             RestaurantOwners = new HashSet<RestaurantOwner>();
         }
 
-        public Restaurant(CreateRestaurantRequest request, long createdBy)
+        public Restaurant(CreateRestaurantRequest request)
         {
             var now = DateTime.UtcNow;
 
@@ -29,10 +29,6 @@ namespace RestaurantServer.Models
             PostalCode = request.PostalCode.Trim();
             Country = request.Country.Trim();
 
-            CreatedAt = now;
-            CreatedBy = createdBy; 
-            UpdatedAt = now;
-            UpdatedBy = createdBy;
             IsDeleted = false;
         }
 

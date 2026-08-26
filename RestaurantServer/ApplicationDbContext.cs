@@ -95,15 +95,16 @@ namespace RestaurantServer
 
             base.OnModelCreating(modelBuilder);
         }
-        public override async Task<int> SaveChangesAsync(
-    CancellationToken cancellationToken)
+
+        public async Task<int> SaveChangesAsync(long? personId,
+            CancellationToken cancellationToken = default)
         {
-            SetTimestamps();
+            SetUpdatedFields(personId);
 
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        private void SetTimestamps()
+        private void SetUpdatedFields(long? personId)
         {
             var now = DateTime.UtcNow;
 
@@ -111,35 +112,35 @@ namespace RestaurantServer
             {
                 if (entry.State == EntityState.Added)
                 {
-                    var createdAtProperty = entry.Entity
-                        .GetType()
-                        .GetProperty("CreatedAt");
+                    SetProperty(entry.Entity, "CreatedAt", now);
+                    SetProperty(entry.Entity, "UpdatedAt", now);
 
-                    var updatedAtProperty = entry.Entity
-                        .GetType()
-                        .GetProperty("UpdatedAt");
-
-                    if (createdAtProperty != null)
+                    if (personId.HasValue)
                     {
-                        createdAtProperty.SetValue(entry.Entity, now);
-                    }
+                        SetProperty(entry.Entity, "CreatedBy", personId.Value);
 
-                    if (updatedAtProperty != null)
-                    {
-                        updatedAtProperty.SetValue(entry.Entity, now);
+                        SetProperty(entry.Entity, "UpdatedBy", personId.Value);
                     }
                 }
                 else if (entry.State == EntityState.Modified)
                 {
-                    var updatedAtProperty = entry.Entity
-                        .GetType()
-                        .GetProperty("UpdatedAt");
+                    SetProperty(entry.Entity, "UpdatedAt", now);
 
-                    if (updatedAtProperty != null)
+                    if (personId.HasValue)
                     {
-                        updatedAtProperty.SetValue(entry.Entity, now);
+                        SetProperty(entry.Entity, "UpdatedBy", personId.Value);
                     }
                 }
+            }
+        }
+
+        private void SetProperty(object entity, string propertyName, object value)
+        {
+            var property = entity.GetType().GetProperty(propertyName);
+
+            if (property != null)
+            {
+                property.SetValue(entity, value);
             }
         }
     }

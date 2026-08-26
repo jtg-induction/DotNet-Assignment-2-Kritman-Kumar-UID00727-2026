@@ -2,7 +2,6 @@
 using RestaurantServer.Enums;
 using RestaurantServer.Filters;
 using RestaurantServer.Services.Interfaces;
-using RestaurantServer.Validators.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -16,9 +15,7 @@ namespace RestaurantServer.Controllers
     public class UserController : ApiController
     {
         private readonly IUserUpdateService _userUpdateService;
-        private readonly IUserValidator _userValidator;
         private readonly IUserSessionService _currentUserService;
-        private readonly IRequestValidator _requestValidator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserController"/> class.
@@ -27,14 +24,10 @@ namespace RestaurantServer.Controllers
         /// The service used to update and deactivate user accounts.
         /// </param>
         public UserController(IUserUpdateService userUpdateService, 
-            IUserValidator userValidator, 
-            IUserSessionService currentUserService,
-            IRequestValidator requestValidator)
+            IUserSessionService currentUserService)
         {
             _userUpdateService = userUpdateService;
-            _userValidator = userValidator;
             _currentUserService = currentUserService;
-            _requestValidator = requestValidator;
        }
 
         /// <summary>

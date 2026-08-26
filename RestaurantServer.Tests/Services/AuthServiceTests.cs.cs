@@ -419,7 +419,7 @@ namespace RestaurantServer.Tests
                 Times.Never);
         }
 
-        [TestMethod] 
+        [TestMethod]
         public async Task RefreshTokenAsync_UserInactive_ShouldThrowValidationException()
         {
             var refreshToken = "valid-refresh-token";

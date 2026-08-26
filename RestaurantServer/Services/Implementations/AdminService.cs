@@ -22,10 +22,11 @@ namespace RestaurantServer.Services.Implementations
     {
         private readonly IRestaurantRepository _restaurantRepository;
         private readonly IRestaurantOwnerRepository _restaurantOwnerRepository;
-        private readonly IAuthRepository _authRepository;
+        private readonly IUsersRepository _usersRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRestaurantValidator _restaurantValidator;
         private readonly IUserValidator _userValidator;
+        private readonly IUserSessionService _userSessionService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdminService"/> class.
@@ -39,17 +40,19 @@ namespace RestaurantServer.Services.Implementations
         public AdminService(
             IRestaurantRepository restaurantRepository,
             IRestaurantOwnerRepository restaurantOwnerRepository,
-            IAuthRepository authRepository,
+            IUsersRepository usersRepository,
             IUnitOfWork unitOfWork,
             IRestaurantValidator restaurantValidator,
-            IUserValidator userValidator)
+            IUserValidator userValidator,
+            IUserSessionService userSessionService)
         {
             _restaurantRepository = restaurantRepository;
             _restaurantOwnerRepository = restaurantOwnerRepository;
-            _authRepository = authRepository;
+            _usersRepository = usersRepository;
             _unitOfWork = unitOfWork;
             _restaurantValidator = restaurantValidator;
             _userValidator = userValidator;
+            _userSessionService = userSessionService;
         }
 
         /// <summary>
@@ -64,30 +67,71 @@ namespace RestaurantServer.Services.Implementations
         /// </exception>
         public async Task<CreateRestaurantResponse> CreateRestaurantAsync(
             CreateRestaurantRequest request,
-            long createdBy,
             CancellationToken cancellationToken = default)
         {
-            var owner = await _authRepository.GetUserByEmailAsync(request.OwnerEmail, cancellationToken);
+            _restaurantValidator.IsOwnersEmailEmpty(request.OwnersEmails);
 
-            _userValidator.IsUserNullOrDeactivated(owner, ValidationMessages.UserNotFound);
+            var createdBy = _userSessionService.GetUserId().Value;
 
-            _restaurantValidator.ValidateAdminRole(owner.Role);
+            var normalizedEmails = new List<string>();
+            var emailSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (string email in request.OwnersEmails)
+            {
+                _restaurantValidator.ValidateEmail(email);
+
+                string normalizedEmail = email.Trim();
+
+                if (false == emailSet.Contains(email))
+                {
+                    emailSet.Add(email);
+                    normalizedEmails.Add(normalizedEmail);
+                }
+
+            }
+
+            List<User> users = await _usersRepository.GetUsersByEmailsAsync(normalizedEmails, cancellationToken);
+
+            var usersByEmail = users.ToDictionary(user => user.Email.Trim(), StringComparer.OrdinalIgnoreCase);
+
+            foreach (var email in normalizedEmails)
+            {
+                if (!usersByEmail.TryGetValue(email, out var user))
+                {
+                    throw new ValidationException(ValidationMessages.UserNotFound);
+                }
+
+                _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
+                _restaurantValidator.ValidateAdminRole(user.Role);
+            }
 
             await _restaurantValidator.ValidateMobileNumber(request.MobileNumber);
 
-            var restaurant = new Restaurant(request, createdBy);
+            var restaurant = new Restaurant(request);
 
             await _restaurantRepository.Add(restaurant);
 
-            var restaurantOwner = new RestaurantOwner(restaurant, owner);
 
-            await _restaurantOwnerRepository.Add(restaurantOwner);
+            var restaurantOwners = new List<RestaurantOwner>();
 
-            owner.Role = (int)UserRole.Owner;
+            foreach (var user in users)
+            {
+                user.Role = (int)UserRole.Owner;
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                var restaurantOwner = new RestaurantOwner(restaurant, user);
 
-            return new CreateRestaurantResponse(restaurant);
+                restaurantOwners.Add(restaurantOwner);
+
+                await _restaurantOwnerRepository.Add(restaurantOwner);
+            }
+
+            await _unitOfWork.SaveChangesAsync(createdBy, cancellationToken);
+
+            List<OwnerDto> owners = restaurantOwners
+                    .Select(restaurantOwner => new OwnerDto(restaurantOwner))
+                    .ToList();
+
+            return new CreateRestaurantResponse(restaurant, owners);
         }
 
         /// <summary>
@@ -107,16 +151,14 @@ namespace RestaurantServer.Services.Implementations
 
             _restaurantValidator.IsOwnersEmailEmpty(request.Emails);
 
-            var restaurant = await _restaurantRepository
-                .GetByIdAsync(restaurantId, cancellationToken);
+            var restaurant = await _restaurantRepository.GetByIdAsync(restaurantId, cancellationToken);
 
             _restaurantValidator.ValidateRestaurantExists(restaurant);
 
             var normalizedEmails = new List<string>();
-
             var emailSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var email in request.Emails)
+            foreach (string email in request.Emails)
             {
                 _restaurantValidator.ValidateEmail(email);
 
@@ -130,7 +172,7 @@ namespace RestaurantServer.Services.Implementations
                 normalizedEmails.Add(normalizedEmail);
             }
 
-            var users = await _authRepository
+            var users = await _usersRepository
                 .GetUsersByEmailsAsync(normalizedEmails, cancellationToken);
 
             var usersByEmail = users.ToDictionary(
@@ -146,14 +188,13 @@ namespace RestaurantServer.Services.Implementations
                 }
 
                 _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
-
                 _restaurantValidator.ValidateAdminRole(user.Role);
             }
 
             var userIds = users.Select(user => user.Id).ToList();
 
             var existingOwners = await _restaurantOwnerRepository
-                .GetOwnersByRestaurantAndUserIdsAsync(restaurantId, userIds, cancellationToken);
+                .GetOwnersByRestaurantAndUserIdsAsync(restaurantId, userIds, true, cancellationToken);
 
             var existingOwnerUserIds = existingOwners
                 .Select(owner => owner.UserId).ToHashSet();
@@ -179,7 +220,7 @@ namespace RestaurantServer.Services.Implementations
                 await _restaurantOwnerRepository.Add(restaurantOwner);
             }
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
 
             return new OnboardRestaurantResponses
             {

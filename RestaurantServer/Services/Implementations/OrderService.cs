@@ -111,7 +111,7 @@ namespace RestaurantServer.Services.Implementations
 
                     await _orderRepository.Add(order);
 
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    await _unitOfWork.SaveChangesAsync(null, cancellationToken);
 
                     transaction.Commit();
 
@@ -179,7 +179,7 @@ namespace RestaurantServer.Services.Implementations
 
                     order.Status = (int)OrderStatus.Cancelled;
 
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    await _unitOfWork.SaveChangesAsync(null, cancellationToken);
 
                     transaction.Commit();
 

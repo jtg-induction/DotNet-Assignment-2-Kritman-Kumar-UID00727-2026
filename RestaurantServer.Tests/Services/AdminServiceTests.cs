@@ -588,9 +588,9 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "owner@example.com"
-                }
+               {
+                   "owner@example.com"
+               }
             };
 
             _restaurantRepositoryMock
@@ -662,10 +662,10 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "owner@example.com",
-                    "owner@example.com"
-                }
+               {
+                   "owner@example.com",
+                   "owner@example.com"
+               }
             };
 
             var restaurant = new Restaurant
@@ -738,9 +738,9 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "owner@example.com"
-                }
+               {
+                   "owner@example.com"
+               }
             };
 
             var restaurant = new Restaurant
@@ -817,9 +817,9 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "admin@example.com"
-                }
+               {
+                   "admin@example.com"
+               }
             };
 
             var restaurant = new Restaurant
@@ -850,7 +850,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<User>
                 {
-                    user
+                   user
                 });
 
             _restaurantValidatorMock
@@ -908,9 +908,9 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "owner@example.com"
-                }
+               {
+                   "owner@example.com"
+               }
             };
 
             var restaurant = new Restaurant
@@ -950,7 +950,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<User>
                 {
-                    user
+                   user
                 });
 
             _restaurantOwnerRepositoryMock
@@ -961,7 +961,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<RestaurantOwner>
                 {
-                    existingOwner
+                   existingOwner
                 });
 
             var exception =
@@ -1006,10 +1006,10 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "owner1@example.com",
-                    "owner2@example.com"
-                }
+               {
+                   "owner1@example.com",
+                   "owner2@example.com"
+               }
             };
 
             var restaurant = new Restaurant
@@ -1050,8 +1050,8 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<User>
                 {
-                    user1,
-                    user2
+                   user1,
+                   user2
                 });
 
             _restaurantOwnerRepositoryMock
@@ -1126,9 +1126,9 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "inactive@example.com"
-                }
+               {
+                   "inactive@example.com"
+               }
             };
 
             var restaurant = new Restaurant
@@ -1159,7 +1159,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<User>
                 {
-                    user
+                   user
                 });
 
             _userValidatorMock
@@ -1218,9 +1218,9 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "invalid-email"
-                }
+               {
+                   "invalid-email"
+               }
             };
 
             var restaurant = new Restaurant
@@ -1283,9 +1283,9 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "  owner@example.com  "
-                }
+               {
+                   "  owner@example.com  "
+               }
             };
 
             var restaurant = new Restaurant
@@ -1316,7 +1316,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<User>
                 {
-                    user
+                   user
                 });
 
             _restaurantOwnerRepositoryMock
@@ -1421,9 +1421,9 @@ namespace RestaurantServer.Tests
             var request = new OnboardRestaurantOwnerRequest
             {
                 Emails = new List<string>
-                {
-                    "owner@example.com"
-                }
+               {
+                   "owner@example.com"
+               }
             };
 
             var restaurant = new Restaurant
@@ -1454,7 +1454,7 @@ namespace RestaurantServer.Tests
                         cancellationToken))
                 .ReturnsAsync(new List<User>
                 {
-                    user
+                   user
                 });
 
             _restaurantOwnerRepositoryMock

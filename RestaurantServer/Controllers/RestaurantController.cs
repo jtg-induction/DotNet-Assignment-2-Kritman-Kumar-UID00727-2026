@@ -1,4 +1,3 @@
-using RestaurantServer.Constants;
 using RestaurantServer.DTOs.Requests;
 using RestaurantServer.Enums;
 using RestaurantServer.Filters;
@@ -16,7 +15,6 @@ namespace RestaurantServer.Controllers
     {
         private readonly IRestaurantService _restaurantService;
         private readonly IOrderService _orderService;
-        private readonly IUserSessionService _currentUserService;
         private readonly IRequestValidator _requestValidator;
 
         public RestaurantController(
@@ -27,7 +25,6 @@ namespace RestaurantServer.Controllers
         {
             _restaurantService = restaurantService;
             _orderService = orderService;
-            _currentUserService = currentUserService;
             _requestValidator = requestValidator;
         }
 

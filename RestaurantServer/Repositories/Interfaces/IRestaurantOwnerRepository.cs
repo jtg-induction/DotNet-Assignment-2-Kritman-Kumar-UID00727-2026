@@ -9,7 +9,7 @@ namespace RestaurantServer.Repositories.Interfaces
     public interface IRestaurantOwnerRepository : IRepository<RestaurantOwner>
     {
         Task<List<RestaurantOwner>> GetOwnersByRestaurantAndUserIdsAsync(
-            long restaurantId, IEnumerable<long> userIds, CancellationToken cancellationToken = default);
+            long restaurantId, List<long> userIds, bool disableTracking = false, CancellationToken cancellationToken = default);
 
         Task<bool> IsOwnerAsync(
             long restaurantId, long userId, CancellationToken cancellationToken = default);

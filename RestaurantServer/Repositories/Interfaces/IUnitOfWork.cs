@@ -12,7 +12,7 @@ namespace RestaurantServer.Repositories.Interfaces
 
     public interface IUnitOfWork
     {
-        Task SaveChangesAsync(CancellationToken cancellationToken = default);
         ITransaction BeginTransaction();
+        Task SaveChangesAsync(long? personId = null, CancellationToken cancellationToken = default);
     }
 }
