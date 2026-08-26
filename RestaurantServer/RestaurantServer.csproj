@@ -190,6 +190,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Constants\CookieConstants.cs" />
     <Compile Include="Constants\ErrorMessages.cs" />
+    <Compile Include="Constants\RegexConstants.cs" />
     <Compile Include="Constants\SuccessMessages.cs" />
     <Compile Include="Constants\ValidationConstants.cs" />
     <Compile Include="Constants\ValidationMessages.cs" />
@@ -223,6 +224,10 @@
     <Compile Include="Migrations\202608171746472_AddUniqueMobileNumber.cs" />
     <Compile Include="Migrations\202608171746472_AddUniqueMobileNumber.Designer.cs">
       <DependentUpon>202608171746472_AddUniqueMobileNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202608251929137_AddRestaurantOwnerCompositeIndex.cs" />
+    <Compile Include="Migrations\202608251929137_AddRestaurantOwnerCompositeIndex.Designer.cs">
+      <DependentUpon>202608251929137_AddRestaurantOwnerCompositeIndex.cs</DependentUpon>
     </Compile>
     <Compile Include="Repositories\implementations\RestaurantRepository.cs" />
     <Compile Include="Services\Implementations\AdminService.cs" />
@@ -266,12 +271,10 @@
     <Compile Include="Models\RestaurantOwner.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\implementations\AuthRepository.cs" />
     <Compile Include="Repositories\implementations\RefreshTokenRepository.cs" />
     <Compile Include="Repositories\implementations\Repository.cs" />
     <Compile Include="Repositories\implementations\UnitOfWork.cs" />
     <Compile Include="Repositories\implementations\UsersRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IAuthRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRefreshTokenRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRepository.cs" />
     <Compile Include="Repositories\Interfaces\IUnitOfWork.cs" />
@@ -358,6 +361,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202608171746472_AddUniqueMobileNumber.resx">
       <DependentUpon>202608171746472_AddUniqueMobileNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608251929137_AddRestaurantOwnerCompositeIndex.resx">
+      <DependentUpon>202608251929137_AddRestaurantOwnerCompositeIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

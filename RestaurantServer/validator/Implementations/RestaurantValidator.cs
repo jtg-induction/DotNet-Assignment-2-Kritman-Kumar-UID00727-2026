@@ -83,7 +83,7 @@ namespace RestaurantServer.Validators.Implementations
         public void ValidateEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email) ||
-                    !Regex.IsMatch(email.Trim(), ValidationConstants.EmailRegex))
+                    !Regex.IsMatch(email.Trim(), RegexConstants.EmailRegex))
             {
                 throw new ValidationException(ValidationMessages.InvalidEmail);
             }
