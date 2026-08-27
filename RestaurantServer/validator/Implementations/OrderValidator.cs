@@ -141,5 +141,28 @@ namespace RestaurantServer.Validators.Implementations
                 throw new ValidationException(ValidationMessages.OrderCannotBeCancelled);
             }
         }
+
+        /// <summary>
+        /// Validates the order query parameters and sets default values for invalid pagination values.
+        /// </summary>
+        /// <param name="orderQueryParameters">The order query parameters.</param>
+        /// <returns>The validated order query parameters.</returns>
+        public OrderQueryParameters ValidateQueryParameters(OrderQueryParameters orderQueryParameters)
+        {
+            orderQueryParameters = orderQueryParameters ?? new OrderQueryParameters();
+
+            if (orderQueryParameters.PageNumber < 1)
+            {
+                orderQueryParameters.PageNumber = 1;
+            }
+
+            if (orderQueryParameters.PageSize < 1)
+            {
+                orderQueryParameters.PageSize = 10;
+            }
+
+            return orderQueryParameters;
+        }
+
     }
 }

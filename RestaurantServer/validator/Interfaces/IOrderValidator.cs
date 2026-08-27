@@ -17,5 +17,6 @@ namespace RestaurantServer.Validators.Interfaces
         void ValidateOrderAccess(Order order, User user, bool isRestaurantOwner = false);
         void ValidateOrderOwnership(Order order, long userId);
         void ValidateOrderStatusForCancellation(Order order);
+        OrderQueryParameters ValidateQueryParameters(OrderQueryParameters orderQueryParameters);
     }
 }

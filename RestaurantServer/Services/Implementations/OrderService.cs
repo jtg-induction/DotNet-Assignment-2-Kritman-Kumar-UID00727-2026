@@ -125,7 +125,7 @@ namespace RestaurantServer.Services.Implementations
         }
 
         public async Task<OrderDetailsResponse> GetOrderDetailsAsync(
-            long orderId, 
+            long orderId,
             CancellationToken cancellationToken = default)
         {
             _orderValidator.ValidateOrderId(orderId);
@@ -153,7 +153,7 @@ namespace RestaurantServer.Services.Implementations
         }
 
         public async Task<CancelOrderResponse> CancelOrderAsync(
-            long orderId, 
+            long orderId,
             CancellationToken cancellationToken = default)
         {
             _orderValidator.ValidateOrderId(orderId);
@@ -191,6 +191,27 @@ namespace RestaurantServer.Services.Implementations
                     throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Filters orders based on the provided query parameters and returns the results with pagination.
+        /// </summary>
+        /// <param name="orderQueryParameters">The parameters used to filter and paginate the orders.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A filtered and paginated list of orders.</returns>
+        public async Task<FilterOrdersResponse> FilterOrdersAsync(OrderQueryParameters orderQueryParameters,
+            CancellationToken cancellationToken = default)
+        {
+            var userId = _userSessionService.GetUserId().Value;
+
+            orderQueryParameters = _orderValidator.ValidateQueryParameters(orderQueryParameters);
+
+            var filterOrders = await _orderRepository.GetFilteredOrders(userId, orderQueryParameters, cancellationToken);
+
+            var paginationResponse = new PaginationResponse(orderQueryParameters.PageNumber,
+                orderQueryParameters.PageSize, filterOrders.TotalRecords);
+
+            return new FilterOrdersResponse(paginationResponse, filterOrders.Orders);
         }
     }
 }
