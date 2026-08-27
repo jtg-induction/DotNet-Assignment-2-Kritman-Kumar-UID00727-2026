@@ -35,14 +35,12 @@ namespace RestaurantServer.Services.Implementations
 
             var totalRecords = await _restaurantRepository.CountAvailableRestaurantsAsync(cancellationToken);
 
-            var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-
             var restaurants = await _restaurantRepository.GetAvailableRestaurantsAsync(page, pageSize, cancellationToken);
 
             var restaurantDtos = restaurants
                 .Select(restaurant => new RestaurantDto(restaurant)).ToList();
 
-            var pagination = new PaginationResponse(page, pageSize, totalRecords, totalPages);
+            var pagination = new PaginationResponse(page, pageSize, totalRecords);
 
             return new RestaurantListResponse(SuccessMessages.RestaurantsRetrieved,
                 restaurantDtos, pagination);
@@ -62,15 +60,13 @@ namespace RestaurantServer.Services.Implementations
 
             var totalRecords = await _itemRepository.CountAvailableItemsByRestaurantIdAsync(restaurantId, cancellationToken);
 
-            var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-
             var items = await _itemRepository.GetAvailableItemsByRestaurantIdAsync(restaurantId, page, pageSize, cancellationToken);
 
             var itemDtos = items
                 .Select(item => new ItemDto(item))
                 .ToList();
 
-            var pagination = new PaginationResponse(page, pageSize, totalRecords, totalPages);
+            var pagination = new PaginationResponse(page, pageSize, totalRecords);
 
             return new RestaurantItemListResponse(
                 SuccessMessages.MenuItemsRetrieved,
