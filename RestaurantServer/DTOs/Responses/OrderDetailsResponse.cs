@@ -11,7 +11,7 @@ namespace RestaurantServer.DTOs.Responses
     {
         public OrderDetailsResponse()
         {
-            OrderItems = new List<OrderDetailItemDto>();
+            OrderItems = new List<OrderItemDto>();
         }
 
         public OrderDetailsResponse(Order order, string message = SuccessMessages.OrderDetailsRetrievedSuccessfully)
@@ -32,8 +32,8 @@ namespace RestaurantServer.DTOs.Responses
             Message = message;
 
             OrderItems = order.OrderItems != null
-                ? order.OrderItems.Select(orderItem => new OrderDetailItemDto(orderItem)).ToList()
-                : new List<OrderDetailItemDto>();
+                ? order.OrderItems.Select(orderItem => new OrderItemDto(orderItem)).ToList()
+                : new List<OrderItemDto>();
         }
 
         public long OrderId { get; set; }
@@ -50,6 +50,6 @@ namespace RestaurantServer.DTOs.Responses
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string Message { get; set; }
-        public List<OrderDetailItemDto> OrderItems { get; set; }
+        public List<OrderItemDto> OrderItems { get; set; }
     }
 }
