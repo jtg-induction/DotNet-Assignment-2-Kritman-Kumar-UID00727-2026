@@ -208,6 +208,7 @@
     <Compile Include="DTOs\Requests\RefreshTokenRequest.cs" />
     <Compile Include="DTOs\Requests\SignupRequest.cs" />
     <Compile Include="DTOs\Requests\UpdateAccountRequest.cs" />
+    <Compile Include="DTOs\Requests\UpdateOrderStatusRequest.cs" />
     <Compile Include="DTOs\Responses\CancelOrderResponse.cs" />
     <Compile Include="DTOs\Responses\CreateOrderResponse.cs" />
     <Compile Include="DTOs\Responses\CreateRestaurantResponse.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="DTOs\Responses\RestaurantListResponse.cs" />
     <Compile Include="DTOs\Responses\OnboardRestaurantResponses.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
+    <Compile Include="DTOs\Responses\UpdateOrderStatusResponse.cs" />
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
     <Compile Include="Enums\OrderSortBy.cs" />
     <Compile Include="Enums\OrderStatus.cs" />

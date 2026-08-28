@@ -1,4 +1,5 @@
 using RestaurantServer.DTOs.Requests;
+using RestaurantServer.Enums;
 using RestaurantServer.Models;
 using System.Collections.Generic;
 
@@ -18,5 +19,7 @@ namespace RestaurantServer.Validators.Interfaces
         void ValidateOrderOwnership(Order order, long userId);
         void ValidateOrderStatusForCancellation(Order order);
         OrderQueryParameters ValidateQueryParameters(OrderQueryParameters orderQueryParameters);
+        void ValidateOrderStatus(OrderStatus status);
+        void ValidateOrderStatusTransition(OrderStatus currentStatus, OrderStatus newStatus);
     }
 }

@@ -63,5 +63,25 @@ namespace RestaurantServer.Controllers
 
             return Content(HttpStatusCode.OK, response);
         }
+
+        /// <summary>
+        /// Updates the status of an existing order.
+        /// </summary>
+        /// <param name="orderId">The unique identifier of the order.</param>
+        /// <param name="request">The request containing the new order status.</param>
+        /// <param name="cancellationToken">A token used to cancel the operation.</param>
+        /// <returns>The updated order status response.</returns>
+        [HttpPatch]
+        [Route("{orderId:long}/status")]
+        [CustomAuthorize(UserRole.Owner)]
+        public async Task<IHttpActionResult> UpdateOrderStatus(long orderId,
+            UpdateOrderStatusRequest request, CancellationToken cancellationToken = default)
+        {
+
+            var response = await _orderService.UpdateOrderStatusAsync(
+                orderId, request, cancellationToken);
+
+            return Ok(response);
+        }
     }
 }

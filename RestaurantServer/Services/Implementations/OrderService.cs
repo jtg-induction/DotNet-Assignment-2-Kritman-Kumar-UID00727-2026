@@ -2,10 +2,12 @@ using RestaurantServer.Constants;
 using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Enums;
+using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -25,6 +27,7 @@ namespace RestaurantServer.Services.Implementations
         private readonly IRestaurantValidator _restaurantValidator;
         private readonly IUserValidator _userValidator;
         private readonly IUserSessionService _userSessionService;
+        private readonly IRequestValidator _requestValidator;
 
         public OrderService(
             IUnitOfWork unitOfWork,
@@ -36,7 +39,8 @@ namespace RestaurantServer.Services.Implementations
             IOrderValidator orderValidator,
             IRestaurantValidator restaurantValidator,
             IUserValidator userValidator,
-            IUserSessionService userSessionService)
+            IUserSessionService userSessionService,
+            IRequestValidator requestValidator)
         {
             _unitOfWork = unitOfWork;
             _orderRepository = orderRepository;
@@ -48,6 +52,7 @@ namespace RestaurantServer.Services.Implementations
             _restaurantValidator = restaurantValidator;
             _userValidator = userValidator;
             _userSessionService = userSessionService;
+            _requestValidator = requestValidator;
         }
 
         public async Task<CreateOrderResponse> PlaceOrderAsync(
@@ -212,6 +217,65 @@ namespace RestaurantServer.Services.Implementations
                 orderQueryParameters.PageSize, filterOrders.TotalRecords);
 
             return new FilterOrdersResponse(paginationResponse, filterOrders.Orders);
+        }
+
+        /// <summary>
+        /// Updates the status of an existing order.
+        /// </summary>
+        /// <param name="orderId">The unique identifier of the order.</param>
+        /// <param name="request">The request containing the new order status.</param>
+        /// <param name="cancellationToken">A token used to cancel the operation.</param>
+        /// <returns>The updated order status response.</returns>
+        public async Task<UpdateOrderStatusResponse> UpdateOrderStatusAsync(long orderId,
+            UpdateOrderStatusRequest request, CancellationToken cancellationToken = default)
+        {
+
+            _requestValidator.IsRequestNull(request);
+
+            _orderValidator.ValidateOrderId(orderId);
+            _orderValidator.ValidateOrderStatus(request.Status);
+
+            var userId = _userSessionService.GetUserId().Value;
+
+            using (var transaction = _unitOfWork.BeginTransaction())
+            {
+                try
+                {
+                    var user = await _usersRepository.GetByIdAsync(userId, cancellationToken);
+
+                    _userValidator.IsUserNullOrDeactivated(
+                        user, ValidationMessages.UserNotFound);
+
+                    var order = await _orderRepository.GetOrderForUpdateAsync(
+                        orderId, cancellationToken);
+
+                    _orderValidator.ValidateOrderExists(order);
+
+                    var isRestaurantOwner = await _restaurantOwnerRepository.IsOwnerAsync(
+                            order.RestaurantId, userId, cancellationToken);
+
+                    if (!isRestaurantOwner)
+                    {
+                        throw new ValidationException(ValidationMessages.RestaurantOwnerRequired);
+                    }
+
+                    _orderValidator.ValidateOrderStatusTransition((OrderStatus)order.Status, request.Status);
+
+                    order.Status = (int)request.Status;
+
+                    await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+
+                    transaction.Commit();
+
+                    return new UpdateOrderStatusResponse(order,
+                        SuccessMessages.OrderStatusUpdatedSuccessfully);
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
     }
 }

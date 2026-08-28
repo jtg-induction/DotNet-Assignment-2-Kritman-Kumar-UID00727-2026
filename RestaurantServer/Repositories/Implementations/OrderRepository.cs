@@ -136,8 +136,8 @@ namespace RestaurantServer.Repositories.Implementations
             }
 
             var responses = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((orderQueryParameters.PageNumber - 1) * orderQueryParameters.PageSize)
+                .Take(orderQueryParameters.PageSize)
                 .Select(order => new OrderResponse
                 {
                     Id = order.Id,

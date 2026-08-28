@@ -164,5 +164,35 @@ namespace RestaurantServer.Validators.Implementations
             return orderQueryParameters;
         }
 
+        /// <summary>
+        /// Validates whether the specified order status is valid.
+        /// </summary>
+        /// <param name="status">The order status to validate.</param>
+        public void ValidateOrderStatus(OrderStatus status)
+        {
+            if (!System.Enum.IsDefined(typeof(OrderStatus), status))
+            {
+                throw new ValidationException(
+                    ValidationMessages.InvalidOrderStatus);
+            }
+        }
+
+        /// <summary>
+        /// Validates whether the specified order status is valid.
+        /// </summary>
+        /// <param name="status">The order status to validate.</param>
+        public void ValidateOrderStatusTransition(OrderStatus currentStatus, OrderStatus newStatus)
+        {
+            bool isValidTransition = (currentStatus == OrderStatus.Placed
+                && (newStatus == OrderStatus.Accepted || newStatus == OrderStatus.Rejected))
+                || (currentStatus == OrderStatus.Accepted && newStatus == OrderStatus.Dispatched)
+                || (currentStatus == OrderStatus.Dispatched && newStatus == OrderStatus.Delivered);
+
+            if (!isValidTransition)
+            {
+                throw new ValidationException(
+                    ValidationMessages.InvalidOrderStatusTransition);
+            }
+        }
     }
 }
