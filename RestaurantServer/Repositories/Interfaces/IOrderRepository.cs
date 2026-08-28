@@ -11,8 +11,7 @@ namespace RestaurantServer.Repositories.Interfaces
     {
         Task<Order> GetOrderWithItemsByIdAsync(long orderId, CancellationToken cancellationToken = default);
         Task<Order> GetOrderForUpdateAsync(long orderId, CancellationToken cancellationToken = default);
-        Task<(int TotalRecords,List<OrderResponse> Orders)> GetFilteredOrders(long ownerId, OrderQueryParameters orderQueryParameters,
+        Task<(int TotalRecords, List<OrderResponse> Orders)> GetFilteredOrders(long ownerId, OrderQueryParameters orderQueryParameters,
                CancellationToken cancellationToken = default);
     }
 }
-    
