@@ -15,4 +15,4 @@ namespace RestaurantServer.DTOs.Responses
         public string Message { get; set; }
         public List<OrderResponse> Orders { get; set; }
     }
-}   
+}
