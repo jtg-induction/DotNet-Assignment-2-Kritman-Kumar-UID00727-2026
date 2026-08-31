@@ -83,9 +83,8 @@ namespace RestaurantServer.Services.Implementations
 
             var ownerId = _userSessionService.GetUserId().Value;
 
-            var reportData = await _reportRepository
-                .GetFrequentlyBoughtTogetherAsync(ownerId, restaurantId,
-                    request, cancellationToken);
+            var reportData = await _reportRepository.GetFrequentlyBoughtTogetherAsync(
+                ownerId, restaurantId, request, cancellationToken);
 
             return _reportRenderer.RenderFrequentlyBoughtTogetherReport(reportData);
         }

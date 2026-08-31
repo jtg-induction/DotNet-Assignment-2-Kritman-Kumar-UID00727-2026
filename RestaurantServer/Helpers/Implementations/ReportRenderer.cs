@@ -1,4 +1,5 @@
-﻿using RestaurantServer.DTOs.Responses;
+﻿using RestaurantServer.Constants;
+using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -30,21 +31,19 @@ namespace RestaurantServer.Helpers.Implementations
 
             if (string.IsNullOrWhiteSpace(reportPath))
             {
-                throw new Exception("Could not map the report path: " + reportRelativePath);
+                throw new Exception(ValidationMessages.InvalidPath + reportRelativePath);
             }
 
             if (!File.Exists(reportPath))
             {
-                throw new FileNotFoundException("The Telerik report file was not found.", reportPath);
+                throw new FileNotFoundException(ValidationMessages.ReportNotFound, reportPath);
             }
 
             var fileInfo = new FileInfo(reportPath);
 
             if (fileInfo.Length == 0)
             {
-                throw new Exception(
-                    "The Telerik report file exists but its file size is 0 bytes. " +
-                    "Open the report in the Telerik Report Designer and save it.");
+                throw new Exception(ValidationMessages.TelerikFileLengthZero);
             }
 
             var reportPackager = new Telerik.Reporting.ReportPackager();
@@ -58,7 +57,7 @@ namespace RestaurantServer.Helpers.Implementations
 
             if (report == null)
             {
-                throw new Exception("Telerik could not load the report.");
+                throw new Exception(ValidationMessages.ReportIsNull);
             }
 
             var table = report.Items
@@ -86,17 +85,17 @@ namespace RestaurantServer.Helpers.Implementations
 
             if (result == null)
             {
-                throw new Exception("Telerik RenderReport returned a null result.");
+                throw new Exception(ValidationMessages.RenderReportisNull);
             }
 
             if (result.DocumentBytes == null)
             {
-                throw new Exception("Telerik rendered the report, but DocumentBytes is null.");
+                throw new Exception(ValidationMessages.DocumentBytesisNull);
             }
 
             if (result.DocumentBytes.Length == 0)
             {
-                throw new Exception("Telerik generated an empty PDF.");
+                throw new Exception(ValidationMessages.EmptyPdf);
             }
 
             return result.DocumentBytes;

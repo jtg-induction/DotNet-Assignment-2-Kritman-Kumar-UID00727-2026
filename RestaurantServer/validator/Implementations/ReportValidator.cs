@@ -1,4 +1,5 @@
-﻿using RestaurantServer.DTOs.Requests;
+﻿using RestaurantServer.Constants;
+using RestaurantServer.DTOs.Requests;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Validators.Interfaces;
 using System.Linq;
@@ -27,30 +28,29 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (request == null)
             {
-                throw new ValidationException("Report request cannot be null.");
+                throw new ValidationException(ValidationMessages.ReportRequestRequired);
             }
 
             if (request.TopItems < MinimumTopItems)
             {
-                throw new ValidationException("TopItems must be greater than 0.");
+                throw new ValidationException(ValidationMessages.InvalidTopItemsCount);
             }
 
             if (request.TopItems > MaximumTopItems)
             {
-                throw new ValidationException("TopItems cannot be greater than 100.");
+                throw new ValidationException(ValidationMessages.InvalidTopItemsCount);
             }
 
-            if (request.StartDate.HasValue &&
-                request.EndDate.HasValue &&
+            if (request.StartDate.HasValue && request.EndDate.HasValue &&
                 request.StartDate.Value.Date > request.EndDate.Value.Date)
             {
-                throw new ValidationException("StartDate cannot be later than EndDate.");
+                throw new ValidationException(ValidationMessages.InvalidDateRange);
             }
 
             if (request.ExcludeItemIds != null &&
                 request.ExcludeItemIds.Any(id => id <= 0))
             {
-                throw new ValidationException("ExcludeItemIds must contain only valid item IDs.");
+                throw new ValidationException(ValidationMessages.InvalidExcludeItemIds);
             }
         }
 
@@ -73,22 +73,22 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (restaurantId <= 0)
             {
-                throw new ValidationException("RestaurantId must be greater than 0.");
+                throw new ValidationException(ValidationMessages.InvalidRestaurantId);
             }
 
             if (request == null)
             {
-                throw new ValidationException("Report request cannot be null.");
+                throw new ValidationException(ValidationMessages.ReportRequestRequired);
             }
 
             if (request.TopPairs < MinimumTopItems)
             {
-                throw new ValidationException("TopPairs must be greater than 0.");
+                throw new ValidationException(ValidationMessages.InvalidTopPairsCount);
             }
 
             if (request.TopPairs > MaximumTopItems)
             {
-                throw new ValidationException("TopPairs cannot be greater than 100.");
+                throw new ValidationException(ValidationMessages.InvalidTopItemsCount);
             }
         }
     }
