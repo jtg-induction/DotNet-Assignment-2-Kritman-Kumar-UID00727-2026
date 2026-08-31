@@ -2,6 +2,7 @@ using RestaurantServer.Constants;
 using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Interfaces;
+using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Linq;
@@ -15,15 +16,18 @@ namespace RestaurantServer.Services.Implementations
         private readonly IRestaurantRepository _restaurantRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IRestaurantValidator _restaurantValidator;
+        private readonly IPaginatedValidator _paginatedValidator;
 
         public RestaurantService(
             IRestaurantRepository restaurantRepository,
             IItemRepository itemRepository,
-            IRestaurantValidator restaurantValidator)
+            IRestaurantValidator restaurantValidator,
+            IPaginatedValidator paginatedValidator)
         {
             _restaurantRepository = restaurantRepository;
             _itemRepository = itemRepository;
             _restaurantValidator = restaurantValidator;
+            _paginatedValidator = paginatedValidator; 
         }
 
         public async Task<RestaurantListResponse> GetRestaurantsAsync(
@@ -31,7 +35,7 @@ namespace RestaurantServer.Services.Implementations
             int pageSize,
             CancellationToken cancellationToken = default)
         {
-            _restaurantValidator.ValidatePagination(page, pageSize);
+            _paginatedValidator.ValidatePagination(page, pageSize);
 
             var totalRecords = await _restaurantRepository.CountAvailableRestaurantsAsync(cancellationToken);
 
@@ -40,7 +44,7 @@ namespace RestaurantServer.Services.Implementations
             var restaurantDtos = restaurants
                 .Select(restaurant => new RestaurantDto(restaurant)).ToList();
 
-            var pagination = new PaginationResponse(page, pageSize, totalRecords);
+            var pagination = new PaginatedResponse(page, pageSize, totalRecords);
 
             return new RestaurantListResponse(SuccessMessages.RestaurantsRetrieved,
                 restaurantDtos, pagination);
@@ -52,7 +56,7 @@ namespace RestaurantServer.Services.Implementations
             int pageSize,
             CancellationToken cancellationToken = default)
         {
-            _restaurantValidator.ValidatePagination(page, pageSize);
+            _paginatedValidator.ValidatePagination(page, pageSize);
 
             var restaurant = await _restaurantRepository.GetByIdAsync(restaurantId, cancellationToken);
 
@@ -66,7 +70,7 @@ namespace RestaurantServer.Services.Implementations
                 .Select(item => new ItemDto(item))
                 .ToList();
 
-            var pagination = new PaginationResponse(page, pageSize, totalRecords);
+            var pagination = new PaginatedResponse(page, pageSize, totalRecords);
 
             return new RestaurantItemListResponse(
                 SuccessMessages.MenuItemsRetrieved,

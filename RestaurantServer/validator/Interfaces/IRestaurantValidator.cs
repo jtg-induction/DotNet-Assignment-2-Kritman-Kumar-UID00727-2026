@@ -12,6 +12,5 @@ namespace RestaurantServer.Validators.Interfaces
         void ValidateEmail(string email);
         void ValidateAdminRole(int role);
         void IsOwnersEmailEmpty(List<string> emails);
-        void ValidatePagination(int page, int pageSize);
     }
 }

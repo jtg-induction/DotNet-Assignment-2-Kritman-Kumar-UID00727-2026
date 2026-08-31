@@ -213,11 +213,10 @@
     <Compile Include="DTOs\Responses\ItemDto.cs" />
     <Compile Include="DTOs\Responses\LoginResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResult.cs" />
-    <Compile Include="DTOs\Responses\OrderDetailItemDto.cs" />
     <Compile Include="DTOs\Responses\OrderDetailsResponse.cs" />
     <Compile Include="DTOs\Responses\OrderItemDto.cs" />
     <Compile Include="DTOs\Responses\OwnerDto.cs" />
-    <Compile Include="DTOs\Responses\PaginationResponse.cs" />
+    <Compile Include="DTOs\Responses\PaginatedResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResult.cs" />
     <Compile Include="DTOs\Responses\RestaurantDto.cs" />
@@ -272,6 +271,7 @@
     <Compile Include="Helpers\Implementations\JwtTokenService.cs" />
     <Compile Include="Helpers\Implementations\PasswordHasher.cs" />
     <Compile Include="validator\Implementations\OrderValidator.cs" />
+    <Compile Include="validator\Implementations\PaginatedValidator.cs" />
     <Compile Include="validator\Implementations\RefreshTokenValidator.cs" />
     <Compile Include="validator\Implementations\RequestValidator.cs" />
     <Compile Include="validator\Implementations\RestaurantValidator.cs" />
@@ -282,6 +282,7 @@
     <Compile Include="Helpers\Interfaces\IJwtTokenService.cs" />
     <Compile Include="Helpers\Interfaces\IPasswordHasher.cs" />
     <Compile Include="validator\Interfaces\IOrderValidator.cs" />
+    <Compile Include="validator\Interfaces\IPaginatedValidator.cs" />
     <Compile Include="validator\Interfaces\IRequestValidator.cs" />
     <Compile Include="validator\Interfaces\IRestaurantValidator.cs" />
     <Compile Include="validator\Interfaces\IUserValidator.cs" />
