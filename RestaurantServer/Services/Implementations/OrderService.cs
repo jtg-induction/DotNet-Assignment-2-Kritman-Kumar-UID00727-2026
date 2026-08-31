@@ -152,8 +152,7 @@ namespace RestaurantServer.Services.Implementations
             return new OrderDetailsResponse(order);
         }
 
-        public async Task<CancelOrderResponse> CancelOrderAsync(
-            long orderId, 
+        public async Task<CancelOrderResponse> CancelOrderAsync(long orderId, 
             CancellationToken cancellationToken = default)
         {
             _orderValidator.ValidateOrderId(orderId);

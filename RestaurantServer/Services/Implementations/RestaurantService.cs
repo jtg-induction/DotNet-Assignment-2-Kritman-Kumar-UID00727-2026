@@ -44,10 +44,10 @@ namespace RestaurantServer.Services.Implementations
             var restaurantDtos = restaurants
                 .Select(restaurant => new RestaurantDto(restaurant)).ToList();
 
-            var pagination = new PaginatedResponse(page, pageSize, totalRecords);
+            var paginatedResult = new PaginatedResponse(page, pageSize, totalRecords);
 
             return new RestaurantListResponse(SuccessMessages.RestaurantsRetrieved,
-                restaurantDtos, pagination);
+                restaurantDtos, paginatedResult);
         }
 
         public async Task<RestaurantItemListResponse> GetRestaurantItemsAsync(
@@ -70,11 +70,10 @@ namespace RestaurantServer.Services.Implementations
                 .Select(item => new ItemDto(item))
                 .ToList();
 
-            var pagination = new PaginatedResponse(page, pageSize, totalRecords);
+            var paginatedResult = new PaginatedResponse(page, pageSize, totalRecords);
 
-            return new RestaurantItemListResponse(
-                SuccessMessages.MenuItemsRetrieved,
-                restaurantId, itemDtos, pagination);
+            return new RestaurantItemListResponse(SuccessMessages.MenuItemsRetrieved,
+                restaurantId, itemDtos, paginatedResult);
         }
     }
 }
