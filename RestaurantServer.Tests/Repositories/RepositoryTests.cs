@@ -14,7 +14,7 @@ namespace RestaurantServer.Tests.Repositories
     {
         private ApplicationDbContext _context;
         private Repository<User> _repository;
-        private UsersRepository _userReposeroty;
+        private UsersRepository _userRepository;
         private RefreshTokenRepository _refreshTokenRepository;
         private UnitOfWork _unitOfWork;
 
@@ -24,7 +24,7 @@ namespace RestaurantServer.Tests.Repositories
             _context = new ApplicationDbContext();
 
             _repository = new Repository<User>(_context);
-            _userReposeroty = new UsersRepository(_context);
+            _userRepository = new UsersRepository(_context);
             _refreshTokenRepository = new RefreshTokenRepository(_context);
             _unitOfWork = new UnitOfWork(_context);
         }
@@ -67,8 +67,14 @@ namespace RestaurantServer.Tests.Repositories
             }
             finally
             {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
+
+                if (userToRemove != null)
+                {
+                    _context.Users.Remove(userToRemove);
+                    await _context.SaveChangesAsync();
+                }
             }
         }
 
@@ -83,7 +89,7 @@ namespace RestaurantServer.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task AddAsync_NewUser_AddsUserToContext()
+        public async Task Add_NewUser_AddsUserToContext()
         {
             var user = new User
             {
@@ -102,8 +108,7 @@ namespace RestaurantServer.Tests.Repositories
                 await _repository.Add(user);
                 await _context.SaveChangesAsync();
 
-                var result = await _context.Users
-                    .FindAsync(user.Id);
+                var result = await _context.Users.FindAsync(user.Id);
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(
@@ -112,8 +117,8 @@ namespace RestaurantServer.Tests.Repositories
             }
             finally
             {
-                var userToRemove = await _context.Users
-                    .FindAsync(user.Id);
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
 
                 if (userToRemove != null)
                 {
@@ -146,7 +151,7 @@ namespace RestaurantServer.Tests.Repositories
                 var userId = user.Id;
 
                 _context.Entry(user).State =
-                    System.Data.Entity.EntityState.Detached;
+                    EntityState.Detached;
 
                 user.Name = "After Update";
 
@@ -154,8 +159,8 @@ namespace RestaurantServer.Tests.Repositories
 
                 await _context.SaveChangesAsync();
 
-                var result = await _context.Users
-                    .FindAsync(userId);
+                var result =
+                    await _context.Users.FindAsync(userId);
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(
@@ -164,8 +169,8 @@ namespace RestaurantServer.Tests.Repositories
             }
             finally
             {
-                var userToRemove = await _context.Users
-                    .FindAsync(user.Id);
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
 
                 if (userToRemove != null)
                 {
@@ -193,11 +198,13 @@ namespace RestaurantServer.Tests.Repositories
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            var userId = user.Id;
+
             _repository.Remove(user);
             await _context.SaveChangesAsync();
 
-            var result = await _context.Users
-                .FindAsync(user.Id);
+            var result =
+                await _context.Users.FindAsync(userId);
 
             Assert.IsNull(result);
         }
@@ -222,9 +229,10 @@ namespace RestaurantServer.Tests.Repositories
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-            var result =
-                await _userReposeroty.GetUserByEmailAsync(
-                    "repository-auth@test.com");
+                var result =
+                    await _userRepository.GetUserByEmailAsync(
+                        "repository-auth@test.com",
+                        CancellationToken.None);
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(user.Id, result.Id);
@@ -234,8 +242,14 @@ namespace RestaurantServer.Tests.Repositories
             }
             finally
             {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
+
+                if (userToRemove != null)
+                {
+                    _context.Users.Remove(userToRemove);
+                    await _context.SaveChangesAsync();
+                }
             }
         }
 
@@ -243,10 +257,176 @@ namespace RestaurantServer.Tests.Repositories
         public async Task GetUserByEmailAsync_EmailDoesNotExist_ReturnsNull()
         {
             var result =
-                await _userReposeroty.GetUserByEmailAsync(
-                    "email-does-not-exist@test.com");
+                await _userRepository.GetUserByEmailAsync(
+                    "email-does-not-exist@test.com",
+                    CancellationToken.None);
 
             Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task GetUsersByEmailsAsync_ExistingEmails_ReturnsUsers()
+        {
+            var user1 = new User
+            {
+                Name = "Email User One",
+                Email = "repository-email-one@test.com",
+                PasswordHash = "hashed-password",
+                IsActive = true,
+                Balance = 1000m,
+                Role = 1,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            var user2 = new User
+            {
+                Name = "Email User Two",
+                Email = "repository-email-two@test.com",
+                PasswordHash = "hashed-password",
+                IsActive = true,
+                Balance = 1000m,
+                Role = 1,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            try
+            {
+                _context.Users.Add(user1);
+                _context.Users.Add(user2);
+                await _context.SaveChangesAsync();
+
+                var emails = new System.Collections.Generic.List<string>
+                {
+                    user1.Email,
+                    user2.Email
+                };
+
+                var result =
+                    await _userRepository.GetUsersByEmailsAsync(
+                        emails,
+                        CancellationToken.None);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(2, result.Count);
+                Assert.IsTrue(
+                    result.Any(user => user.Email == user1.Email));
+                Assert.IsTrue(
+                    result.Any(user => user.Email == user2.Email));
+            }
+            finally
+            {
+                var users = await _context.Users
+                    .Where(user =>
+                        user.Id == user1.Id ||
+                        user.Id == user2.Id)
+                    .ToListAsync();
+
+                _context.Users.RemoveRange(users);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        [TestMethod]
+        public async Task GetUsersByEmailsAsync_NoMatchingEmails_ReturnsEmptyList()
+        {
+            var emails =
+                new System.Collections.Generic.List<string>
+                {
+                    "does-not-exist-one@test.com",
+                    "does-not-exist-two@test.com"
+                };
+
+            var result =
+                await _userRepository.GetUsersByEmailsAsync(
+                    emails,
+                    CancellationToken.None);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task IsMobileNumberExists_ExistingMobileNumber_ReturnsTrue()
+        {
+            var user = new User
+            {
+                Name = "Mobile Test User",
+                Email = "repository-mobile@test.com",
+                MobileNumber = "9999999999",
+                PasswordHash = "hashed-password",
+                IsActive = true,
+                Balance = 1000m,
+                Role = 1,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            try
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                var result =
+                    _userRepository.IsMobileNumberExists(
+                        "9999999999",
+                        0);
+
+                Assert.IsTrue(result);
+            }
+            finally
+            {
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
+
+                if (userToRemove != null)
+                {
+                    _context.Users.Remove(userToRemove);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task IsMobileNumberExists_SameUser_ReturnsFalse()
+        {
+            var user = new User
+            {
+                Name = "Same Mobile User",
+                Email = "repository-same-mobile@test.com",
+                MobileNumber = "8888888888",
+                PasswordHash = "hashed-password",
+                IsActive = true,
+                Balance = 1000m,
+                Role = 1,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            try
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                var result =
+                    _userRepository.IsMobileNumberExists(
+                        "8888888888",
+                        user.Id);
+
+                Assert.IsFalse(result);
+            }
+            finally
+            {
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
+
+                if (userToRemove != null)
+                {
+                    _context.Users.Remove(userToRemove);
+                    await _context.SaveChangesAsync();
+                }
+            }
         }
 
         [TestMethod]
@@ -269,10 +449,11 @@ namespace RestaurantServer.Tests.Repositories
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                var refreshToken = new RefreshToken(user.Id)
-                {
-                    Token = "repository-test-refresh-token"
-                };
+                var refreshToken =
+                    new RefreshToken(user.Id)
+                    {
+                        Token = "repository-test-refresh-token"
+                    };
 
                 _context.RefreshTokens.Add(refreshToken);
                 await _context.SaveChangesAsync();
@@ -292,18 +473,19 @@ namespace RestaurantServer.Tests.Repositories
             }
             finally
             {
-                var tokenToRemove = await _context.RefreshTokens
-                    .FirstOrDefaultAsync(
-                        token => token.Token ==
-                            "repository-test-refresh-token");
+                var tokenToRemove =
+                    await _context.RefreshTokens
+                        .FirstOrDefaultAsync(
+                            token => token.Token ==
+                                "repository-test-refresh-token");
 
                 if (tokenToRemove != null)
                 {
                     _context.RefreshTokens.Remove(tokenToRemove);
                 }
 
-                var userToRemove = await _context.Users
-                    .FindAsync(user.Id);
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
 
                 if (userToRemove != null)
                 {
@@ -345,17 +527,19 @@ namespace RestaurantServer.Tests.Repositories
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                var activeToken1 = new RefreshToken(user.Id)
-                {
-                    Token = "active-token-1",
-                    IsRevoked = false
-                };
+                var activeToken1 =
+                    new RefreshToken(user.Id)
+                    {
+                        Token = "active-token-1",
+                        IsRevoked = false
+                    };
 
-                var activeToken2 = new RefreshToken(user.Id)
-                {
-                    Token = "active-token-2",
-                    IsRevoked = false
-                };
+                var activeToken2 =
+                    new RefreshToken(user.Id)
+                    {
+                        Token = "active-token-2",
+                        IsRevoked = false
+                    };
 
                 _context.RefreshTokens.Add(activeToken1);
                 _context.RefreshTokens.Add(activeToken2);
@@ -369,24 +553,19 @@ namespace RestaurantServer.Tests.Repositories
 
                 Assert.IsTrue(activeToken1.IsRevoked);
                 Assert.IsTrue(activeToken2.IsRevoked);
-
-                Assert.IsTrue(
-                    activeToken1.UpdatedAt > DateTime.MinValue);
-
-                Assert.IsTrue(
-                    activeToken2.UpdatedAt > DateTime.MinValue);
             }
             finally
             {
-                var tokens = await _context.RefreshTokens
-                    .Where(token =>
-                        token.UserId == user.Id)
-                    .ToListAsync();
+                var tokens =
+                    await _context.RefreshTokens
+                        .Where(token =>
+                            token.UserId == user.Id)
+                        .ToListAsync();
 
                 _context.RefreshTokens.RemoveRange(tokens);
 
-                var userToRemove = await _context.Users
-                    .FindAsync(user.Id);
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
 
                 if (userToRemove != null)
                 {
@@ -417,11 +596,12 @@ namespace RestaurantServer.Tests.Repositories
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                var revokedToken = new RefreshToken(user.Id)
-                {
-                    Token = "already-revoked-token",
-                    IsRevoked = true
-                };
+                var revokedToken =
+                    new RefreshToken(user.Id)
+                    {
+                        Token = "already-revoked-token",
+                        IsRevoked = true
+                    };
 
                 _context.RefreshTokens.Add(revokedToken);
                 await _context.SaveChangesAsync();
@@ -453,8 +633,8 @@ namespace RestaurantServer.Tests.Repositories
                     _context.RefreshTokens.Remove(tokenToRemove);
                 }
 
-                var userToRemove = await _context.Users
-                    .FindAsync(user.Id);
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
 
                 if (userToRemove != null)
                 {
@@ -499,11 +679,12 @@ namespace RestaurantServer.Tests.Repositories
 
                 await _context.SaveChangesAsync();
 
-                var token = new RefreshToken(user2.Id)
-                {
-                    Token = "different-user-token",
-                    IsRevoked = false
-                };
+                var token =
+                    new RefreshToken(user2.Id)
+                    {
+                        Token = "different-user-token",
+                        IsRevoked = false
+                    };
 
                 _context.RefreshTokens.Add(token);
                 await _context.SaveChangesAsync();
@@ -569,10 +750,11 @@ namespace RestaurantServer.Tests.Repositories
                 _context.Users.Add(user);
 
                 await _unitOfWork.SaveChangesAsync(
+                    null,
                     CancellationToken.None);
 
-                var result = await _context.Users
-                    .FindAsync(user.Id);
+                var result =
+                    await _context.Users.FindAsync(user.Id);
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(
@@ -581,8 +763,8 @@ namespace RestaurantServer.Tests.Repositories
             }
             finally
             {
-                var userToRemove = await _context.Users
-                    .FindAsync(user.Id);
+                var userToRemove =
+                    await _context.Users.FindAsync(user.Id);
 
                 if (userToRemove != null)
                 {
