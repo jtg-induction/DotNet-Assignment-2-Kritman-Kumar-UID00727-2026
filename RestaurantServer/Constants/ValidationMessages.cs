@@ -61,5 +61,6 @@ namespace RestaurantServer.Constants
         public const string InvalidOrderStatus = "Invalid order status.";
         public const string InvalidOrderStatusTransition = "Invalid order status transition.";
         public const string OrderCannotBeCancelledByOwner = "Order cancellation is handled by the customer.";
+        public const string InvalidTopItems = "Top items must be between 1 and 100.";
     }
 }

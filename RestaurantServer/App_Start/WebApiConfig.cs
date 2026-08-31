@@ -21,8 +21,8 @@ namespace RestaurantServer
             config.Filters.Add(new ValidateModelAttribute());
 
             config.Services.Replace(
-              typeof(IExceptionHandler),
-              new GlobalExceptionHandler()
+             typeof(IExceptionHandler),
+             new GlobalExceptionHandler()
             );
         }
     }
