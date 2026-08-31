@@ -30,6 +30,7 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IRestaurantRepository, RestaurantRepository>(new HierarchicalLifetimeManager());
             Container.RegisterType<IItemRepository, ItemRepository>(new HierarchicalLifetimeManager());
             Container.RegisterType<IOrderRepository, OrderRepository>(new HierarchicalLifetimeManager());
+            Container.RegisterType<IReportRepository, ReportRepository>(new HierarchicalLifetimeManager());
 
             Container.RegisterType<IAuthService, AuthService>();
             Container.RegisterType<IUserUpdateService, UserUpdateService>();
@@ -47,6 +48,9 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IRestaurantService, RestaurantService>();
             Container.RegisterType<IOrderValidator, OrderValidator>();
             Container.RegisterType<IOrderService, OrderService>();
+            Container.RegisterType<IReportService, ReportService>();
+            Container.RegisterType<IReportValidator, ReportValidator>();
+            Container.RegisterType<IReportRenderer, ReportRenderer>();
         }
     }
 }

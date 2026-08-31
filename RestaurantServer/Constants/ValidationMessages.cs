@@ -1,3 +1,6 @@
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
+
 namespace RestaurantServer.Constants
 {
     public static class ValidationMessages
@@ -19,6 +22,7 @@ namespace RestaurantServer.Constants
         public const string QuantityRequired = "Quantity id required.";
         public const string ItemIdRequired = "ItemId is required.";
         public const string RestaurantOwnerRequired = "You are not authorized to update this order.";
+        public const string ReportRequestRequired = "Report request cannot be null.";
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
         public const string EmailMaxLength = "Email cannot exceed the maximum allowed length.";
@@ -26,6 +30,8 @@ namespace RestaurantServer.Constants
         public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length.";
         public const string MobileNumberMaxLength = "Mobile number cannot exceed the maximum allowed length.";
         public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include 1 email.";
+        public const string InvalidTopItemsCount = "TopItems must be greater than 0 and TopItems cannot be greater than 100.";
+        public const string InvalidTopPairsCount = "TopPairs must be greater than 0 and TopPairs cannot be greater than 100.";
 
         public const string InvalidEmail = "Please enter a valid email address.";
         public const string EmailAlreadyExists = "An account with this email already exists.";
@@ -61,5 +67,16 @@ namespace RestaurantServer.Constants
         public const string InvalidOrderStatus = "Invalid order status.";
         public const string InvalidOrderStatusTransition = "Invalid order status transition.";
         public const string OrderCannotBeCancelledByOwner = "Order cancellation is handled by the customer.";
+        public const string InvalidTopItems = "Top items must be between 1 and 100.";
+        public const string InvalidDateRange = "StartDate cannot be later than EndDate.";
+        public const string InvalidExcludeItemIds = "ExcludeItemIds must contain only valid item IDs.";
+        public const string InvalidRestaurantId = "RestaurantId must be greater than 0.";
+        public const string InvalidPath = "Could not map the report path: ";
+        public const string ReportNotFound = "The Telerik report file was not found.";
+        public const string TelerikFileLengthZero = "The Telerik report file exists but its file size is 0 bytes. Open the report in the Telerik Report Designer and save it.";
+        public const string ReportIsNull = "Telerik could not load the report.";
+        public const string RenderReportisNull = "Telerik RenderReport returned a null result.";
+        public const string DocumentBytesisNull = "Telerik rendered the report, but DocumentBytes is null.";
+        public const string EmptyPdf = "Telerik generated an empty PDF.";
     }
 }
