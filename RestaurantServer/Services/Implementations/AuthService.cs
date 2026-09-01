@@ -81,7 +81,7 @@ namespace RestaurantServer.Services.Implementations
         /// <exception cref="ValidationException">
         /// Thrown when an account with the provided email address already exists.
         /// </exception>
-        public async Task<SignupResponse> SignupAsync(SignupRequest request, 
+        public async Task<SignupResponse> SignupAsync(SignupRequest request,
             CancellationToken cancellationToken = default)
         {
             _requestValidator.IsRequestNull(request);
@@ -99,7 +99,7 @@ namespace RestaurantServer.Services.Implementations
             var user = new User(request.Name.Trim(), request.Email, passwordHash);
 
             await _usersRepository.Add(user);
-            await _unitOfWork.SaveChangesAsync(null , cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
             return new SignupResponse(user);
         }
@@ -148,7 +148,7 @@ namespace RestaurantServer.Services.Implementations
                     Token = refreshToken
                 });
 
-            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
             return new LoginResult
             {
@@ -192,7 +192,7 @@ namespace RestaurantServer.Services.Implementations
 
             _refreshTokenRepository.Update(existingRefreshToken);
 
-            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
             var response = new RefreshResponse(accessToken, "Bearer");
 
@@ -233,7 +233,7 @@ namespace RestaurantServer.Services.Implementations
 
             _refreshTokenRepository.Update(existingRefreshToken);
 
-            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
         }
 
     }

@@ -220,7 +220,7 @@ namespace RestaurantServer.Services.Implementations
                 await _restaurantOwnerRepository.Add(restaurantOwner);
             }
 
-            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
             return new OnboardRestaurantResponses
             {
