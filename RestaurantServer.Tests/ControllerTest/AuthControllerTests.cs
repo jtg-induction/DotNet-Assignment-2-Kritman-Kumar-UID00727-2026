@@ -65,7 +65,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock
                 .Setup(service =>
-                    service.SignupAsync(request))
+                    service.SignupAsync(
+                        request,
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResponse);
 
             var result =
@@ -81,7 +83,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock.Verify(
                 service =>
-                    service.SignupAsync(request),
+                    service.SignupAsync(
+                        request,
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -113,7 +117,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock.Verify(
                 service =>
-                    service.LoginAsync(request),
+                    service.LoginAsync(
+                        request,
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -206,7 +212,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock.Verify(
                 service =>
-                    service.LoginAsync(request),
+                    service.LoginAsync(
+                        request,
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -278,7 +286,8 @@ namespace RestaurantServer.Tests.ControllersTest
             _authServiceMock.Verify(
                 service =>
                     service.RefreshTokenAsync(
-                        refreshToken),
+                        refreshToken,
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -388,7 +397,8 @@ namespace RestaurantServer.Tests.ControllersTest
             _authServiceMock.Verify(
                 service =>
                     service.RefreshTokenAsync(
-                        It.IsAny<string>()),
+                        It.IsAny<string>(),
+                        It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -407,7 +417,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock
                 .Setup(service =>
-                    service.LogoutAsync(refreshToken))
+                    service.LogoutAsync(
+                        refreshToken,
+                        It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             SetupLogoutCookie();
@@ -446,7 +458,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock
                 .Setup(service =>
-                    service.LogoutAsync(refreshToken))
+                    service.LogoutAsync(
+                        refreshToken,
+                        It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             SetupLogoutCookie();
@@ -455,7 +469,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock.Verify(
                 service =>
-                    service.LogoutAsync(refreshToken),
+                    service.LogoutAsync(
+                        refreshToken,
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -474,7 +490,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock
                 .Setup(service =>
-                    service.LogoutAsync(refreshToken))
+                    service.LogoutAsync(
+                        refreshToken,
+                        It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             SetupLogoutCookie();
@@ -509,7 +527,9 @@ namespace RestaurantServer.Tests.ControllersTest
 
             _authServiceMock
                 .Setup(service =>
-                    service.LogoutAsync(refreshToken))
+                    service.LogoutAsync(
+                        refreshToken,
+                        It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             var expiredCookie =
@@ -601,7 +621,8 @@ namespace RestaurantServer.Tests.ControllersTest
             _authServiceMock.Verify(
                 service =>
                     service.LogoutAsync(
-                        It.IsAny<string>()),
+                        It.IsAny<string>(),
+                        It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -611,7 +632,9 @@ namespace RestaurantServer.Tests.ControllersTest
         {
             _authServiceMock
                 .Setup(service =>
-                    service.LoginAsync(request))
+                    service.LoginAsync(
+                        request,
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync(result);
 
             _cookieHelperMock
@@ -633,7 +656,8 @@ namespace RestaurantServer.Tests.ControllersTest
             _authServiceMock
                 .Setup(service =>
                     service.RefreshTokenAsync(
-                        refreshToken))
+                        refreshToken,
+                        It.IsAny<CancellationToken>()))
                 .ReturnsAsync(result);
 
             _cookieHelperMock

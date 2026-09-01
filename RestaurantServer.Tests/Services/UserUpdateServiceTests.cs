@@ -36,6 +36,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock
                 .Setup(unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
@@ -123,6 +124,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Never);
         }
@@ -179,6 +181,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Never);
         }
@@ -217,29 +220,13 @@ namespace RestaurantServer.Tests
 
             Assert.IsNotNull(result);
 
-            Assert.AreEqual(
-                userId,
-                result.UserId);
+            Assert.AreEqual(userId, result.UserId);
+            Assert.AreEqual("Updated Name", result.Name);
+            Assert.AreEqual("test@example.com", result.Email);
+            Assert.AreEqual("9123456789", result.MobileNumber);
 
-            Assert.AreEqual(
-                "Updated Name",
-                result.Name);
-
-            Assert.AreEqual(
-                "test@example.com",
-                result.Email);
-
-            Assert.AreEqual(
-                "9123456789",
-                result.MobileNumber);
-
-            Assert.AreEqual(
-                "Updated Name",
-                user.Name);
-
-            Assert.AreEqual(
-                "9123456789",
-                user.MobileNumber);
+            Assert.AreEqual("Updated Name", user.Name);
+            Assert.AreEqual("9123456789", user.MobileNumber);
 
             _requestValidatorMock.Verify(
                 validator =>
@@ -268,6 +255,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
         }
@@ -286,7 +274,9 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(null, "Invalid refresh token."))
+                    validator.IsUserNullOrDeactivated(
+                        null,
+                        "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRefreshToken));
@@ -309,7 +299,9 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(null, "Invalid refresh token."),
+                    validator.IsUserNullOrDeactivated(
+                        null,
+                        "Invalid refresh token."),
                 Times.Once);
 
             _refreshTokenRepositoryMock.Verify(
@@ -322,6 +314,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Never);
         }
@@ -348,7 +341,9 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(user, "Invalid refresh token."))
+                    validator.IsUserNullOrDeactivated(
+                        user,
+                        "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRefreshToken));
@@ -371,7 +366,9 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(user, "Invalid refresh token."),
+                    validator.IsUserNullOrDeactivated(
+                        user,
+                        "Invalid refresh token."),
                 Times.Once);
 
             Assert.IsFalse(user.IsActive);
@@ -386,6 +383,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Never);
         }
@@ -429,7 +427,9 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(user, "Invalid refresh token."),
+                    validator.IsUserNullOrDeactivated(
+                        user,
+                        "Invalid refresh token."),
                 Times.Once);
 
             _refreshTokenRepositoryMock.Verify(
@@ -442,6 +442,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
         }
