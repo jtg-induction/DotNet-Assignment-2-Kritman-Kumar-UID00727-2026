@@ -12,6 +12,6 @@ namespace RestaurantServer.Repositories.Interfaces
         Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);
 
         Task<List<User>> GetUsersByEmailsAsync(
-            IEnumerable<string> emails, CancellationToken cancellationToken = default);
+            List<string> emails, CancellationToken cancellationToken = default);
     }
 }

@@ -50,15 +50,11 @@ namespace RestaurantServer.Repositories.Implementations
         /// <param name="emails"> IEnumerable of emails</param>
         /// <returns>List of users</returns>
         public async Task<List<User>> GetUsersByEmailsAsync(
-           IEnumerable<string> emails,
-           CancellationToken cancellationToken = default)
-        {
-            var emailList = emails
-                .Select(email => email.Trim())
-                .ToList();
-
+           List<string> emails, CancellationToken cancellationToken = default)
+        { 
+            
             return await _context.Users
-                .Where(user => emailList.Contains(user.Email))
+                .Where(user => emails.Contains(user.Email))
                 .ToListAsync(cancellationToken);
         }
     }

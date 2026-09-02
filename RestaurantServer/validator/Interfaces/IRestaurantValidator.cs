@@ -1,5 +1,5 @@
 ﻿using RestaurantServer.Models;
-using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RestaurantServer.Validators.Interfaces
@@ -8,9 +8,7 @@ namespace RestaurantServer.Validators.Interfaces
     {
         void ValidateRestaurantExists(Restaurant restaurant);
         void ValidateOwnerRelationshipDoesNotExist(RestaurantOwner restaurantOwner);
-        Task ValidateMobileNumber(string mobileNumber);
-        void ValidateEmail(string email);
-        void ValidateAdminRole(int role);
-        void IsOwnersEmailEmpty(List<string> emails);
+        Task ValidateMobileNumber(string mobileNumber, CancellationToken cancellationToken = default); 
+        void ValidateAdminRole(int role); 
     }
 }

@@ -22,9 +22,9 @@
         public const string PasswordMinLength = "Password must be at least {1} characters long.";
         public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length.";
         public const string MobileNumberMaxLength = "Mobile number cannot exceed the maximum allowed length.";
-        public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include 1 email.";
-
-        public const string InvalidEmail = "Please enter a valid email address.";
+        public const string ListMinLength = "The list must have a minimum length of {0}";
+         
+        public const string InvalidEmail = "The following email addresses are invalid: {0}";
         public const string EmailAlreadyExists = "An account with this email already exists.";
         public const string MobileNumberAlreadyExists = "Mobile number already exists.";
         public const string InvalidCredentials = "Invalid email or password.";

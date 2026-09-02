@@ -1,4 +1,5 @@
 ﻿using RestaurantServer.Constants;
+using RestaurantServer.ModelStateValidator;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -15,7 +16,7 @@ namespace RestaurantServer.DTOs.Requests
 
         [Required(ErrorMessage = ValidationMessages.MobileNumberRequired)]
         [MaxLength(ValidationConstants.MobileNumberMaxLength)]
-        [RegularExpression(RegexConstants.MobileNumberRgex, ErrorMessage = ValidationMessages.InvalidMobileNumber)]
+        [RegularExpression(Regex.MobileNumberRgex, ErrorMessage = ValidationMessages.InvalidMobileNumber)]
         public string MobileNumber { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.AddressLine1Required)]
@@ -39,7 +40,8 @@ namespace RestaurantServer.DTOs.Requests
         public string Country { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.EmailRequired)]
+        [EmailListAttribute]
+        [ListRequired(1)]
         public List<string> OwnersEmails { get; set; }
-
     }
 }

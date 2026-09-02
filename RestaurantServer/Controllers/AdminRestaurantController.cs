@@ -3,7 +3,6 @@ using RestaurantServer.Enums;
 using RestaurantServer.Filters;
 using RestaurantServer.Services.Implementations;
 using RestaurantServer.Validators.Interfaces;
-using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,9 +45,13 @@ namespace RestaurantServer.Controllers
         {
             _requestValidator.IsRequestNull(request);
 
-            var response = await _restaurantService.CreateRestaurantAsync(request, cancellationToken);
+            // ------------ remove this  ---------------------
+            return Ok("woking");
+            // -----------------------------------------------
 
-            return Content(HttpStatusCode.Created, response);
+            //var response = await _restaurantService.CreateRestaurantAsync(request, cancellationToken);
+
+            //return Content(HttpStatusCode.Created, response);
         }
 
         /// <summary>
@@ -67,9 +70,13 @@ namespace RestaurantServer.Controllers
         {
             _requestValidator.IsRequestNull(request);
 
-            var response = await _restaurantService.OnboardRestaurantOwnerAsync(restaurantId, request, cancellationToken);
+            // -------------- Remove this ------------------
+            return Ok("woking");
+            // ---------------------------------------------
 
-            return Content(HttpStatusCode.Created, response);
+            //var response = await _restaurantService.OnboardRestaurantOwnerAsync(restaurantId, request, cancellationToken);
+
+            //return Content(HttpStatusCode.Created, response);
         }
     }
 }
