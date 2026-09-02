@@ -18,8 +18,6 @@ namespace RestaurantServer.Models
 
         public Restaurant(CreateRestaurantRequest request)
         {
-            var now = DateTime.UtcNow;
-
             RestaurantName = request.RestaurantName.Trim();
             Description = request.Description?.Trim();
             MobileNumber = request.MobileNumber.Trim();

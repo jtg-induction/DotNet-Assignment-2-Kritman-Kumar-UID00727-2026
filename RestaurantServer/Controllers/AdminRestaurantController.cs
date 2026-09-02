@@ -4,7 +4,6 @@ using RestaurantServer.Filters;
 using RestaurantServer.Services.Implementations;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
-using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +44,7 @@ namespace RestaurantServer.Controllers
         [Route("restaurants")]
         public async Task<IHttpActionResult> CreateRestaurantAsync(CreateRestaurantRequest request, CancellationToken cancellationToken = default)
         {
-            _requestValidator.IsRequestNull(request);
+            _requestValidator.IsRequestNull(request); 
 
             var response = await _restaurantService.CreateRestaurantAsync(request, cancellationToken);
 

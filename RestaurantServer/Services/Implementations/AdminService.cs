@@ -68,33 +68,22 @@ namespace RestaurantServer.Services.Implementations
         public async Task<CreateRestaurantResponse> CreateRestaurantAsync(
             CreateRestaurantRequest request,
             CancellationToken cancellationToken = default)
-        {
-            _restaurantValidator.IsOwnersEmailEmpty(request.OwnersEmails);
+        { 
 
             var createdBy = _userSessionService.GetUserId().Value;
 
-            var normalizedEmails = new List<string>();
             var emailSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (string email in request.OwnersEmails)
-            {
-                _restaurantValidator.ValidateEmail(email);
-
-                string normalizedEmail = email.Trim();
-
-                if (false == emailSet.Contains(email))
-                {
-                    emailSet.Add(email);
-                    normalizedEmails.Add(normalizedEmail);
-                }
-
+            foreach (string email in request.OwnersEmails)  
+            { 
+                emailSet.Add(email.Trim());
             }
 
-            List<User> users = await _usersRepository.GetUsersByEmailsAsync(normalizedEmails, cancellationToken);
+            List<User> users = await _usersRepository.GetUsersByEmailsAsync(emailSet.ToList(), cancellationToken);
 
             var usersByEmail = users.ToDictionary(user => user.Email.Trim(), StringComparer.OrdinalIgnoreCase);
 
-            foreach (var email in normalizedEmails)
+            foreach (var email in emailSet)
             {
                 if (!usersByEmail.TryGetValue(email, out var user))
                 {
@@ -149,38 +138,26 @@ namespace RestaurantServer.Services.Implementations
             CancellationToken cancellationToken = default)
         {
 
-            _restaurantValidator.IsOwnersEmailEmpty(request.Emails);
-
             var restaurant = await _restaurantRepository.GetByIdAsync(restaurantId, cancellationToken);
 
             _restaurantValidator.ValidateRestaurantExists(restaurant);
 
-            var normalizedEmails = new List<string>();
             var emailSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (string email in request.Emails)
             {
-                _restaurantValidator.ValidateEmail(email);
-
-                var normalizedEmail = email.Trim();
-
-                if (!emailSet.Add(normalizedEmail))
-                {
-                    throw new ValidationException(ValidationMessages.DuplicateOwnerEmail);
-                }
-
-                normalizedEmails.Add(normalizedEmail);
+                emailSet.Add(email.Trim());
             }
 
             var users = await _usersRepository
-                .GetUsersByEmailsAsync(normalizedEmails, cancellationToken);
+                .GetUsersByEmailsAsync(emailSet.ToList(), cancellationToken);
 
             var usersByEmail = users.ToDictionary(
                 user => user.Email.Trim(),
                 StringComparer.OrdinalIgnoreCase);
 
 
-            foreach (var email in normalizedEmails)
+            foreach (var email in emailSet)
             {
                 if (!usersByEmail.TryGetValue(email, out var user))
                 {
@@ -220,15 +197,14 @@ namespace RestaurantServer.Services.Implementations
                 await _restaurantOwnerRepository.Add(restaurantOwner);
             }
 
-            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
             return new OnboardRestaurantResponses
             {
                 RestaurantId = restaurantId,
                 Message = SuccessMessages.ownersOnboardedSuccessful,
                 Owners = restaurantOwners
-                    .Select(restaurantOwner =>
-                        new OwnerDto(restaurantOwner))
+                    .Select(restaurantOwner => new OwnerDto(restaurantOwner))
                     .ToList()
             };
         }

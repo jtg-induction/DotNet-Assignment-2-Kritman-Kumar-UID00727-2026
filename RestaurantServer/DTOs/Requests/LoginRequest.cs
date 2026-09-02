@@ -5,12 +5,12 @@ public class LoginRequest
 {
     [Required(ErrorMessage = ValidationMessages.EmailRequired)]
     [MaxLength(ValidationConstants.EmailMaxLength, ErrorMessage = ValidationMessages.EmailMaxLength)]
-    [RegularExpression(RegexConstants.EmailRegex, ErrorMessage = ValidationMessages.InvalidEmail)]
+    [RegularExpression(Regex.EmailRegex, ErrorMessage = ValidationMessages.InvalidEmail)]
     public string Email { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.PasswordRequired)]
     [MinLength(ValidationConstants.PasswordMinLength, ErrorMessage = ValidationMessages.PasswordMinLength)]
     [MaxLength(ValidationConstants.PasswordMaxLength, ErrorMessage = ValidationMessages.PasswordMaxLength)]
-    [RegularExpression(RegexConstants.PasswordRegex, ErrorMessage = ValidationMessages.InvalidPasswordFormat)]
+    [RegularExpression(Regex.PasswordRegex, ErrorMessage = ValidationMessages.InvalidPasswordFormat)]
     public string Password { get; set; }
 }

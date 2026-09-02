@@ -6,8 +6,8 @@ using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
+using System.Threading.Tasks; 
+using System.Threading; 
 
 namespace RestaurantServer.Validators.Implementations
 {
@@ -62,7 +62,7 @@ namespace RestaurantServer.Validators.Implementations
         /// </summary>
         /// <param name="mobileNumber">string new restaurant mobile number</param>
         /// <exception cref="ValidationException">thrown when mobile number allready exists</exception>
-        public async Task ValidateMobileNumber(string mobileNumber)
+        public async Task ValidateMobileNumber(string mobileNumber, CancellationToken cancellationToken = default)
         {
             mobileNumber = mobileNumber?.Trim();
 
@@ -76,21 +76,6 @@ namespace RestaurantServer.Validators.Implementations
         }
 
         /// <summary>
-        /// Validates the email using Regex.
-        /// </summary>
-        /// <param name="email">owner email</param>
-        /// <exception cref="ValidationException">throws exception when email is empty or when email is invlaid.</exception>
-        public void ValidateEmail(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email) ||
-                    !Regex.IsMatch(email.Trim(), RegexConstants.EmailRegex))
-            {
-                throw new ValidationException(ValidationMessages.InvalidEmail);
-            }
-        }
-
-
-        /// <summary>
         /// validate user role Allow only customer and owner.
         /// </summary>
         /// <param name="role"> intiger user role only from ENUM USER_ROLE</param>
@@ -100,20 +85,6 @@ namespace RestaurantServer.Validators.Implementations
             if (role == (int)UserRole.Admin)
             {
                 throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
-            }
-        }
-
-
-        /// <summary>
-        ///  validate the emails count.
-        /// </summary>
-        /// <param name="emails"> list of string </param>
-        /// <exception cref="ValidationException">throws exception when emails count is 0</exception>
-        public void IsOwnersEmailEmpty(List<string> emails)
-        {
-            if (0 == emails.Count)
-            {
-                throw new ValidationException(ValidationMessages.OnboardRestaurantOwnerEmailsMinLength);
             }
         }
 

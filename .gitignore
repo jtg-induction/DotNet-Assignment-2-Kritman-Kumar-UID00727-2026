@@ -16,3 +16,8 @@ RestaurantServer.Tests/obj/
 # Local database connection strings
 RestaurantServer/ConnectionStrings.config
 RestaurantServer/AppSettings.config
+
+# Test results / code coverage
+TestResults/
+*.coverage
+*.coveragexml

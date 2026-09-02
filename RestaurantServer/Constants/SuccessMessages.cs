@@ -1,6 +1,4 @@
-﻿using RestaurantServer.Models;
-
-namespace RestaurantServer.Constants
+﻿namespace RestaurantServer.Constants
 {
     public static class SuccessMessages
     {
