@@ -23,6 +23,12 @@ namespace RestaurantServer.Repositories.Implementations
 
         }
 
+        /// <summary>
+        /// Checks whether a mobile number is already in use by any user other than the specified user.
+        /// </summary>
+        /// <param name="mobileNumber">The mobile number string to check for duplicates.</param>
+        /// <param name="userId">The unique identifier of the user to exclude from the check (typically the current user).</param>
+        /// <returns><c>true</c> if the mobile number already exists for another user; otherwise, <c>false</c>.</returns>
         public bool IsMobileNumberExists(string mobileNumber, long userId)
         {
             return _context.Users.Any(user => user.MobileNumber == mobileNumber && user.Id != userId);

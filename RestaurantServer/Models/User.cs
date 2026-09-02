@@ -16,11 +16,7 @@ namespace RestaurantServer.Models
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
-        public User(
-           string name,
-           string email,
-           string passwordHash)
-           : this()
+        public User(string name, string email, string passwordHash): this()
         {
             Name = name;
             Email = email;
