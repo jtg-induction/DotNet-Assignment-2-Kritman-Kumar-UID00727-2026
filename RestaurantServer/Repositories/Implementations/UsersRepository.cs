@@ -58,7 +58,6 @@ namespace RestaurantServer.Repositories.Implementations
         public async Task<List<User>> GetUsersByEmailsAsync(
            List<string> emails, CancellationToken cancellationToken = default)
         { 
-            
             return await _context.Users
                 .Where(user => emails.Contains(user.Email))
                 .ToListAsync(cancellationToken);

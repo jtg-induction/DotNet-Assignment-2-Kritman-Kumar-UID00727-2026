@@ -17,7 +17,7 @@ namespace RestaurantServer.Controllers
     [CustomAuthorize(UserRole.Admin)]
     public class AdminRestaurantController : ApiController
     {
-        private readonly AdminService _restaurantService;
+        private readonly RestaurantAdminService _restaurantService;
         private readonly IRequestValidator _requestValidator;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace RestaurantServer.Controllers
         /// <param name="restaurantService">The service handling restaurant administration business logic.</param>
         /// <param name="requestValidator">The validator checking incoming request payloads.</param>
         public AdminRestaurantController(
-            AdminService restaurantService,
+            RestaurantAdminService restaurantService,
             IRequestValidator requestValidator)
         {
             _restaurantService = restaurantService;

@@ -232,7 +232,7 @@
     <Compile Include="ModelStateValidator\EmailListAttribute.cs" />
     <Compile Include="ModelStateValidator\CollectionMinLengthAttribute.cs" />
     <Compile Include="Repositories\implementations\RestaurantRepository.cs" />
-    <Compile Include="Services\Implementations\AdminService.cs" />
+    <Compile Include="Services\Implementations\RestaurantAdminService.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantOwnerRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantRepository.cs" />
     <Compile Include="Services\Implementations\UserSessionService.cs" />

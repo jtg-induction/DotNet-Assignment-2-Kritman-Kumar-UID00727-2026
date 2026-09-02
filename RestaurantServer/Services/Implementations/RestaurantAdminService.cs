@@ -55,26 +55,13 @@ namespace RestaurantServer.Services.Implementations
             _userSessionService = userSessionService;
         }
 
-        /// <summary>
-        /// Creates a new restaurant and assigns an existing user as its owner.
-        /// </summary>
-        /// <param name="request">Restaurant and owner details.</param>
-        /// <param name="createdBy">ID of the user creating the restaurant.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>The created restaurant details.</returns>
-        /// <exception cref="ValidationException">
-        /// Thrown when the owner is invalid or cannot be assigned as an owner.
-        /// </exception>
-        public async Task<CreateRestaurantResponse> CreateRestaurantAsync(
-            CreateRestaurantRequest request,
-            CancellationToken cancellationToken = default)
+        private async Task<List<RestaurantOwner>> OnboardOwnerAsync(Restaurant restaurant, List<string> emails,
+            bool isOnboard = true, CancellationToken cancellationToken = default)
         {
-
-            var createdBy = _userSessionService.GetUserId().Value;
 
             var emailSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (string email in request.OwnersEmails)
+            foreach (string email in emails)
             {
                 emailSet.Add(email.Trim());
             }
@@ -94,12 +81,24 @@ namespace RestaurantServer.Services.Implementations
                 _restaurantValidator.ValidateAdminRole(user.Role);
             }
 
-            await _restaurantValidator.ValidateMobileNumber(request.MobileNumber);
+            if (isOnboard)
+            {
+                var userIds = users.Select(user => user.Id).ToList();
 
-            var restaurant = new Restaurant(request);
+                var existingOwners = await _restaurantOwnerRepository
+                    .GetOwnersByRestaurantAndUserIdsAsync(restaurant.Id, userIds, true, cancellationToken);
 
-            await _restaurantRepository.Add(restaurant);
+                var existingOwnerUserIds = existingOwners
+                    .Select(owner => owner.UserId).ToHashSet();
 
+                foreach (var user in users)
+                {
+                    if (existingOwnerUserIds.Contains(user.Id))
+                    {
+                        throw new ValidationException(ErrorMessages.OwnerRelationshipAlreadyExists);
+                    }
+                }
+            }
 
             var restaurantOwners = users.Select(
                 user =>
@@ -109,6 +108,34 @@ namespace RestaurantServer.Services.Implementations
                 }).ToList();
 
             await _restaurantOwnerRepository.AddRange(restaurantOwners);
+
+            return restaurantOwners;
+        }
+
+        /// <summary>
+        /// Creates a new restaurant and assigns an existing user as its owner.
+        /// </summary>
+        /// <param name="request">Restaurant and owner details.</param>
+        /// <param name="createdBy">ID of the user creating the restaurant.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The created restaurant details.</returns>
+        /// <exception cref="ValidationException">
+        /// Thrown when the owner is invalid or cannot be assigned as an owner.
+        /// </exception>
+        public async Task<CreateRestaurantResponse> CreateRestaurantAsync(
+            CreateRestaurantRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var createdBy = _userSessionService.GetUserId().Value;
+
+            await _restaurantValidator.ValidateMobileNumber(request.MobileNumber);
+
+            var restaurant = new Restaurant(request);
+
+            await _restaurantRepository.Add(restaurant);
+
+            List<RestaurantOwner> restaurantOwners = await this.OnboardOwnerAsync(restaurant, request.OwnersEmails, isOnboard: false, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(createdBy, cancellationToken);
 
@@ -138,56 +165,7 @@ namespace RestaurantServer.Services.Implementations
 
             _restaurantValidator.ValidateRestaurantExists(restaurant);
 
-            var emailSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (string email in request.Emails)
-            {
-                emailSet.Add(email.Trim());
-            }
-
-            var users = await _usersRepository
-                .GetUsersByEmailsAsync(emailSet.ToList(), cancellationToken);
-
-            var usersByEmail = users.ToDictionary(
-                user => user.Email.Trim(),
-                StringComparer.OrdinalIgnoreCase);
-
-
-            foreach (var email in emailSet)
-            {
-                if (!usersByEmail.TryGetValue(email, out var user))
-                {
-                    throw new ValidationException(ErrorMessages.UserNotFound);
-                }
-
-                _userValidator.IsUserNullOrDeactivated(user, ErrorMessages.UserNotFound);
-                _restaurantValidator.ValidateAdminRole(user.Role);
-            }
-
-            var userIds = users.Select(user => user.Id).ToList();
-
-            var existingOwners = await _restaurantOwnerRepository
-                .GetOwnersByRestaurantAndUserIdsAsync(restaurantId, userIds, true, cancellationToken);
-
-            var existingOwnerUserIds = existingOwners
-                .Select(owner => owner.UserId).ToHashSet();
-
-            foreach (var user in users)
-            {
-                if (existingOwnerUserIds.Contains(user.Id))
-                {
-                    throw new ValidationException(ErrorMessages.OwnerRelationshipAlreadyExists);
-                }
-            }
-
-            var restaurantOwners = users.Select(
-                user =>
-                {
-                    user.Role = (int)UserRole.Owner;
-                    return new RestaurantOwner(restaurant, user);
-                }).ToList();
-
-            await _restaurantOwnerRepository.AddRange(restaurantOwners);
+            List<RestaurantOwner> restaurantOwners = await this.OnboardOwnerAsync(restaurant, request.Emails, isOnboard: true, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
