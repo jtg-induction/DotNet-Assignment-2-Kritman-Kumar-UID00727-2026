@@ -2,6 +2,7 @@
 using RestaurantServer.Enums;
 using RestaurantServer.Filters;
 using RestaurantServer.Services.Implementations;
+using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System.Net;
 using System.Threading;
@@ -17,7 +18,7 @@ namespace RestaurantServer.Controllers
     [CustomAuthorize(UserRole.Admin)]
     public class AdminRestaurantController : ApiController
     {
-        private readonly RestaurantAdminService _restaurantService;
+        private readonly IRestaurantAdminService _restaurantService;
         private readonly IRequestValidator _requestValidator;
 
         /// <summary>

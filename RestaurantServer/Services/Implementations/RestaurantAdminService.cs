@@ -18,7 +18,7 @@ namespace RestaurantServer.Services.Implementations
     /// <summary>
     /// Provides administrative services for creating restaurants and onboarding owners.
     /// </summary>
-    public class AdminService : IAdminService
+    public class RestaurantAdminService : IRestaurantAdminService
     {
         private readonly IRestaurantRepository _restaurantRepository;
         private readonly IRestaurantOwnerRepository _restaurantOwnerRepository;
@@ -29,7 +29,7 @@ namespace RestaurantServer.Services.Implementations
         private readonly IUserSessionService _userSessionService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AdminService"/> class.
+        /// Initializes a new instance of the <see cref="RestaurantAdminService"/> class.
         /// </summary>
         /// <param name="restaurantRepository">The data repository for managing restaurants.</param>
         /// <param name="restaurantOwnerRepository">The data repository for managing restaurant-to-owner relationships.</param>
@@ -37,7 +37,7 @@ namespace RestaurantServer.Services.Implementations
         /// <param name="unitOfWork">The transaction boundary manager for saving multi-repository database state changes.</param>
         /// <param name="restaurantValidator">The validation rules engine for restaurant properties and entities.</param>
         /// <param name="userValidator">The validation rules engine for user record properties and checks.</param>
-        public AdminService(
+        public RestaurantAdminService(
             IRestaurantRepository restaurantRepository,
             IRestaurantOwnerRepository restaurantOwnerRepository,
             IUsersRepository usersRepository,

@@ -1,4 +1,5 @@
 ﻿using RestaurantServer.Constants;
+using RestaurantServer.Validator.Implementations;
 using RestaurantServer.Validator.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -25,7 +26,7 @@ namespace RestaurantServer.ModelStateValidator
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
 
-            IEmailValidator emailValidator = value as IEmailValidator;
+            EmailValidator emailValidator = new EmailValidator();
 
             if (value is List<string> emails)
             {

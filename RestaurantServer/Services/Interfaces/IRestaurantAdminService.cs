@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantServer.Services.Interfaces
 {
-    public interface IAdminService
+    public interface IRestaurantAdminService
     {
         Task<CreateRestaurantResponse> CreateRestaurantAsync(
             CreateRestaurantRequest request,

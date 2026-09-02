@@ -237,7 +237,7 @@
     <Compile Include="Repositories\Interfaces\IRestaurantRepository.cs" />
     <Compile Include="Services\Implementations\UserSessionService.cs" />
     <Compile Include="Services\Interfaces\IUserSessionService.cs" />
-    <Compile Include="Services\Interfaces\IAdminService.cs" />
+    <Compile Include="Services\Interfaces\IRestaurantAdminService.cs" />
     <Compile Include="Validator\Implementations\AuthenticationValidator.cs" />
     <Compile Include="Helpers\Implementations\CookieHelper.cs" />
     <Compile Include="Helpers\Implementations\RefreshTokenHelper.cs" />
