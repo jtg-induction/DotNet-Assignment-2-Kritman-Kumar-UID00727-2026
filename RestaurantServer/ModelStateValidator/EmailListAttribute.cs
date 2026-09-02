@@ -37,7 +37,7 @@ namespace RestaurantServer.ModelStateValidator
                     var invalidEmailList = string.Join(", ", invalidEmails);
 
                     return new ValidationResult(
-                        string.Format(ValidationMessages.InvalidEmail, invalidEmailList)
+                        string.Format(ErrorMessages.InvalidEmail, invalidEmailList)
                     );
                 }
             }

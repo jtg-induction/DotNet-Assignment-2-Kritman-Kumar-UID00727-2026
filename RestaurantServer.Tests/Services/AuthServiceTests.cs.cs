@@ -84,7 +84,7 @@ namespace RestaurantServer.Tests
                 () => _authService.SignupAsync(request));
 
             Assert.AreEqual(
-                ValidationMessages.EmailAlreadyExists,
+                ErrorMessages.EmailAlreadyExists,
                 exception.Message);
         }
 
@@ -176,7 +176,7 @@ namespace RestaurantServer.Tests
                 () => _authService.LoginAsync(request));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidCredentials,
+                ErrorMessages.InvalidCredentials,
                 exception.Message);
 
             _authenticationValidatorMock.Verify(
@@ -216,13 +216,13 @@ namespace RestaurantServer.Tests
                     validator.ValidateUserIsActive(inactiveUser))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.UserInactive));
+                        ErrorMessages.UserInactive));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.LoginAsync(request));
 
             Assert.AreEqual(
-                ValidationMessages.UserInactive,
+                ErrorMessages.UserInactive,
                 exception.Message);
 
             _passwordHasherMock.Verify(
@@ -270,13 +270,13 @@ namespace RestaurantServer.Tests
                     validator.ValidatePassword(false))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidCredentials));
+                        ErrorMessages.InvalidCredentials));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.LoginAsync(request));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidCredentials,
+                ErrorMessages.InvalidCredentials,
                 exception.Message);
 
             _jwtTokenServiceMock.Verify(
@@ -402,13 +402,13 @@ namespace RestaurantServer.Tests
                     validator.ValidateRefreshTokenIsValid(null))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
+                        ErrorMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.RefreshTokenAsync(refreshToken));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
             _authRepositoryMock.Verify(
@@ -454,13 +454,13 @@ namespace RestaurantServer.Tests
                     validator.IsUserNullOrDeactivated(null, ""))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
+                        ErrorMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.RefreshTokenAsync(refreshToken));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
             _jwtTokenServiceMock.Verify(
@@ -513,13 +513,13 @@ namespace RestaurantServer.Tests
                     validator.IsUserNullOrDeactivated(inactiveUser, ""))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
+                        ErrorMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.RefreshTokenAsync(refreshToken));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
             _jwtTokenServiceMock.Verify(
@@ -627,7 +627,7 @@ namespace RestaurantServer.Tests
                 () => _authService.LogoutAsync(""));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
             _refreshTokenRepositoryMock.Verify(
@@ -655,13 +655,13 @@ namespace RestaurantServer.Tests
                     validator.ValidateRefreshToken(null))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
+                        ErrorMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.LogoutAsync(refreshToken));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
         }
 
@@ -694,13 +694,13 @@ namespace RestaurantServer.Tests
                         revokedToken))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
+                        ErrorMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.LogoutAsync(refreshToken));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
             _refreshTokenRepositoryMock.Verify(

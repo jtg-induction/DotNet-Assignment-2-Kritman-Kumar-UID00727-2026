@@ -92,7 +92,7 @@ namespace RestaurantServer.Services.Implementations
 
             if (existingUser != null)
             {
-                throw new ValidationException(ValidationMessages.EmailAlreadyExists);
+                throw new ValidationException(ErrorMessages.EmailAlreadyExists);
             }
 
             var passwordHash = _passwordHasher.HashPassword(request.Password);
@@ -130,7 +130,7 @@ namespace RestaurantServer.Services.Implementations
             if (user == null)
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidCredentials);
+                    ErrorMessages.InvalidCredentials);
             }
 
             _authenticationValidator.ValidateUserIsActive(user);
@@ -221,7 +221,7 @@ namespace RestaurantServer.Services.Implementations
             if (string.IsNullOrWhiteSpace(refreshToken))
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
             }
 
             var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);

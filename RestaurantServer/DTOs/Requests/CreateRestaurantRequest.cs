@@ -16,7 +16,7 @@ namespace RestaurantServer.DTOs.Requests
 
         [Required(ErrorMessage = ValidationMessages.MobileNumberRequired)]
         [MaxLength(ValidationConstants.MobileNumberMaxLength)]
-        [RegularExpression(Regex.MobileNumberRgex, ErrorMessage = ValidationMessages.InvalidMobileNumber)]
+        [RegularExpression(Regex.MobileNumberRgex, ErrorMessage = ErrorMessages.InvalidMobileNumber)]
         public string MobileNumber { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.AddressLine1Required)]

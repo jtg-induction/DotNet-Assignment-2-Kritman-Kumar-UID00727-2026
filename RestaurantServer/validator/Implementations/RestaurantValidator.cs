@@ -3,7 +3,7 @@ using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
-using RestaurantServer.Validators.Interfaces; 
+using RestaurantServer.Validators.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +16,7 @@ namespace RestaurantServer.Validators.Implementations
     public class RestaurantValidator : IRestaurantValidator
     {
 
-        private readonly IRestaurantRepository _restaurantRepository; 
+        private readonly IRestaurantRepository _restaurantRepository;
 
         public RestaurantValidator() { }
 
@@ -35,12 +35,12 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (restaurant == null)
             {
-                throw new ValidationException(ValidationMessages.RestaurantNotExists);
+                throw new ValidationException(ErrorMessages.RestaurantNotExists);
             }
 
             if (restaurant.IsDeleted)
             {
-                throw new ValidationException(ValidationMessages.RestaurantNotavailable);
+                throw new ValidationException(ErrorMessages.RestaurantNotavailable);
             }
         }
 
@@ -54,7 +54,7 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (restaurantOwner != null)
             {
-                throw new ValidationException(ValidationMessages.OwnerRelationshipAlreadyExists);
+                throw new ValidationException(ErrorMessages.OwnerRelationshipAlreadyExists);
             }
         }
 
@@ -72,7 +72,7 @@ namespace RestaurantServer.Validators.Implementations
 
             if (mobileExists)
             {
-                throw new ValidationException(ValidationMessages.RestaurantMobileNumberAlreadyExists);
+                throw new ValidationException(ErrorMessages.RestaurantMobileNumberAlreadyExists);
             }
         }
 
@@ -85,7 +85,7 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (role == (int)UserRole.Admin)
             {
-                throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
+                throw new ValidationException(ErrorMessages.InvalidRestaurantOwner);
             }
         }
 

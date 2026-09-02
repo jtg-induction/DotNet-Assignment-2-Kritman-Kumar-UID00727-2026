@@ -68,14 +68,14 @@ namespace RestaurantServer.Services.Implementations
         public async Task<CreateRestaurantResponse> CreateRestaurantAsync(
             CreateRestaurantRequest request,
             CancellationToken cancellationToken = default)
-        { 
+        {
 
             var createdBy = _userSessionService.GetUserId().Value;
 
             var emailSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (string email in request.OwnersEmails)  
-            { 
+            foreach (string email in request.OwnersEmails)
+            {
                 emailSet.Add(email.Trim());
             }
 
@@ -87,10 +87,10 @@ namespace RestaurantServer.Services.Implementations
             {
                 if (!usersByEmail.TryGetValue(email, out var user))
                 {
-                    throw new ValidationException(ValidationMessages.UserNotFound);
+                    throw new ValidationException(ErrorMessages.UserNotFound);
                 }
 
-                _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
+                _userValidator.IsUserNullOrDeactivated(user, ErrorMessages.UserNotFound);
                 _restaurantValidator.ValidateAdminRole(user.Role);
             }
 
@@ -102,8 +102,11 @@ namespace RestaurantServer.Services.Implementations
 
 
             var restaurantOwners = users.Select(
-                user =>{ user.Role = (int)UserRole.Owner;
-                    return new RestaurantOwner(restaurant, user);}).ToList();
+                user =>
+                {
+                    user.Role = (int)UserRole.Owner;
+                    return new RestaurantOwner(restaurant, user);
+                }).ToList();
 
             await _restaurantOwnerRepository.AddRange(restaurantOwners);
 
@@ -154,10 +157,10 @@ namespace RestaurantServer.Services.Implementations
             {
                 if (!usersByEmail.TryGetValue(email, out var user))
                 {
-                    throw new ValidationException(ValidationMessages.UserNotFound);
+                    throw new ValidationException(ErrorMessages.UserNotFound);
                 }
 
-                _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
+                _userValidator.IsUserNullOrDeactivated(user, ErrorMessages.UserNotFound);
                 _restaurantValidator.ValidateAdminRole(user.Role);
             }
 
@@ -173,13 +176,16 @@ namespace RestaurantServer.Services.Implementations
             {
                 if (existingOwnerUserIds.Contains(user.Id))
                 {
-                    throw new ValidationException(ValidationMessages.OwnerRelationshipAlreadyExists);
+                    throw new ValidationException(ErrorMessages.OwnerRelationshipAlreadyExists);
                 }
             }
 
             var restaurantOwners = users.Select(
-                user =>{ user.Role = (int)UserRole.Owner;
-                    return new RestaurantOwner(restaurant, user);}).ToList();
+                user =>
+                {
+                    user.Role = (int)UserRole.Owner;
+                    return new RestaurantOwner(restaurant, user);
+                }).ToList();
 
             await _restaurantOwnerRepository.AddRange(restaurantOwners);
 
