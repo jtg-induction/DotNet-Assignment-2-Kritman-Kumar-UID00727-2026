@@ -43,15 +43,11 @@ namespace RestaurantServer.Controllers
         [Route("restaurants")]
         public async Task<IHttpActionResult> CreateRestaurantAsync(CreateRestaurantRequest request, CancellationToken cancellationToken = default)
         {
-            _requestValidator.IsRequestNull(request);
+            _requestValidator.IsRequestNull(request); 
 
-            // ------------ remove this  ---------------------
-            return Ok("woking");
-            // -----------------------------------------------
+            var response = await _restaurantService.CreateRestaurantAsync(request, cancellationToken);
 
-            //var response = await _restaurantService.CreateRestaurantAsync(request, cancellationToken);
-
-            //return Content(HttpStatusCode.Created, response);
+            return Content(HttpStatusCode.Created, response);
         }
 
         /// <summary>
@@ -70,13 +66,9 @@ namespace RestaurantServer.Controllers
         {
             _requestValidator.IsRequestNull(request);
 
-            // -------------- Remove this ------------------
-            return Ok("woking");
-            // ---------------------------------------------
+            var response = await _restaurantService.OnboardRestaurantOwnerAsync(restaurantId, request, cancellationToken);
 
-            //var response = await _restaurantService.OnboardRestaurantOwnerAsync(restaurantId, request, cancellationToken);
-
-            //return Content(HttpStatusCode.Created, response);
+            return Content(HttpStatusCode.Created, response);
         }
     }
 }
