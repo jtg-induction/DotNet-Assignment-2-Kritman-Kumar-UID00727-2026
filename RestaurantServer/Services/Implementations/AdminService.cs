@@ -101,18 +101,11 @@ namespace RestaurantServer.Services.Implementations
             await _restaurantRepository.Add(restaurant);
 
 
-            var restaurantOwners = new List<RestaurantOwner>();
+            var restaurantOwners = users.Select(
+                user =>{ user.Role = (int)UserRole.Owner;
+                    return new RestaurantOwner(restaurant, user);}).ToList();
 
-            foreach (var user in users)
-            {
-                user.Role = (int)UserRole.Owner;
-
-                var restaurantOwner = new RestaurantOwner(restaurant, user);
-
-                restaurantOwners.Add(restaurantOwner);
-
-                await _restaurantOwnerRepository.Add(restaurantOwner);
-            }
+            await _restaurantOwnerRepository.AddRange(restaurantOwners);
 
             await _unitOfWork.SaveChangesAsync(createdBy, cancellationToken);
 
@@ -184,18 +177,11 @@ namespace RestaurantServer.Services.Implementations
                 }
             }
 
-            var restaurantOwners = new List<RestaurantOwner>();
+            var restaurantOwners = users.Select(
+                user =>{ user.Role = (int)UserRole.Owner;
+                    return new RestaurantOwner(restaurant, user);}).ToList();
 
-            foreach (var user in users)
-            {
-                user.Role = (int)UserRole.Owner;
-
-                var restaurantOwner = new RestaurantOwner(restaurant, user);
-
-                restaurantOwners.Add(restaurantOwner);
-
-                await _restaurantOwnerRepository.Add(restaurantOwner);
-            }
+            await _restaurantOwnerRepository.AddRange(restaurantOwners);
 
             await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 

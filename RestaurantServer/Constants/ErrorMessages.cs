@@ -6,5 +6,6 @@
         public const string Unauthorized = "You are not authorized to perform this action.";
         public const string NotFound = "The requested resource was not found.";
         public const string ValidationFailed = "Validation failed.";
+        public const string ListRequiredInvalidType = "{0} can only be applied to collection properties.";
     }
 }

@@ -22,8 +22,7 @@ namespace RestaurantServer.DTOs.Requests
         [Required(ErrorMessage = ValidationMessages.AddressLine1Required)]
         [MaxLength(ValidationConstants.AddressMaxLength)]
         public string AddressLine1 { get; set; }
-
-        [Required(ErrorMessage = ValidationMessages.AddressLine2Required)]
+         
         [MaxLength(ValidationConstants.AddressMaxLength)]
         public string AddressLine2 { get; set; }
 
@@ -41,7 +40,7 @@ namespace RestaurantServer.DTOs.Requests
 
         [Required(ErrorMessage = ValidationMessages.EmailRequired)]
         [EmailListAttribute]
-        [ListRequired(1)]
+        [CollectionMinLength]
         public List<string> OwnersEmails { get; set; }
     }
 }

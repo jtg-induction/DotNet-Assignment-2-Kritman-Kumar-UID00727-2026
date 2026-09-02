@@ -26,7 +26,6 @@ namespace RestaurantServer.Models
             City = request.City.Trim();
             PostalCode = request.PostalCode.Trim();
             Country = request.Country.Trim();
-
             IsDeleted = false;
         }
 

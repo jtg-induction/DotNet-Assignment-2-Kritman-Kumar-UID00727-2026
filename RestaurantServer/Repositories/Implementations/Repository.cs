@@ -1,7 +1,8 @@
-﻿using System.Data.Entity;
-using System.Threading.Tasks;
-using RestaurantServer.Repositories.Interfaces;
+﻿using RestaurantServer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace RestaurantServer.Repositories.Implementations
 {
@@ -24,6 +25,13 @@ namespace RestaurantServer.Repositories.Implementations
             _context.Set<T>().Add(entity);
             return Task.CompletedTask;
         }
+
+        public Task AddRange(IEnumerable<T> entities)
+        {
+            _context.Set<T>().AddRange(entities);
+            return Task.CompletedTask;
+        }
+
 
         public void Update(T entity)
         {

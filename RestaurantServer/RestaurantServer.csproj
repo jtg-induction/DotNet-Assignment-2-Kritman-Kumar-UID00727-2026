@@ -230,7 +230,7 @@
       <DependentUpon>202608251929137_AddRestaurantOwnerCompositeIndex.cs</DependentUpon>
     </Compile>
     <Compile Include="ModelStateValidator\EmailListAttribute.cs" />
-    <Compile Include="ModelStateValidator\ListRequiredAttribute.cs" />
+    <Compile Include="ModelStateValidator\CollectionMinLengthAttribute.cs" />
     <Compile Include="Repositories\implementations\RestaurantRepository.cs" />
     <Compile Include="Services\Implementations\AdminService.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantOwnerRepository.cs" />
