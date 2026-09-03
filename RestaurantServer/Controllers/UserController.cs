@@ -3,8 +3,6 @@ using RestaurantServer.Enums;
 using RestaurantServer.Filters;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -19,6 +17,8 @@ namespace RestaurantServer.Controllers
     {
         private readonly IUserUpdateService _userUpdateService;
         private readonly IUserValidator _userValidator;
+        private readonly IUserSessionService _currentUserService;
+        private readonly IRequestValidator _requestValidator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserController"/> class.
@@ -26,11 +26,16 @@ namespace RestaurantServer.Controllers
         /// <param name="userUpdateService">
         /// The service used to update and deactivate user accounts.
         /// </param>
-        public UserController(IUserUpdateService userUpdateService, IUserValidator userValidator)
+        public UserController(IUserUpdateService userUpdateService, 
+            IUserValidator userValidator, 
+            IUserSessionService currentUserService,
+            IRequestValidator requestValidator)
         {
             _userUpdateService = userUpdateService;
             _userValidator = userValidator;
-        }
+            _currentUserService = currentUserService;
+            _requestValidator = requestValidator;
+       }
 
         /// <summary>
         /// Updates the account details of the currently authenticated user.
@@ -51,20 +56,14 @@ namespace RestaurantServer.Controllers
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
         public async Task<IHttpActionResult> UpdateAccount(UpdateAccountRequest request, CancellationToken cancellationToken = default)
         {
-            var claimsPrincipal = User as ClaimsPrincipal;
+            var userId = _currentUserService.GetUserId();
 
-            var userIdClaim = claimsPrincipal.Claims
-                .FirstOrDefault(
-                    claim => claim.Type == ClaimTypes.NameIdentifier);
-
-            if (!long.TryParse(
-                userIdClaim.Value,
-                out var userId))
+            if (!userId.HasValue)
             {
                 return Unauthorized();
             }
 
-            var response = await _userUpdateService.UpdateAccountAsync(userId, request, cancellationToken);
+            var response = await _userUpdateService.UpdateAccountAsync(userId.Value, request, cancellationToken);
 
             return Ok(response);
         }
@@ -85,28 +84,14 @@ namespace RestaurantServer.Controllers
         [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
         public async Task<IHttpActionResult> DeactivateAccount(CancellationToken cancellationToken = default)
         {
-            var claimsPrincipal = User as ClaimsPrincipal;
+            var userId = _currentUserService.GetUserId();
 
-            if (claimsPrincipal == null)
+            if (!userId.HasValue)
             {
                 return Unauthorized();
             }
 
-            var userIdClaim = claimsPrincipal.Claims
-                .FirstOrDefault(
-                    claim => claim.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null)
-            {
-                return Unauthorized();
-            }
-
-            if (!long.TryParse(userIdClaim.Value, out var userId))
-            {
-                return Unauthorized();
-            }
-
-            var response = await _userUpdateService.DeactivateAccountAsync(userId, cancellationToken);
+            var response = await _userUpdateService.DeactivateAccountAsync(userId.Value, cancellationToken);
 
             return Ok(new
             {

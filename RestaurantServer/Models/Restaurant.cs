@@ -1,7 +1,9 @@
-﻿using System;
+﻿using RestaurantServer.Constants;
+using RestaurantServer.DTOs.Requests;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using RestaurantServer.Constants;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RestaurantServer.Models
 {
@@ -12,6 +14,19 @@ namespace RestaurantServer.Models
             Items = new HashSet<Item>();
             Orders = new HashSet<Order>();
             RestaurantOwners = new HashSet<RestaurantOwner>();
+        }
+
+        public Restaurant(CreateRestaurantRequest request)
+        {
+            RestaurantName = request.RestaurantName.Trim();
+            Description = request.Description?.Trim();
+            MobileNumber = request.MobileNumber.Trim();
+            AddressLine1 = request.AddressLine1.Trim();
+            AddressLine2 = request.AddressLine2?.Trim();
+            City = request.City.Trim();
+            PostalCode = request.PostalCode.Trim();
+            Country = request.Country.Trim();
+            IsDeleted = false;
         }
 
         [Key]
@@ -25,6 +40,7 @@ namespace RestaurantServer.Models
         public string Description { get; set; }
 
         [MaxLength(ValidationConstants.MobileNumberMaxLength)]
+        [Index("IX_Restaurant_MobileNumber", IsUnique = true)]
         public string MobileNumber { get; set; }
 
         [Required]

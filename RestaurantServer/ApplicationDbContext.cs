@@ -1,5 +1,8 @@
-﻿using System.Data.Entity; 
-using RestaurantServer.Models;
+﻿using RestaurantServer.Models;
+using System;
+using System.Data.Entity;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RestaurantServer
 {
@@ -93,5 +96,53 @@ namespace RestaurantServer
             base.OnModelCreating(modelBuilder);
         }
 
+        public async Task<int> SaveChangesAsync(
+            long? personId,
+            CancellationToken cancellationToken = default)
+        {
+            SetUpdatedFields(personId);
+
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void SetUpdatedFields(long? personId)
+        {
+            var now = DateTime.UtcNow;
+
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    SetProperty(entry.Entity, "CreatedAt", now);
+                    SetProperty(entry.Entity, "UpdatedAt", now);
+
+                    if (personId.HasValue)
+                    {
+                        SetProperty(entry.Entity, "CreatedBy", personId.Value);
+
+                        SetProperty(entry.Entity, "UpdatedBy", personId.Value);
+                    }
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    SetProperty(entry.Entity, "UpdatedAt", now);
+
+                    if (personId.HasValue)
+                    {
+                        SetProperty(entry.Entity, "UpdatedBy", personId.Value);
+                    }
+                }
+            }
+        }
+
+        private void SetProperty(object entity, string propertyName, object value)
+        {
+            var property = entity.GetType().GetProperty(propertyName);
+
+            if (property != null)
+            {
+                property.SetValue(entity, value);
+            }
+        }
     }
 }

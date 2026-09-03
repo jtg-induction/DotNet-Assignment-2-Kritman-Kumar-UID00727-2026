@@ -7,13 +7,8 @@ namespace RestaurantServer.Services.Interfaces
 {
     public interface IUserUpdateService
     {
-        Task<UpdateUserResponse> UpdateAccountAsync(
-            long userId,
-            UpdateAccountRequest request,
-            CancellationToken cancellationToken = default);
+        Task<UpdateUserResponse> UpdateAccountAsync(long userId, UpdateAccountRequest request, CancellationToken cancellationToken = default);
 
-        Task<string> DeactivateAccountAsync(
-            long userId,
-            CancellationToken cancellationToken = default);
+        Task<string> DeactivateAccountAsync(long userId, CancellationToken cancellationToken = default);
     }
 }

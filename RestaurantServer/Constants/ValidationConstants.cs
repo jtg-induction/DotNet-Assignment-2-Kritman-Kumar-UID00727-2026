@@ -15,7 +15,5 @@
         public const int PasswordMinLength = 6;
         public const int PasswordMaxLength = 100;
         public const int RefreshTokenMaxLength = 500;
-        public const string EmailRegex = @"^[A-Za-z0-9]+([._-][A-Za-z0-9]+)*@[A-Za-z0-9]+([.-][A-Za-z0-9]+)*\.[A-Za-z]{2,}$";
-        public const string PasswordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
     }
 }

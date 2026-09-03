@@ -62,7 +62,6 @@ namespace RestaurantServer.Repositories.Implementations
             foreach (var refreshToken in refreshTokens)
             {
                 refreshToken.IsRevoked = true;
-                refreshToken.UpdatedAt = DateTime.UtcNow;
             }
         }
     }

@@ -35,7 +35,7 @@ namespace RestaurantServer.Validators.Implementations
             if (user == null)
             {
                 throw new ValidationException(
-                    ValidationMessages.UserNotFound);
+                    ErrorMessages.UserNotFound);
             }
         }
 
@@ -58,7 +58,7 @@ namespace RestaurantServer.Validators.Implementations
             if (requestedUserId != authenticatedUserId)
             {
                 throw new ValidationException(
-                    ValidationMessages.NotAuthorized);
+                    ErrorMessages.NotAuthorized);
             }
         }
 
@@ -71,12 +71,12 @@ namespace RestaurantServer.Validators.Implementations
         /// <exception cref="ValidationException">
         /// Thrown when the user does not exist or the user's account is inactive.
         /// </exception>
-        public void IsUserNullOrDeactivated(User user)
+        public void IsUserNullOrDeactivated(User user, string message = ErrorMessages.InvalidRefreshToken)
         {
+
             if (user == null || !user.IsActive)
             {
-                throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                throw new ValidationException(message);
             }
         }
 
@@ -90,7 +90,7 @@ namespace RestaurantServer.Validators.Implementations
             if (_userReposeroty.IsMobileNumberExists(mobileNumber, userId))
             {
                 throw new ValidationException(
-                    ValidationMessages.MobileNumberAlreadyExists);
+                    ErrorMessages.MobileNumberAlreadyExists);
             }
         }
     }

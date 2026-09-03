@@ -6,7 +6,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace RestaurantServer.Middleware
 {
@@ -22,7 +24,6 @@ namespace RestaurantServer.Middleware
         public JwtAuthenticationMiddleware(OwinMiddleware next)
             : base(next)
         {
-
         }
 
         /// <summary>
@@ -45,29 +46,41 @@ namespace RestaurantServer.Middleware
                     "Bearer ",
                     StringComparison.OrdinalIgnoreCase))
             {
-                var token = authorizationHeader.Substring(7).Trim();
+                var token =
+                    authorizationHeader.Substring(7).Trim();
 
                 try
                 {
                     var secretKey =
-                        ConfigurationManager.AppSettings["JwtSecretKey"];
+                        ConfigurationManager.AppSettings[
+                            "JwtSecretKey"];
 
                     var issuer =
-                        ConfigurationManager.AppSettings["JwtIssuer"];
+                        ConfigurationManager.AppSettings[
+                            "JwtIssuer"];
 
                     var audience =
-                        ConfigurationManager.AppSettings["JwtAudience"];
+                        ConfigurationManager.AppSettings[
+                            "JwtAudience"];
 
-                    var tokenHandler = new JwtSecurityTokenHandler();
+                    if (string.IsNullOrWhiteSpace(secretKey) ||
+                        string.IsNullOrWhiteSpace(issuer) ||
+                        string.IsNullOrWhiteSpace(audience))
+                    {
+                        context.Response.StatusCode =
+                            (int)HttpStatusCode.Unauthorized;
+
+                        return;
+                    }
+
+                    var tokenHandler =
+                        new JwtSecurityTokenHandler();
 
                     var validationParameters =
                         new TokenValidationParameters
                         {
                             ValidateIssuerSigningKey = true,
-                            IssuerSigningKey =
-                                new SymmetricSecurityKey(
-                                    Encoding.UTF8.GetBytes(secretKey)
-                                ),
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                             ValidateIssuer = true,
                             ValidIssuer = issuer,
                             ValidateAudience = true,
@@ -78,24 +91,29 @@ namespace RestaurantServer.Middleware
 
                     SecurityToken validatedToken;
 
-                    ClaimsPrincipal principal =
-                        tokenHandler.ValidateToken(
-                            token,
-                            validationParameters,
-                            out validatedToken
-                        );
+                    ClaimsPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
 
                     context.Request.User = principal;
+
                     context.Environment["server.User"] = principal;
+
+                    if (HttpContext.Current != null)
+                    {
+                        HttpContext.Current.User = principal;
+                    }
+
+                    Thread.CurrentPrincipal = principal;
                 }
                 catch (SecurityTokenException)
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+
                     return;
                 }
                 catch (ArgumentException)
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+
                     return;
                 }
             }

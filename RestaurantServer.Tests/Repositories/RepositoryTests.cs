@@ -12,7 +12,7 @@ namespace RestaurantServer.Tests.Repositories
     {
         private ApplicationDbContext _context;
         private Repository<User> _repository;
-        private AuthRepository _authRepository;
+        private UsersRepository _userReposeroty;
         private RefreshTokenRepository _refreshTokenRepository;
         private UnitOfWork _unitOfWork;
 
@@ -22,7 +22,7 @@ namespace RestaurantServer.Tests.Repositories
             _context = new ApplicationDbContext();
 
             _repository = new Repository<User>(_context);
-            _authRepository = new AuthRepository(_context);
+            _userReposeroty = new UsersRepository(_context);
             _refreshTokenRepository = new RefreshTokenRepository(_context);
             _unitOfWork = new UnitOfWork(_context);
         }
@@ -86,7 +86,7 @@ namespace RestaurantServer.Tests.Repositories
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await _repository.AddAsync(user);
+            await _repository.Add(user);
             await _context.SaveChangesAsync();
 
             var result = await _context.Users
@@ -182,7 +182,7 @@ namespace RestaurantServer.Tests.Repositories
             await _context.SaveChangesAsync();
 
             var result =
-                await _authRepository.GetUserByEmailAsync(
+                await _userReposeroty.GetUserByEmailAsync(
                     "repository-auth@test.com");
 
             Assert.IsNotNull(result);
@@ -199,7 +199,7 @@ namespace RestaurantServer.Tests.Repositories
         public async Task GetUserByEmailAsync_EmailDoesNotExist_ReturnsNull()
         {
             var result =
-                await _authRepository.GetUserByEmailAsync(
+                await _userReposeroty.GetUserByEmailAsync(
                     "email-does-not-exist@test.com");
 
             Assert.IsNull(result);

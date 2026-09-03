@@ -40,7 +40,7 @@ namespace RestaurantServer.Filters
                     HttpStatusCode.BadRequest,
                     new
                     {
-                        Message = ErrorMessages.ValidationFailed,
+                        Message = ErrorMessages.ValidationFailed,   
                         Errors = errors
                     });
             }

@@ -13,9 +13,9 @@ namespace RestaurantServer.Repositories.Implementations
             _context = context;
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        public async Task SaveChangesAsync(long? personId, CancellationToken cancellationToken = default)
         {
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(personId, cancellationToken);
         }
     }
 }
