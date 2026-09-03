@@ -7,6 +7,6 @@ public class OnboardRestaurantOwnerRequest
 {
     [Required(ErrorMessage = ValidationMessages.EmailRequired)]
     [EmailListAttribute]
-    [ListRequired(1)]
+    [CollectionMinLength]
     public List<string> Emails { get; set; } 
 }

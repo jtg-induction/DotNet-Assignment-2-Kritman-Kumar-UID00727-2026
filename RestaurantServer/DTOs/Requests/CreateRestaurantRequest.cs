@@ -16,15 +16,15 @@ namespace RestaurantServer.DTOs.Requests
 
         [Required(ErrorMessage = ValidationMessages.MobileNumberRequired)]
         [MaxLength(ValidationConstants.MobileNumberMaxLength)]
-        [RegularExpression(Regex.MobileNumberRgex, ErrorMessage = ValidationMessages.InvalidMobileNumber)]
+        [RegularExpression(Regex.MobileNumberRgex, ErrorMessage = ErrorMessages.InvalidMobileNumber)]
         public string MobileNumber { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.AddressLine1Required)]
         [MaxLength(ValidationConstants.AddressMaxLength)]
         public string AddressLine1 { get; set; }
-
-        [Required(ErrorMessage = ValidationMessages.AddressLine2Required)]
+         
         [MaxLength(ValidationConstants.AddressMaxLength)]
+        [Required(ErrorMessage = ValidationMessages.AddressLine2Required)]
         public string AddressLine2 { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.CityRequired)]
@@ -41,7 +41,7 @@ namespace RestaurantServer.DTOs.Requests
 
         [Required(ErrorMessage = ValidationMessages.EmailRequired)]
         [EmailListAttribute]
-        [ListRequired(1)]
+        [CollectionMinLength]
         public List<string> OwnersEmails { get; set; }
     }
 }

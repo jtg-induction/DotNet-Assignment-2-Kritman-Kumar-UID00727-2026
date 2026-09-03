@@ -7,7 +7,7 @@ namespace RestaurantServer.Validators.Interfaces
     {
         void ValidateUserExists(User user);
         void ValidateUserId(long requestedUserId, long authenticatedUserId);
-        void IsUserNullOrDeactivated(User user, string message = ValidationMessages.InvalidRefreshToken);
+        void IsUserNullOrDeactivated(User user, string message = ErrorMessages.InvalidRefreshToken);
         void ValidateMobileNumberIsUnique(string mobileNumber, long userId);
     }
 }

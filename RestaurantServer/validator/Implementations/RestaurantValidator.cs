@@ -4,10 +4,9 @@ using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Validators.Interfaces;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks; 
-using System.Threading; 
+using System.Threading;
+using System.Threading.Tasks;
+
 
 namespace RestaurantServer.Validators.Implementations
 {
@@ -18,6 +17,8 @@ namespace RestaurantServer.Validators.Implementations
     {
 
         private readonly IRestaurantRepository _restaurantRepository;
+
+        public RestaurantValidator() { }
 
         public RestaurantValidator(IRestaurantRepository restaurantRepository)
         {
@@ -34,12 +35,12 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (restaurant == null)
             {
-                throw new ValidationException(ValidationMessages.RestaurantNotExists);
+                throw new ValidationException(ErrorMessages.RestaurantNotExists);
             }
 
             if (restaurant.IsDeleted)
             {
-                throw new ValidationException(ValidationMessages.RestaurantNotavailable);
+                throw new ValidationException(ErrorMessages.RestaurantNotavailable);
             }
         }
 
@@ -53,7 +54,7 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (restaurantOwner != null)
             {
-                throw new ValidationException(ValidationMessages.OwnerRelationshipAlreadyExists);
+                throw new ValidationException(ErrorMessages.OwnerRelationshipAlreadyExists);
             }
         }
 
@@ -71,7 +72,7 @@ namespace RestaurantServer.Validators.Implementations
 
             if (mobileExists)
             {
-                throw new ValidationException(ValidationMessages.RestaurantMobileNumberAlreadyExists);
+                throw new ValidationException(ErrorMessages.RestaurantMobileNumberAlreadyExists);
             }
         }
 
@@ -80,11 +81,11 @@ namespace RestaurantServer.Validators.Implementations
         /// </summary>
         /// <param name="role"> intiger user role only from ENUM USER_ROLE</param>
         /// <exception cref="ValidationException"> thows exception when user role is addmin </exception>
-        public void ValidateAdminRole(int role)
+        public void ValidateAdminRole(User user)
         {
-            if (role == (int)UserRole.Admin)
+            if (user.Role == (int)UserRole.Admin)
             {
-                throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
+                throw new ValidationException(string.Format(ErrorMessages.UserInvalidRole, user.Email));
             }
         }
 
