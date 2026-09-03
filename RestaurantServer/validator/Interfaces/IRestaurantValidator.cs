@@ -8,7 +8,7 @@ namespace RestaurantServer.Validators.Interfaces
     {
         void ValidateRestaurantExists(Restaurant restaurant);
         void ValidateOwnerRelationshipDoesNotExist(RestaurantOwner restaurantOwner);
-        Task ValidateMobileNumber(string mobileNumber, CancellationToken cancellationToken = default); 
-        void ValidateAdminRole(int role); 
+        Task ValidateMobileNumber(string mobileNumber, CancellationToken cancellationToken = default);
+        void ValidateAdminRole(User user); 
     }
 }

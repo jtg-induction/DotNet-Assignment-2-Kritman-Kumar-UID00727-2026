@@ -74,11 +74,11 @@ namespace RestaurantServer.Services.Implementations
             {
                 if (!usersByEmail.TryGetValue(email, out var user))
                 {
-                    throw new ValidationException(ErrorMessages.UserNotFound);
+                    throw new ValidationException(string.Format(ErrorMessages.UserNotFound, email));
                 }
 
-                _userValidator.IsUserNullOrDeactivated(user, ErrorMessages.UserNotFound);
-                _restaurantValidator.ValidateAdminRole(user.Role);
+                _userValidator.IsUserNullOrDeactivated(user, string.Format(ErrorMessages.UserNotFound, user.Email));
+                _restaurantValidator.ValidateAdminRole(user);
             }
 
             if (isOnboard)

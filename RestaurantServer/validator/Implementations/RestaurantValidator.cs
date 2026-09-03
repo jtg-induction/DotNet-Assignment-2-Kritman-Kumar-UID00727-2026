@@ -81,11 +81,11 @@ namespace RestaurantServer.Validators.Implementations
         /// </summary>
         /// <param name="role"> intiger user role only from ENUM USER_ROLE</param>
         /// <exception cref="ValidationException"> thows exception when user role is addmin </exception>
-        public void ValidateAdminRole(int role)
+        public void ValidateAdminRole(User user)
         {
-            if (role == (int)UserRole.Admin)
+            if (user.Role == (int)UserRole.Admin)
             {
-                throw new ValidationException(ErrorMessages.InvalidRestaurantOwner);
+                throw new ValidationException(string.Format(ErrorMessages.UserInvalidRole, user.Email));
             }
         }
 

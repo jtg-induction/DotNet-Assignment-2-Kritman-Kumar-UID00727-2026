@@ -24,6 +24,7 @@ namespace RestaurantServer.DTOs.Requests
         public string AddressLine1 { get; set; }
          
         [MaxLength(ValidationConstants.AddressMaxLength)]
+        [Required(ErrorMessage = ValidationMessages.AddressLine2Required)]
         public string AddressLine2 { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.CityRequired)]

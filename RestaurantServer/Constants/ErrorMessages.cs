@@ -7,12 +7,11 @@
         public const string NotFound = "The requested resource was not found.";
         public const string ValidationFailed = "Validation failed.";
         public const string ListRequiredInvalidType = "{0} can only be applied to collection properties.";
-        public const string InvalidEmail = "The following email addresses are invalid: {0}";
+        public const string InvalidEmail = "The email '{0}' is invalid.";
         public const string InvalidCredentials = "Invalid email or password.";
         public const string InvalidRefreshToken = "Invalid refresh token.";
         public const string EmailAlreadyExists = "An account with this email already exists.";
-        public const string MobileNumberAlreadyExists = "Mobile number already exists.";
-        public const string UserNotFound = "User not found.";
+        public const string MobileNumberAlreadyExists = "Mobile number already exists."; 
         public const string UserInactive = "Your account has been deactivated.";
         public const string InvalidMobileNumber = "Mobile number is invalid.";
         public const string NotAuthorized = "You are not authorized to access this resource.";
@@ -24,5 +23,9 @@
         public const string InvalidRestaurantOwner = "Admin users cannot be assigned as restaurant owners.";
         public const string DuplicateOwnerEmail = "Duplicate owner email found in the request.";
         public const string RestaurantMobileNumberAlreadyExists = "A restaurant with this mobile number already exists.";
+        public const string UserNotFound = "The user '{0}' was not found.";
+        public const string UserDeactivated = "The user '{0}' is deactivated.";
+        public const string UserInvalidRole = "The user '{0}' does not have the required role.";
+
     }
 }
