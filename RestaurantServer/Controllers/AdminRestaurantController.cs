@@ -4,7 +4,6 @@ using RestaurantServer.Filters;
 using RestaurantServer.Services.Implementations;
 using RestaurantServer.Services.Interfaces;
 using RestaurantServer.Validators.Interfaces;
-using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace RestaurantServer.Controllers
     [CustomAuthorize(UserRole.Admin)]
     public class AdminRestaurantController : ApiController
     {
-        private readonly IAdminService _restaurantService;
+        private readonly IRestaurantAdminService _restaurantService;
         private readonly IRequestValidator _requestValidator;
 
         /// <summary>
@@ -28,7 +27,7 @@ namespace RestaurantServer.Controllers
         /// <param name="restaurantService">The service handling restaurant administration business logic.</param>
         /// <param name="requestValidator">The validator checking incoming request payloads.</param>
         public AdminRestaurantController(
-            AdminService restaurantService,
+            RestaurantAdminService restaurantService,
             IRequestValidator requestValidator)
         {
             _restaurantService = restaurantService;
@@ -45,7 +44,7 @@ namespace RestaurantServer.Controllers
         [Route("restaurants")]
         public async Task<IHttpActionResult> CreateRestaurantAsync(CreateRestaurantRequest request, CancellationToken cancellationToken = default)
         {
-            _requestValidator.IsRequestNull(request);
+            _requestValidator.IsRequestNull(request); 
 
             var response = await _restaurantService.CreateRestaurantAsync(request, cancellationToken);
 

@@ -7,7 +7,7 @@ namespace RestaurantServer.Repositories.Interfaces
 {
     public interface IUsersRepository : IRepository<User>
     {
-        bool IsMobileNumberExists(string mobileNumber, long userId); 
+        bool IsMobileNumberExists(string mobileNumber, long userId);
 
         Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);
 
