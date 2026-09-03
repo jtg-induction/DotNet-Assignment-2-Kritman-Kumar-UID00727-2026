@@ -84,7 +84,7 @@ namespace RestaurantServer.Tests
                     validator.ValidateUserExists(null))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.UserNotFound));
+                        ErrorMessages.UserNotFound));
 
             var exception =
                 await Assert.ThrowsExceptionAsync<ValidationException>(
@@ -93,7 +93,7 @@ namespace RestaurantServer.Tests
                         request));
 
             Assert.AreEqual(
-                ValidationMessages.UserNotFound,
+                ErrorMessages.UserNotFound,
                 exception.Message);
 
             _requestValidatorMock.Verify(
@@ -145,7 +145,7 @@ namespace RestaurantServer.Tests
                         userId))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.MobileNumberAlreadyExists));
+                        ErrorMessages.MobileNumberAlreadyExists));
 
             var exception =
                 await Assert.ThrowsExceptionAsync<ValidationException>(
@@ -154,7 +154,7 @@ namespace RestaurantServer.Tests
                         request));
 
             Assert.AreEqual(
-                ValidationMessages.MobileNumberAlreadyExists,
+                ErrorMessages.MobileNumberAlreadyExists,
                 exception.Message);
 
             _requestValidatorMock.Verify(
@@ -289,7 +289,7 @@ namespace RestaurantServer.Tests
                     validator.IsUserNullOrDeactivated(null, "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
+                        ErrorMessages.InvalidRefreshToken));
 
             var exception =
                 await Assert.ThrowsExceptionAsync<ValidationException>(
@@ -297,7 +297,7 @@ namespace RestaurantServer.Tests
                         userId));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
             _usersRepositoryMock.Verify(
@@ -351,7 +351,7 @@ namespace RestaurantServer.Tests
                     validator.IsUserNullOrDeactivated(user, "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
+                        ErrorMessages.InvalidRefreshToken));
 
             var exception =
                 await Assert.ThrowsExceptionAsync<ValidationException>(
@@ -359,7 +359,7 @@ namespace RestaurantServer.Tests
                         userId));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
             _usersRepositoryMock.Verify(

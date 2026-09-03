@@ -6,6 +6,7 @@ using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services;
 using RestaurantServer.Services.Implementations;
 using RestaurantServer.Services.Interfaces;
+using RestaurantServer.validator.Implementations;
 using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Implementations;
 using RestaurantServer.Validators.Interfaces;
@@ -41,12 +42,13 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IUserValidator, UserValidator>();
             Container.RegisterType<ICookieHelper, CookieHelper>();
             Container.RegisterType<IRequestValidator, RequestValidator>();
-            Container.RegisterType<IAdminService, AdminService>();
+            Container.RegisterType<IRestaurantAdminService, RestaurantAdminService>();
             Container.RegisterType<IRestaurantValidator, RestaurantValidator>();
             Container.RegisterType<IUserSessionService, UserSessionService>();
             Container.RegisterType<IRestaurantService, RestaurantService>();
             Container.RegisterType<IOrderValidator, OrderValidator>();
             Container.RegisterType<IOrderService, OrderService>();
+            Container.RegisterType<IPaginatedValidator, PaginatedValidator>();
         }
     }
 }

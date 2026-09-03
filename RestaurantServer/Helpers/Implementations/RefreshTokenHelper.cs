@@ -35,7 +35,7 @@ namespace RestaurantServer.Helpers
             if (cookie == null)
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
             }
 
             var refreshToken =
@@ -44,7 +44,7 @@ namespace RestaurantServer.Helpers
             if (string.IsNullOrWhiteSpace(refreshToken))
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
             }
 
             return refreshToken;

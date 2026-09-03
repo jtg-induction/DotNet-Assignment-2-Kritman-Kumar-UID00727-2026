@@ -39,7 +39,7 @@ namespace RestaurantServer.Tests.Validators
                 () => _userValidator.ValidateUserExists(null));
 
             Assert.AreEqual(
-                ValidationMessages.UserNotFound,
+                ErrorMessages.UserNotFound,
                 exception.Message);
         }
 
@@ -56,7 +56,7 @@ namespace RestaurantServer.Tests.Validators
                 () => _userValidator.ValidateUserId(1, 2));
 
             Assert.AreEqual(
-                ValidationMessages.NotAuthorized,
+                ErrorMessages.NotAuthorized,
                 exception.Message);
         }
 
@@ -78,7 +78,7 @@ namespace RestaurantServer.Tests.Validators
                 () => _userValidator.IsUserNullOrDeactivated(null));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
         }
 
@@ -94,7 +94,7 @@ namespace RestaurantServer.Tests.Validators
                 () => _userValidator.IsUserNullOrDeactivated(user));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
         }
 
@@ -125,7 +125,7 @@ namespace RestaurantServer.Tests.Validators
                 () => _userValidator.ValidateMobileNumberIsUnique("9876543210", 1));
 
             Assert.AreEqual(
-                ValidationMessages.MobileNumberAlreadyExists,
+                ErrorMessages.MobileNumberAlreadyExists,
                 exception.Message);
         }
     }

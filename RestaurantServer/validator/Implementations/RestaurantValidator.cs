@@ -4,8 +4,7 @@ using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Validators.Interfaces;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -18,6 +17,8 @@ namespace RestaurantServer.Validators.Implementations
     {
 
         private readonly IRestaurantRepository _restaurantRepository;
+
+        public RestaurantValidator() { }
 
         public RestaurantValidator(IRestaurantRepository restaurantRepository)
         {
@@ -34,12 +35,12 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (restaurant == null)
             {
-                throw new ValidationException(ValidationMessages.RestaurantNotExists);
+                throw new ValidationException(ErrorMessages.RestaurantNotExists);
             }
 
             if (restaurant.IsDeleted)
             {
-                throw new ValidationException(ValidationMessages.RestaurantNotavailable);
+                throw new ValidationException(ErrorMessages.RestaurantNotavailable);
             }
         }
 
@@ -53,7 +54,7 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (restaurantOwner != null)
             {
-                throw new ValidationException(ValidationMessages.OwnerRelationshipAlreadyExists);
+                throw new ValidationException(ErrorMessages.OwnerRelationshipAlreadyExists);
             }
         }
 
@@ -62,7 +63,7 @@ namespace RestaurantServer.Validators.Implementations
         /// </summary>
         /// <param name="mobileNumber">string new restaurant mobile number</param>
         /// <exception cref="ValidationException">thrown when mobile number allready exists</exception>
-        public async Task ValidateMobileNumber(string mobileNumber)
+        public async Task ValidateMobileNumber(string mobileNumber, CancellationToken cancellationToken = default)
         {
             mobileNumber = mobileNumber?.Trim();
 
@@ -71,69 +72,22 @@ namespace RestaurantServer.Validators.Implementations
 
             if (mobileExists)
             {
-                throw new ValidationException(ValidationMessages.RestaurantMobileNumberAlreadyExists);
+                throw new ValidationException(ErrorMessages.RestaurantMobileNumberAlreadyExists);
             }
         }
-
-        /// <summary>
-        /// Validates the email using Regex.
-        /// </summary>
-        /// <param name="email">owner email</param>
-        /// <exception cref="ValidationException">throws exception when email is empty or when email is invlaid.</exception>
-        public void ValidateEmail(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email) ||
-                    !Regex.IsMatch(email.Trim(), RegexConstants.EmailRegex))
-            {
-                throw new ValidationException(ValidationMessages.InvalidEmail);
-            }
-        }
-
 
         /// <summary>
         /// validate user role Allow only customer and owner.
         /// </summary>
         /// <param name="role"> intiger user role only from ENUM USER_ROLE</param>
         /// <exception cref="ValidationException"> thows exception when user role is addmin </exception>
-        public void ValidateAdminRole(int role)
+        public void ValidateAdminRole(User user)
         {
-            if ((int)UserRole.Admin == role)
+            if (user.Role == (int)UserRole.Admin)
             {
-                throw new ValidationException(ValidationMessages.InvalidRestaurantOwner);
+                throw new ValidationException(string.Format(ErrorMessages.UserInvalidRole, user.Email));
             }
         }
 
-
-        /// <summary>
-        ///  validate the emails count.
-        /// </summary>
-        /// <param name="emails"> list of string </param>
-        /// <exception cref="ValidationException">throws exception when emails count is 0</exception>
-        public void IsOwnersEmailEmpty(List<string> emails)
-        {
-            if (0 == emails.Count)
-            {
-                throw new ValidationException(ValidationMessages.OnboardRestaurantOwnerEmailsMinLength);
-            }
-        }
-
-        /// <summary>
-        /// Validates pagination parameters.
-        /// </summary>
-        /// <param name="page">The current page number.</param>
-        /// <param name="pageSize">The number of items per page.</param>
-        /// <exception cref="ValidationException">Thrown when page or pageSize is less than 1.</exception>
-        public void ValidatePagination(int page, int pageSize)
-        {
-            if (page < 1)
-            {
-                throw new ValidationException(ValidationMessages.InvalidPageNumber);
-            }
-
-            if (pageSize < 1)
-            {
-                throw new ValidationException(ValidationMessages.InvalidPageSize);
-            }
-        }
     }
 }

@@ -4,6 +4,7 @@ using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Validators.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace RestaurantServer.Validators.Implementations
@@ -39,22 +40,22 @@ namespace RestaurantServer.Validators.Implementations
             }
         }
 
+
         public void ValidateUserRoleForOrder(User user)
         {
             _userValidator.IsUserNullOrDeactivated(user);
 
-            if (user.Role != (int)UserRole.Customer &&
-                user.Role != (int)UserRole.Owner &&
-                user.Role != (int)UserRole.Admin)
+            if (!Enum.IsDefined(typeof(UserRole), user.Role))
             {
                 throw new ValidationException(ValidationMessages.InvalidRole);
             }
         }
 
+
         public void ValidateItemsForOrder(
-            long restaurantId,
-            List<OrderItemRequest> consolidatedItems,
-            Dictionary<long, Item> lockedItemsById)
+                long restaurantId,
+                List<OrderItemRequest> consolidatedItems,
+                Dictionary<long, Item> lockedItemsById)
         {
             foreach (var requestedItem in consolidatedItems)
             {

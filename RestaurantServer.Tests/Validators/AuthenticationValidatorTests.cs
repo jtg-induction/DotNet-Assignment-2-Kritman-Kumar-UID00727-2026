@@ -35,7 +35,7 @@ namespace RestaurantServer.Tests
                 () => _authenticationValidator.ValidateUser(null));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidCredentials,
+                ErrorMessages.InvalidCredentials,
                 exception.Message);
         }
 
@@ -62,7 +62,7 @@ namespace RestaurantServer.Tests
                 () => _authenticationValidator.ValidateUserIsActive(user));
 
             Assert.AreEqual(
-                ValidationMessages.UserInactive,
+                ErrorMessages.UserInactive,
                 exception.Message);
         }
 
@@ -79,7 +79,7 @@ namespace RestaurantServer.Tests
                 () => _authenticationValidator.ValidatePassword(false));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidCredentials,
+                ErrorMessages.InvalidCredentials,
                 exception.Message);
         }
     }
