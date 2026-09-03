@@ -22,7 +22,7 @@ namespace RestaurantServer.Validators.Implementations
             if (string.IsNullOrWhiteSpace(refreshToken))
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
             }
         }
 
@@ -40,7 +40,7 @@ namespace RestaurantServer.Validators.Implementations
             if (refreshToken == null)
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
             }
         }
 
@@ -59,7 +59,7 @@ namespace RestaurantServer.Validators.Implementations
             if (refreshToken.IsRevoked)
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
             }
         }
 
@@ -78,7 +78,7 @@ namespace RestaurantServer.Validators.Implementations
             if (refreshToken.ExpiresAt <= DateTime.UtcNow)
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
             }
         }
 

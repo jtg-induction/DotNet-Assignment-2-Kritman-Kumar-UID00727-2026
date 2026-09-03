@@ -26,7 +26,7 @@ namespace RestaurantServer.Exceptions
                     .CreateResponse(HttpStatusCode.BadRequest,
                         new
                         {
-                            Message = validationException.Message
+                            Error = validationException.Message
                         }
                     )
                 );

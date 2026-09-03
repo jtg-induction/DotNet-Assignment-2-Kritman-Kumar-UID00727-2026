@@ -10,7 +10,7 @@ namespace RestaurantServer.DTOs.Requests
         public string Name { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.MobileNumberRequired)]
-        [RegularExpression(RegexConstants.MobileNumberRgex, ErrorMessage = ValidationMessages.InvalidMobileNumber)]
+        [RegularExpression(Regex.MobileNumberRgex, ErrorMessage = ErrorMessages.InvalidMobileNumber)]
         public string MobileNumber { get; set; }
     }
 }

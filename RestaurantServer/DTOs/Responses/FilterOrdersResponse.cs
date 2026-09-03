@@ -5,13 +5,13 @@ namespace RestaurantServer.DTOs.Responses
 {
     public class FilterOrdersResponse
     {
-        public FilterOrdersResponse(PaginationResponse paginationResponse, List<OrderResponse> orders)
+        public FilterOrdersResponse(PaginatedResponse paginationResponse, List<OrderResponse> orders)
         {
             Pagination = paginationResponse;
             Message = SuccessMessages.OrdersRetrieved;
             Orders = orders;
         }
-        public PaginationResponse Pagination { get; set; }
+        public PaginatedResponse Pagination { get; set; }
         public string Message { get; set; }
         public List<OrderResponse> Orders { get; set; }
     }

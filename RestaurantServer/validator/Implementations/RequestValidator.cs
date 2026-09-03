@@ -25,7 +25,7 @@ namespace RestaurantServer.Validators.Implementations
         {
             if (request == null)
             {
-                throw new ValidationException(ValidationMessages.EmptyRequest);
+                throw new ValidationException(ErrorMessages.EmptyRequest);
             }
         }
     }

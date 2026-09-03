@@ -157,8 +157,7 @@ namespace RestaurantServer.Services.Implementations
             return new OrderDetailsResponse(order);
         }
 
-        public async Task<CancelOrderResponse> CancelOrderAsync(
-            long orderId,
+        public async Task<CancelOrderResponse> CancelOrderAsync(long orderId,
             CancellationToken cancellationToken = default)
         {
             _orderValidator.ValidateOrderId(orderId);
@@ -213,7 +212,7 @@ namespace RestaurantServer.Services.Implementations
 
             var filterOrders = await _orderRepository.GetFilteredOrders(userId, orderQueryParameters, cancellationToken);
 
-            var paginationResponse = new PaginationResponse(orderQueryParameters.PageNumber,
+            var paginationResponse = new PaginatedResponse(orderQueryParameters.PageNumber,
                 orderQueryParameters.PageSize, filterOrders.TotalRecords);
 
             return new FilterOrdersResponse(paginationResponse, filterOrders.Orders);

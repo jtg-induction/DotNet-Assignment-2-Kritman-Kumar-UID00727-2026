@@ -40,7 +40,6 @@ namespace RestaurantServer.Models
         {
             UserId = userId;
             IsRevoked = false;
-
             var now = DateTime.UtcNow;
             CreatedAt = now;
             UpdatedAt = now;
