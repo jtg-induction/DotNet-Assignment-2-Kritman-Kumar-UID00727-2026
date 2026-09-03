@@ -1,4 +1,7 @@
+using RestaurantServer.DTOs.Requests;
+using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Models;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,5 +11,7 @@ namespace RestaurantServer.Repositories.Interfaces
     {
         Task<Order> GetOrderWithItemsByIdAsync(long orderId, CancellationToken cancellationToken = default);
         Task<Order> GetOrderForUpdateAsync(long orderId, CancellationToken cancellationToken = default);
+        Task<(int TotalRecords, List<OrderResponse> Orders)> GetFilteredOrders(long ownerId, OrderQueryParameters orderQueryParameters,
+               CancellationToken cancellationToken = default);
     }
 }

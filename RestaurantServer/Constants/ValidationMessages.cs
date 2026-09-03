@@ -18,6 +18,7 @@ namespace RestaurantServer.Constants
         public const string DescriptionRequired = "Description is required";
         public const string QuantityRequired = "Quantity id required.";
         public const string ItemIdRequired = "ItemId is required.";
+        public const string RestaurantOwnerRequired = "You are not authorized to update this order.";
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
         public const string EmailMaxLength = "Email cannot exceed the maximum allowed length.";
@@ -58,5 +59,8 @@ namespace RestaurantServer.Constants
         public const string OrderNotFound = "Order not found.";
         public const string InvalidOrderId = "Order ID is invalid.";
         public const string OrderCannotBeCancelled = "Order can only be cancelled when it is in Placed or Accepted status.";
+        public const string InvalidOrderStatus = "Invalid order status.";
+        public const string InvalidOrderStatusTransition = "Invalid order status transition.";
+        public const string OrderCannotBeCancelledByOwner = "Order cancellation is handled by the customer.";
     }
 }

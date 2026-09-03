@@ -142,5 +142,58 @@ namespace RestaurantServer.Validators.Implementations
                 throw new ValidationException(ValidationMessages.OrderCannotBeCancelled);
             }
         }
+
+        /// <summary>
+        /// Validates the order query parameters and sets default values for invalid pagination values.
+        /// </summary>
+        /// <param name="orderQueryParameters">The order query parameters.</param>
+        /// <returns>The validated order query parameters.</returns>
+        public OrderQueryParameters ValidateQueryParameters(OrderQueryParameters orderQueryParameters)
+        {
+            orderQueryParameters = orderQueryParameters ?? new OrderQueryParameters();
+
+            if (orderQueryParameters.PageNumber < 1)
+            {
+                orderQueryParameters.PageNumber = 1;
+            }
+
+            if (orderQueryParameters.PageSize < 1)
+            {
+                orderQueryParameters.PageSize = 10;
+            }
+
+            return orderQueryParameters;
+        }
+
+        /// <summary>
+        /// Validates whether the specified order status is valid.
+        /// </summary>
+        /// <param name="status">The order status to validate.</param>
+        public void ValidateOrderStatus(OrderStatus status)
+        {
+            if (!System.Enum.IsDefined(typeof(OrderStatus), status))
+            {
+                throw new ValidationException(
+                    ValidationMessages.InvalidOrderStatus);
+            }
+        }
+
+        /// <summary>
+        /// Validates whether the specified order status is valid.
+        /// </summary>
+        /// <param name="status">The order status to validate.</param>
+        public void ValidateOrderStatusTransition(OrderStatus currentStatus, OrderStatus newStatus)
+        {
+            bool isValidTransition = (currentStatus == OrderStatus.Placed
+                && (newStatus == OrderStatus.Accepted || newStatus == OrderStatus.Rejected))
+                || (currentStatus == OrderStatus.Accepted && newStatus == OrderStatus.Dispatched)
+                || (currentStatus == OrderStatus.Dispatched && newStatus == OrderStatus.Delivered);
+
+            if (!isValidTransition)
+            {
+                throw new ValidationException(
+                    ValidationMessages.InvalidOrderStatusTransition);
+            }
+        }
     }
 }
