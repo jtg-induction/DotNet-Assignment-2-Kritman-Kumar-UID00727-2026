@@ -510,7 +510,7 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(inactiveUser, ""))
+                    validator.IsUserNullOrDeactivated(inactiveUser, "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
                         ErrorMessages.InvalidRefreshToken));

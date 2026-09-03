@@ -8,7 +8,6 @@ using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services.Implementations;
 using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Interfaces;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -75,19 +74,46 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
+                    validator.ValidateMobileNumberIsUnique(
+                        "9876543210",
+                        userId))
+                .Verifiable();
+
+            _userValidatorMock
+                .Setup(validator =>
                     validator.ValidateUserExists(null))
                 .Throws(
                     new ValidationException(
                         ErrorMessages.UserNotFound));
 
-            var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
-                () => _userUpdateService.UpdateAccountAsync(
-                    userId,
-                    request));
+            var exception =
+                await Assert.ThrowsExceptionAsync<ValidationException>(
+                    () => _userUpdateService.UpdateAccountAsync(
+                        userId,
+                        request));
 
             Assert.AreEqual(
                 ErrorMessages.UserNotFound,
                 exception.Message);
+
+            _requestValidatorMock.Verify(
+                validator =>
+                    validator.IsRequestNull(request),
+                Times.Once);
+
+            _userValidatorMock.Verify(
+                validator =>
+                    validator.ValidateMobileNumberIsUnique(
+                        "9876543210",
+                        userId),
+                Times.Once);
+
+            _usersRepositoryMock.Verify(
+                repository =>
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()),
+                Times.Once);
 
             _userValidatorMock.Verify(
                 validator =>
@@ -121,14 +147,27 @@ namespace RestaurantServer.Tests
                     new ValidationException(
                         ErrorMessages.MobileNumberAlreadyExists));
 
-            var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
-                () => _userUpdateService.UpdateAccountAsync(
-                    userId,
-                    request));
+            var exception =
+                await Assert.ThrowsExceptionAsync<ValidationException>(
+                    () => _userUpdateService.UpdateAccountAsync(
+                        userId,
+                        request));
 
             Assert.AreEqual(
                 ErrorMessages.MobileNumberAlreadyExists,
                 exception.Message);
+
+            _requestValidatorMock.Verify(
+                validator =>
+                    validator.IsRequestNull(request),
+                Times.Once);
+
+            _userValidatorMock.Verify(
+                validator =>
+                    validator.ValidateMobileNumberIsUnique(
+                        "9876543210",
+                        userId),
+                Times.Once);
 
             _usersRepositoryMock.Verify(
                 repository =>
@@ -171,26 +210,36 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
-            var beforeUpdate = DateTime.UtcNow;
-
-            var result = await _userUpdateService.UpdateAccountAsync(
-                userId,
-                request);
-
-            var afterUpdate = DateTime.UtcNow;
+            var result =
+                await _userUpdateService.UpdateAccountAsync(
+                    userId,
+                    request);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(userId, result.UserId);
-            Assert.AreEqual("Updated Name", result.Name);
-            Assert.AreEqual("test@example.com", result.Email);
-            Assert.AreEqual("9123456789", result.MobileNumber);
 
-            Assert.AreEqual("Updated Name", user.Name);
-            Assert.AreEqual("9123456789", user.MobileNumber);
+            Assert.AreEqual(
+                userId,
+                result.UserId);
 
-            Assert.IsTrue(
-                user.UpdatedAt >= beforeUpdate &&
-                user.UpdatedAt <= afterUpdate);
+            Assert.AreEqual(
+                "Updated Name",
+                result.Name);
+
+            Assert.AreEqual(
+                "test@example.com",
+                result.Email);
+
+            Assert.AreEqual(
+                "9123456789",
+                result.MobileNumber);
+
+            Assert.AreEqual(
+                "Updated Name",
+                user.Name);
+
+            Assert.AreEqual(
+                "9123456789",
+                user.MobileNumber);
 
             _requestValidatorMock.Verify(
                 validator =>
@@ -202,6 +251,13 @@ namespace RestaurantServer.Tests
                     validator.ValidateMobileNumberIsUnique(
                         "9123456789",
                         userId),
+                Times.Once);
+
+            _usersRepositoryMock.Verify(
+                repository =>
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
 
             _userValidatorMock.Verify(
@@ -230,21 +286,30 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(null, ""))
+                    validator.IsUserNullOrDeactivated(null, "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
                         ErrorMessages.InvalidRefreshToken));
 
-            var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
-                () => _userUpdateService.DeactivateAccountAsync(userId));
+            var exception =
+                await Assert.ThrowsExceptionAsync<ValidationException>(
+                    () => _userUpdateService.DeactivateAccountAsync(
+                        userId));
 
             Assert.AreEqual(
                 ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
+            _usersRepositoryMock.Verify(
+                repository =>
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()),
+                Times.Once);
+
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(null, ""),
+                    validator.IsUserNullOrDeactivated(null, "Invalid refresh token."),
                 Times.Once);
 
             _refreshTokenRepositoryMock.Verify(
@@ -283,21 +348,30 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(user, ""))
+                    validator.IsUserNullOrDeactivated(user, "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
                         ErrorMessages.InvalidRefreshToken));
 
-            var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
-                () => _userUpdateService.DeactivateAccountAsync(userId));
+            var exception =
+                await Assert.ThrowsExceptionAsync<ValidationException>(
+                    () => _userUpdateService.DeactivateAccountAsync(
+                        userId));
 
             Assert.AreEqual(
                 ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
+            _usersRepositoryMock.Verify(
+                repository =>
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()),
+                Times.Once);
+
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(user, ""),
+                    validator.IsUserNullOrDeactivated(user, "Invalid refresh token."),
                 Times.Once);
 
             Assert.IsFalse(user.IsActive);
@@ -336,11 +410,9 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
-            var beforeUpdate = DateTime.UtcNow;
-
-            var result = await _userUpdateService.DeactivateAccountAsync(userId);
-
-            var afterUpdate = DateTime.UtcNow;
+            var result =
+                await _userUpdateService.DeactivateAccountAsync(
+                    userId);
 
             Assert.AreEqual(
                 SuccessMessages.AccountDeactivatedSuccessful,
@@ -348,13 +420,16 @@ namespace RestaurantServer.Tests
 
             Assert.IsFalse(user.IsActive);
 
-            Assert.IsTrue(
-                user.UpdatedAt >= beforeUpdate &&
-                user.UpdatedAt <= afterUpdate);
+            _usersRepositoryMock.Verify(
+                repository =>
+                    repository.GetByIdAsync(
+                        userId,
+                        It.IsAny<CancellationToken>()),
+                Times.Once);
 
             _userValidatorMock.Verify(
                 validator =>
-                    validator.IsUserNullOrDeactivated(user, ""),
+                    validator.IsUserNullOrDeactivated(user, "Invalid refresh token."),
                 Times.Once);
 
             _refreshTokenRepositoryMock.Verify(

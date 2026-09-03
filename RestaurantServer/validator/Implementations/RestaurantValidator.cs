@@ -68,7 +68,7 @@ namespace RestaurantServer.Validators.Implementations
             mobileNumber = mobileNumber?.Trim();
 
             var mobileExists = await _restaurantRepository
-                .ExistsByMobileNumberAsync(mobileNumber, cancellationToken);
+                .ExistsByMobileNumberAsync(mobileNumber);
 
             if (mobileExists)
             {
