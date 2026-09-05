@@ -1,4 +1,4 @@
-﻿using RestaurantServer.Constants;
+using RestaurantServer.Constants;
 using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;

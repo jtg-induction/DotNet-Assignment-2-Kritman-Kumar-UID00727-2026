@@ -93,5 +93,13 @@ namespace RestaurantServer.Validators.Implementations
                     ErrorMessages.MobileNumberAlreadyExists);
             }
         }
+
+        public void ValidateUserBalance(User user, decimal totalPrice)
+        {
+            if (user.Balance < totalPrice)
+            {
+                throw new ValidationException(ValidationMessages.InsufficientBalance);
+            }
+        }
     }
 }

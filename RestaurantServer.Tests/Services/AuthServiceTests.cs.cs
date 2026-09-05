@@ -513,13 +513,13 @@ namespace RestaurantServer.Tests
                     validator.IsUserNullOrDeactivated(inactiveUser, "Invalid refresh token."))
                 .Throws(
                     new ValidationException(
-                        ErrorMessages.InvalidRefreshToken));
+                        ValidationMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.RefreshTokenAsync(refreshToken));
 
             Assert.AreEqual(
-                ErrorMessages.InvalidRefreshToken,
+                ValidationMessages.InvalidRefreshToken,
                 exception.Message);
 
             _jwtTokenServiceMock.Verify(
@@ -627,7 +627,7 @@ namespace RestaurantServer.Tests
                 () => _authService.LogoutAsync(""));
 
             Assert.AreEqual(
-                ErrorMessages.InvalidRefreshToken,
+                ValidationMessages.InvalidRefreshToken,
                 exception.Message);
 
             _refreshTokenRepositoryMock.Verify(
@@ -655,13 +655,13 @@ namespace RestaurantServer.Tests
                     validator.ValidateRefreshToken(null))
                 .Throws(
                     new ValidationException(
-                        ErrorMessages.InvalidRefreshToken));
+                        ValidationMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.LogoutAsync(refreshToken));
 
             Assert.AreEqual(
-                ErrorMessages.InvalidRefreshToken,
+                ValidationMessages.InvalidRefreshToken,
                 exception.Message);
         }
 
@@ -694,13 +694,13 @@ namespace RestaurantServer.Tests
                         revokedToken))
                 .Throws(
                     new ValidationException(
-                        ErrorMessages.InvalidRefreshToken));
+                        ValidationMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.LogoutAsync(refreshToken));
 
             Assert.AreEqual(
-                ErrorMessages.InvalidRefreshToken,
+                ValidationMessages.InvalidRefreshToken,
                 exception.Message);
 
             _refreshTokenRepositoryMock.Verify(

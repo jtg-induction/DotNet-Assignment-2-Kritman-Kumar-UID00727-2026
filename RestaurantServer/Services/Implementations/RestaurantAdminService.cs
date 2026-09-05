@@ -171,8 +171,7 @@ namespace RestaurantServer.Services.Implementations
 
             return new OnboardRestaurantResponses
             {
-                RestaurantId = restaurantId,
-                Message = SuccessMessages.ownersOnboardedSuccessful,
+                RestaurantId = restaurantId, 
                 Owners = restaurantOwners
                     .Select(restaurantOwner => new OwnerDto(restaurantOwner))
                     .ToList()

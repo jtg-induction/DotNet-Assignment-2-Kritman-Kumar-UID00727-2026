@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -195,20 +195,33 @@
     <Compile Include="Constants\ValidationConstants.cs" />
     <Compile Include="Constants\ValidationMessages.cs" />
     <Compile Include="Controllers\AdminRestaurantController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\RestaurantController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="DTOs\Requests\CreateOrderRequest.cs" />
     <Compile Include="DTOs\Requests\CreateRestaurantRequest.cs" />
     <Compile Include="DTOs\Requests\LoginRequest.cs" />
     <Compile Include="DTOs\Requests\OnboardRestaurantOwnerRequest.cs" />
+    <Compile Include="DTOs\Requests\OrderItemRequest.cs" />
     <Compile Include="DTOs\Requests\RefreshTokenRequest.cs" />
     <Compile Include="DTOs\Requests\SignupRequest.cs" />
     <Compile Include="DTOs\Requests\UpdateAccountRequest.cs" />
+    <Compile Include="DTOs\Responses\CancelOrderResponse.cs" />
+    <Compile Include="DTOs\Responses\CreateOrderResponse.cs" />
     <Compile Include="DTOs\Responses\CreateRestaurantResponse.cs" />
+    <Compile Include="DTOs\Responses\ItemDto.cs" />
     <Compile Include="DTOs\Responses\LoginResponse.cs" />
     <Compile Include="DTOs\Responses\LoginResult.cs" />
+    <Compile Include="DTOs\Responses\OrderResponse.cs" />
+    <Compile Include="DTOs\Responses\OrderItemDto.cs" />
     <Compile Include="DTOs\Responses\OwnerDto.cs" />
+    <Compile Include="DTOs\Responses\PaginatedResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResponse.cs" />
     <Compile Include="DTOs\Responses\RefreshResult.cs" />
+    <Compile Include="DTOs\Responses\RestaurantDto.cs" />
+    <Compile Include="DTOs\Responses\RestaurantItemListResponse.cs" />
+    <Compile Include="DTOs\Responses\RestaurantListResponse.cs" />
     <Compile Include="DTOs\Responses\OnboardRestaurantResponses.cs" />
     <Compile Include="DTOs\Responses\SignupResponse.cs" />
     <Compile Include="DTOs\Responses\UpdateUserResponse.cs" />
@@ -221,9 +234,17 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202608041016595_InitialCreate.cs" />
+    <Compile Include="Migrations\202608041016595_InitialCreate.Designer.cs">
+      <DependentUpon>202608041016595_InitialCreate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202608171746472_AddUniqueMobileNumber.cs" />
     <Compile Include="Migrations\202608171746472_AddUniqueMobileNumber.Designer.cs">
       <DependentUpon>202608171746472_AddUniqueMobileNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202608201119140_AddUniqueMobileIndexToRestaurant.cs" />
+    <Compile Include="Migrations\202608201119140_AddUniqueMobileIndexToRestaurant.Designer.cs">
+      <DependentUpon>202608201119140_AddUniqueMobileIndexToRestaurant.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202608251929137_AddRestaurantOwnerCompositeIndex.cs" />
     <Compile Include="Migrations\202608251929137_AddRestaurantOwnerCompositeIndex.Designer.cs">
@@ -231,11 +252,19 @@
     </Compile>
     <Compile Include="ModelStateValidator\EmailListAttribute.cs" />
     <Compile Include="ModelStateValidator\CollectionMinLengthAttribute.cs" />
+    <Compile Include="Repositories\implementations\ItemRepository.cs" />
+    <Compile Include="Repositories\implementations\OrderRepository.cs" />
     <Compile Include="Repositories\implementations\RestaurantRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IItemRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IOrderRepository.cs" />
+    <Compile Include="Services\Implementations\OrderService.cs" />
     <Compile Include="Services\Implementations\RestaurantAdminService.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantOwnerRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRestaurantRepository.cs" />
+    <Compile Include="Services\Implementations\RestaurantService.cs" />
     <Compile Include="Services\Implementations\UserSessionService.cs" />
+    <Compile Include="Services\Interfaces\IOrderService.cs" />
+    <Compile Include="Services\Interfaces\IRestaurantService.cs" />
     <Compile Include="Services\Interfaces\IUserSessionService.cs" />
     <Compile Include="Services\Interfaces\IRestaurantAdminService.cs" />
     <Compile Include="Validator\Implementations\AuthenticationValidator.cs" />
@@ -244,6 +273,8 @@
     <Compile Include="Helpers\Implementations\JwtTokenService.cs" />
     <Compile Include="Helpers\Implementations\PasswordHasher.cs" />
     <Compile Include="Validator\Implementations\EmailValidator.cs" />
+    <Compile Include="Validator\Implementations\OrderValidator.cs" />
+    <Compile Include="Validator\Implementations\PaginatedValidator.cs" />
     <Compile Include="Validator\Implementations\RefreshTokenValidator.cs" />
     <Compile Include="Validator\Implementations\RequestValidator.cs" />
     <Compile Include="Validator\Implementations\RestaurantValidator.cs" />
@@ -254,6 +285,8 @@
     <Compile Include="Helpers\Interfaces\IRefreshTokenHelper.cs" />
     <Compile Include="Helpers\Interfaces\IJwtTokenService.cs" />
     <Compile Include="Helpers\Interfaces\IPasswordHasher.cs" />
+    <Compile Include="Validator\Interfaces\IOrderValidator.cs" />
+    <Compile Include="Validator\Interfaces\IPaginatedValidator.cs" />
     <Compile Include="Validator\Interfaces\IRequestValidator.cs" />
     <Compile Include="Validator\Interfaces\IRestaurantValidator.cs" />
     <Compile Include="Validator\Interfaces\IUserValidator.cs" />
@@ -357,6 +390,9 @@
     <Compile Include="Repositories\implementations\RestaurantOwnerRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\202608041016595_InitialCreate.resx">
+      <DependentUpon>202608041016595_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202608052226261_AddConstraintsAndIndexes.resx">
       <DependentUpon>202608052226261_AddConstraintsAndIndexes.cs</DependentUpon>
     </EmbeddedResource>
@@ -365,6 +401,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202608171746472_AddUniqueMobileNumber.resx">
       <DependentUpon>202608171746472_AddUniqueMobileNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608201119140_AddUniqueMobileIndexToRestaurant.resx">
+      <DependentUpon>202608201119140_AddUniqueMobileIndexToRestaurant.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202608251929137_AddRestaurantOwnerCompositeIndex.resx">
       <DependentUpon>202608251929137_AddRestaurantOwnerCompositeIndex.cs</DependentUpon>

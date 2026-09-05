@@ -96,8 +96,7 @@ namespace RestaurantServer
             base.OnModelCreating(modelBuilder);
         }
 
-        public async Task<int> SaveChangesAsync(
-            long? personId,
+        public async Task<int> SaveChangesAsync(long? personId,
             CancellationToken cancellationToken = default)
         {
             SetUpdatedFields(personId);

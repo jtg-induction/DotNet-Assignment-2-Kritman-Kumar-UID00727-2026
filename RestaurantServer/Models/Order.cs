@@ -1,7 +1,9 @@
+using RestaurantServer.Constants;
+using RestaurantServer.DTOs.Requests;
+using RestaurantServer.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using RestaurantServer.Constants;
 
 namespace RestaurantServer.Models
 {
@@ -11,7 +13,21 @@ namespace RestaurantServer.Models
         {
             OrderItems = new HashSet<OrderItem>();
         }
-        
+
+        public Order( long restaurantId, long userId, decimal totalPrice, CreateOrderRequest request, List<OrderItem> orderItems)
+        {
+            RestaurantId = restaurantId;
+            UserId = userId;
+            Status = (int)OrderStatus.Placed;
+            TotalPrice = totalPrice;
+            AddressLine1 = request.AddressLine1.Trim();
+            AddressLine2 = request.AddressLine2?.Trim();
+            City = request.City.Trim();
+            PostalCode = request.PostalCode.Trim();
+            Country = request.Country.Trim();
+            OrderItems = orderItems;
+        }
+
         [Key]
         public long Id { get; set; }
 
