@@ -32,9 +32,7 @@ namespace RestaurantServer.Repositories.Implementations
         /// </returns>
         public async Task<bool> ExistsByMobileNumberAsync(string mobileNumber, CancellationToken cancellationToken = default)
         {
-            IQueryable<Restaurant> query = _context.Restaurants;
-
-            return await query.AnyAsync(
+            return await _context.Restaurants.AnyAsync(
                 restaurant => restaurant.MobileNumber == mobileNumber &&
                               !restaurant.IsDeleted, cancellationToken);
         }

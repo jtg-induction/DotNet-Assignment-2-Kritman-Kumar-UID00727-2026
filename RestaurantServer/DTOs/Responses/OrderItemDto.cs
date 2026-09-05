@@ -15,7 +15,6 @@ namespace RestaurantServer.DTOs.Responses
             Name = orderItem.Name;
             PriceAtPurchase = orderItem.PriceAtPurchase;
             Quantity = orderItem.Quantity;
-
             TotalPrice = orderItem.PriceAtPurchase * orderItem.Quantity;
         }
 
