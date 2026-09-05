@@ -37,6 +37,15 @@ namespace RestaurantServer.Repositories.Implementations
             return await query.ToListAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Determines whether the specified user is an owner of the specified restaurant.
+        /// </summary>
+        /// <param name="restaurantId">The unique identifier of the restaurant.</param>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+        /// <returns>
+        /// <c>true</c> if the user is an owner of the restaurant; otherwise, <c>false</c>.
+        /// </returns>
         public async Task<bool> IsOwnerAsync(
             long restaurantId, long userId, CancellationToken cancellationToken = default)
         {

@@ -11,6 +11,7 @@ namespace RestaurantServer.DTOs.Requests
 
         [Required(ErrorMessage = ValidationMessages.EmailRequired)]
         [MaxLength(ValidationConstants.EmailMaxLength, ErrorMessage = ValidationMessages.EmailMaxLength)]
+        [RegularExpression(Regex.EmailRegex, ErrorMessage = ErrorMessages.InvalidEmail)]
         public string Email { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.PasswordRequired)]

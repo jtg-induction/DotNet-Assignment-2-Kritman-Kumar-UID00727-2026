@@ -88,7 +88,7 @@ namespace RestaurantServer.Services.Implementations
 
             request.Email = request.Email.Trim().ToLowerInvariant();
 
-            var existingUser = await _usersRepository.GetUserByEmailAsync(request.Email);
+            var existingUser = await _usersRepository.GetUserByEmailAsync(request.Email, true, cancellationToken);
 
             if (existingUser != null)
             {
@@ -125,7 +125,7 @@ namespace RestaurantServer.Services.Implementations
 
             request.Email = request.Email.Trim().ToLowerInvariant();
 
-            var user = await _usersRepository.GetUserByEmailAsync(request.Email);
+            var user = await _usersRepository.GetUserByEmailAsync(request.Email, true, cancellationToken);
 
             if (user == null)
             {
@@ -179,7 +179,7 @@ namespace RestaurantServer.Services.Implementations
 
             _refreshTokenValidator.ValidateRefreshTokenIsValid(existingRefreshToken);
 
-            var user = await _usersRepository.GetByIdAsync(existingRefreshToken.UserId);
+            var user = await _usersRepository.GetByIdAsync(existingRefreshToken.UserId, cancellationToken);
 
             _userValidator.IsUserNullOrDeactivated(user);
 

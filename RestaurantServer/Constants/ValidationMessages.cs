@@ -18,12 +18,13 @@ namespace RestaurantServer.Constants
         public const string DescriptionRequired = "Description is required";
         public const string QuantityRequired = "Quantity id required.";
         public const string ItemIdRequired = "ItemId is required.";
+        public const string RestaurantIdRequired = "Restaurant Id Is Required.";
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
         public const string EmailMaxLength = "Email cannot exceed the maximum allowed length.";
-        public const string PasswordMinLength = "Password must be at least {1} characters long.";
+        public const string PasswordMinLength = "Password must be at least {0} characters long.";
         public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length."; 
-        public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include 1 email.";
+        public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include {0} email.";
         public const string MobileNumberMaxLength = "Mobile number cannot exceed the maximum allowed length.";
         public const string ListMinLength = "The list must contain at least {0} item";
 
@@ -36,7 +37,8 @@ namespace RestaurantServer.Constants
         public const string InvalidRefreshToken = "Invalid refresh token.";
         public const string InvalidMobileNumber = "Mobile number is invalid.";
         public const string NotAuthorized = "You are not authorized to access this resource.";
-        public const string InvalidPasswordFormat = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+        public const string InvalidPasswordFormat = "Password must contain at least one uppercase" +
+            " letter, one lowercase letter, one number, and one special character.";
         public const string EmptyRequest = "Request body cannot be empty.";
         public const string RestaurantNotExists = "Restaurant does not exist.";
         public const string RestaurantNotavailable = "Restaurant is not available.";
@@ -44,11 +46,11 @@ namespace RestaurantServer.Constants
         public const string InvalidRestaurantOwner = "Admin users cannot be assigned as restaurant owners.";
         public const string DuplicateOwnerEmail = "Duplicate owner email found in the request.";
         public const string RestaurantMobileNumberAlreadyExists = "A restaurant with this mobile number already exists.";
-        public const string InvalidPageNumber = "Page number must be greater than or equal to 1.";
-        public const string InvalidPageSize = "Page size must be greater than or equal to 1.";
+        public const string InvalidPageNumber = "Page number must be greater than or equal to {0}.";
+        public const string InvalidPageSize = "Page size must be greater than or equal to {0}.";
         public const string OrderItemsRequired = "Order must contain at least one item.";
         public const string InvalidItemId = "Item ID is invalid.";
-        public const string InvalidQuantity = "Quantity must be at least 1.";
+        public const string InvalidQuantity = "Quantity must be at least {0}.";
         public const string InsufficientStock = "Insufficient stock for item.";
         public const string InsufficientBalance = "Insufficient balance to place order.";
         public const string ItemNotFound = "Item not found.";

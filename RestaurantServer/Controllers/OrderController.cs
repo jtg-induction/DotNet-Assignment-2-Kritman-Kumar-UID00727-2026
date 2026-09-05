@@ -1,6 +1,9 @@
+using RestaurantServer.DTOs.Requests;
 using RestaurantServer.Enums;
 using RestaurantServer.Filters;
 using RestaurantServer.Services.Interfaces;
+using RestaurantServer.Validators.Interfaces;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -10,12 +13,15 @@ namespace RestaurantServer.Controllers
     [RoutePrefix("api/orders")]
     public class OrderController : ApiController
     {
-        private readonly IOrderService _orderService; 
+        private readonly IOrderService _orderService;
+        private readonly IRequestValidator _requestValidator;
 
         public OrderController(
-            IOrderService orderService)
+            IOrderService orderService,
+            IRequestValidator requestValidator)
         {
             _orderService = orderService; 
+            _requestValidator = requestValidator;
         }
 
         [HttpGet]
@@ -43,6 +49,19 @@ namespace RestaurantServer.Controllers
                 orderId, cancellationToken);
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("")]
+        [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
+        public async Task<IHttpActionResult> PlaceOrder(CreateOrderRequest request, 
+            CancellationToken cancellationToken = default)
+        {
+            _requestValidator.IsRequestNull(request);
+
+            var response = await _orderService.PlaceOrderAsync(request.RestaurantId, request, cancellationToken);
+
+            return Content(HttpStatusCode.Created, response);
         }
     }
 }

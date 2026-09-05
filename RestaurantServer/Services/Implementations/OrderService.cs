@@ -124,7 +124,7 @@ namespace RestaurantServer.Services.Implementations
             }
         }
 
-        public async Task<OrderDetailsResponse> GetOrderDetailsAsync(
+        public async Task<OrderResponse> GetOrderDetailsAsync(
             long orderId, 
             CancellationToken cancellationToken = default)
         {
@@ -136,7 +136,7 @@ namespace RestaurantServer.Services.Implementations
 
             _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
 
-            var order = await _orderRepository.GetOrderWithItemsByIdAsync(orderId, cancellationToken);
+            var order = await _orderRepository.GetOrderWithItemsByIdAsync(orderId, true, cancellationToken);
 
             _orderValidator.ValidateOrderExists(order);
 
@@ -149,7 +149,7 @@ namespace RestaurantServer.Services.Implementations
 
             _orderValidator.ValidateOrderAccess(order, user, isRestaurantOwner);
 
-            return new OrderDetailsResponse(order);
+            return new OrderResponse(order);
         }
 
         public async Task<CancelOrderResponse> CancelOrderAsync(long orderId, 

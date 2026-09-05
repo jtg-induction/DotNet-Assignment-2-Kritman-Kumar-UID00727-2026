@@ -7,20 +7,18 @@ using System.Linq;
 
 namespace RestaurantServer.DTOs.Responses
 {
-    public class OrderDetailsResponse
+    public class OrderResponse
     {
-        public OrderDetailsResponse()
+        public OrderResponse()
         {
             OrderItems = new List<OrderItemDto>();
         }
 
-        public OrderDetailsResponse(Order order, string message = SuccessMessages.OrderDetailsRetrievedSuccessfully)
+        public OrderResponse(Order order)
         {
             OrderId = order.Id;
-            RestaurantId = order.RestaurantId;
-            UserId = order.UserId;
-            Status = order.Status;
-            StatusName = ((OrderStatus)order.Status).ToString();
+            RestaurantId = order.RestaurantId; 
+            Status = ((OrderStatus)order.Status).ToString();
             TotalPrice = order.TotalPrice;
             AddressLine1 = order.AddressLine1;
             AddressLine2 = order.AddressLine2;
@@ -28,8 +26,7 @@ namespace RestaurantServer.DTOs.Responses
             PostalCode = order.PostalCode;
             Country = order.Country;
             CreatedAt = order.CreatedAt;
-            UpdatedAt = order.UpdatedAt;
-            Message = message;
+            UpdatedAt = order.UpdatedAt; 
 
             OrderItems = order.OrderItems != null
                 ? order.OrderItems.Select(orderItem => new OrderItemDto(orderItem)).ToList()
@@ -37,10 +34,8 @@ namespace RestaurantServer.DTOs.Responses
         }
 
         public long OrderId { get; set; }
-        public long RestaurantId { get; set; }
-        public long UserId { get; set; }
-        public int Status { get; set; }
-        public string StatusName { get; set; }
+        public long RestaurantId { get; set; } 
+        public string Status { get; set; } 
         public decimal TotalPrice { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
@@ -48,8 +43,7 @@ namespace RestaurantServer.DTOs.Responses
         public string PostalCode { get; set; }
         public string Country { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public string Message { get; set; }
+        public DateTime UpdatedAt { get; set; } 
         public List<OrderItemDto> OrderItems { get; set; }
     }
 }
