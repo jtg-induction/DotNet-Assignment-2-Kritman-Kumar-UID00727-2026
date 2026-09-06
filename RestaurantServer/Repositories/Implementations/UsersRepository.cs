@@ -59,9 +59,8 @@ namespace RestaurantServer.Repositories.Implementations
             }
 
             return await query
-                .FirstOrDefaultAsync(user => user.Email == email, cancellationToken);
-
-
+                .FirstOrDefaultAsync(user => user.Email == email, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -74,14 +73,16 @@ namespace RestaurantServer.Repositories.Implementations
         {
             return await _context.Users
                 .Where(user => emails.Contains(user.Email))
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async Task<User> GetUserForUpdateAsync(long userId, CancellationToken cancellationToken = default)
         {
             return await _context.Users
                 .SqlQuery("SELECT * FROM Users WITH (UPDLOCK, ROWLOCK) WHERE Id = @p0", userId)
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

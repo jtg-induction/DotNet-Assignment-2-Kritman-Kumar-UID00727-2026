@@ -32,7 +32,9 @@ namespace RestaurantServer.Repositories.Implementations
         /// <returns>A task that represents the asynchronous operation. The task result contains the found entity, or <c>null</c> if no entity matches the identifier.</returns>
         public async Task<T> GetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            return await _context.Set<T>().FindAsync(cancellationToken, new object[] { id });
+            return await _context.Set<T>()
+                .FindAsync(cancellationToken, new object[] { id })
+                .ConfigureAwait(false);
         }
 
         /// <summary>

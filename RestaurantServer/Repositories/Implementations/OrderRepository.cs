@@ -38,7 +38,7 @@ namespace RestaurantServer.Repositories.Implementations
         /// matching order with its associated order items, or <see langword="null"/> if no
         /// order with the specified identifier exists.
         /// </returns>
-        public async Task<Order> GetOrderWithItemsByIdAsync(long orderId,
+        public async Task<Order> GetOrderWithItemsByIdNoTrackingAsync(long orderId,
             bool disableTracking = false, CancellationToken cancellationToken = default)
         {
             IQueryable<Order> query = _context.Orders
@@ -51,14 +51,14 @@ namespace RestaurantServer.Repositories.Implementations
 
             return await query.FirstOrDefaultAsync(
                 order => order.Id == orderId,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<Order> GetOrderForUpdateAsync(long orderId, CancellationToken cancellationToken = default)
         {
             return await _context.Orders
                 .SqlQuery("SELECT * FROM Orders WITH (UPDLOCK, ROWLOCK) WHERE Id = @p0", orderId)
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace RestaurantServer.Repositories.Implementations
         /// <param name="orderQueryParameters">The filters, sorting, and pagination parameters.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         /// <returns>The total number of matching orders and the orders for the requested page.</returns>
-        public async Task<(int TotalRecords, List<OrderResponse> Orders)> GetFilteredOrders(
+        public async Task<(int TotalRecords, List<OrderResponse> Orders)> GetFilteredOrdersNoTrackingAsync(
             long ownerId, OrderQueryParameters orderQueryParameters, CancellationToken cancellationToken = default)
         {
             var query = _context.Orders.AsNoTracking()
@@ -92,7 +92,7 @@ namespace RestaurantServer.Repositories.Implementations
                         PostalCode = order.PostalCode,
                         Country = order.Country
                     })
-                    .FirstOrDefaultAsync(cancellationToken);
+                    .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
                 if (searchOrder == null)
                 {
@@ -122,7 +122,8 @@ namespace RestaurantServer.Repositories.Implementations
                     order.Country.Contains(searchQuery));
             }
 
-            var totalRecords = await query.CountAsync(cancellationToken);
+            var totalRecords = await query.CountAsync(cancellationToken)
+                            .ConfigureAwait(false); ;
 
             switch (orderQueryParameters.SortBy)
             {
@@ -178,7 +179,7 @@ namespace RestaurantServer.Repositories.Implementations
                     PostalCode = order.PostalCode,
                     Country = order.Country
                 })
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false); ;
 
             return (totalRecords, responses);
         }

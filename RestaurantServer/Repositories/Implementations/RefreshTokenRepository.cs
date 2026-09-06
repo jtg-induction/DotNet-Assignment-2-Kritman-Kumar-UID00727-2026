@@ -38,7 +38,7 @@ namespace RestaurantServer.Repositories.Implementations
         {
             return await _context.RefreshTokens
                 .FirstOrDefaultAsync(refreshToken =>
-                    refreshToken.Token == token, cancellationToken);
+                    refreshToken.Token == token, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace RestaurantServer.Repositories.Implementations
                 .Where(refreshToken =>
                     refreshToken.UserId == userId &&
                     !refreshToken.IsRevoked)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
 
             foreach (var refreshToken in refreshTokens)
             {

@@ -34,7 +34,7 @@ namespace RestaurantServer.Repositories.Implementations
                 query = query.AsNoTracking();
             }
 
-            return await query.ToListAsync(cancellationToken);
+            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -50,7 +50,8 @@ namespace RestaurantServer.Repositories.Implementations
             long restaurantId, long userId, CancellationToken cancellationToken = default)
         {
             return await _context.RestaurantOwners
-                .AnyAsync(ro => ro.RestaurantId == restaurantId && ro.UserId == userId, cancellationToken);
+                .AnyAsync(ro => ro.RestaurantId == restaurantId && ro.UserId == userId, cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

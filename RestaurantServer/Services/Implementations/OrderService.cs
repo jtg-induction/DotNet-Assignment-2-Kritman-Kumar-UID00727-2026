@@ -141,7 +141,8 @@ namespace RestaurantServer.Services.Implementations
 
             _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
 
-            var order = await _orderRepository.GetOrderWithItemsByIdAsync(orderId, true, cancellationToken);
+            var order = await _orderRepository.GetOrderWithItemsByIdNoTrackingAsync(
+                orderId, true, cancellationToken);
 
             _orderValidator.ValidateOrderExists(order);
 
@@ -210,7 +211,8 @@ namespace RestaurantServer.Services.Implementations
 
             orderQueryParameters = _orderValidator.ValidateQueryParameters(orderQueryParameters);
 
-            var filterOrders = await _orderRepository.GetFilteredOrders(userId, orderQueryParameters, cancellationToken);
+            var filterOrders = await _orderRepository.GetFilteredOrdersNoTrackingAsync(
+                userId, orderQueryParameters, cancellationToken);
 
             var paginationResponse = new PaginatedResponse(orderQueryParameters.PageNumber,
                 orderQueryParameters.PageSize, filterOrders.TotalRecords);
