@@ -51,20 +51,5 @@ namespace RestaurantServer.Controllers
 
             return Ok(response);
         }
-
-        [HttpPost]
-        [Route("{restaurantId:long}/orders")]
-        [CustomAuthorize(UserRole.Customer, UserRole.Owner, UserRole.Admin)]
-        public async Task<IHttpActionResult> PlaceOrder(
-            long restaurantId,
-            CreateOrderRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            _requestValidator.IsRequestNull(request);
-
-            var response = await _orderService.PlaceOrderAsync(restaurantId, request, cancellationToken);
-
-            return Content(HttpStatusCode.Created, response);
-        }
     }
 }

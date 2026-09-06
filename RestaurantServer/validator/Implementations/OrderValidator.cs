@@ -3,6 +3,7 @@ using RestaurantServer.DTOs.Requests;
 using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
+using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,13 @@ namespace RestaurantServer.Validators.Implementations
     {
 
         private readonly UserValidator _userValidator;
+        private readonly IPaginatedValidator _paginatedValidator;
 
-        public OrderValidator(UserValidator userValidator)
+        public OrderValidator(UserValidator userValidator,
+            IPaginatedValidator paginatedValidator)
         {
-            _userValidator = userValidator;
+            _userValidator = userValidator; 
+             _paginatedValidator = paginatedValidator;
         }
 
         public void ValidateOrderRequest(CreateOrderRequest request)
@@ -152,15 +156,8 @@ namespace RestaurantServer.Validators.Implementations
         {
             orderQueryParameters = orderQueryParameters ?? new OrderQueryParameters();
 
-            if (orderQueryParameters.PageNumber < 1)
-            {
-                orderQueryParameters.PageNumber = 1;
-            }
-
-            if (orderQueryParameters.PageSize < 1)
-            {
-                orderQueryParameters.PageSize = 10;
-            }
+            _paginatedValidator.ValidatePagination(orderQueryParameters.PageSize,
+                orderQueryParameters.PageNumber);
 
             return orderQueryParameters;
         }

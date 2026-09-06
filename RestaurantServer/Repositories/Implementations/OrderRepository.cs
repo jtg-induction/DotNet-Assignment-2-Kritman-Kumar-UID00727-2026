@@ -18,18 +18,61 @@ namespace RestaurantServer.Repositories.Implementations
         {
         }
 
-        public async Task<Order> GetOrderWithItemsByIdAsync(long orderId, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Asynchronously retrieves an order by its identifier, including its associated order items.
+        /// </summary>
+        /// <param name="orderId">
+        /// The unique identifier of the order to retrieve.
+        /// </param>
+        /// <param name="disableTracking">
+        /// A value indicating whether Entity Framework tracking should be disabled.
+        /// When set to <see langword="true"/>, <see cref="DbExtensions.AsNoTracking{T}(System.Linq.IQueryable{T})" />
+        /// is applied to the query. This is recommended when the returned order and its items
+        /// are intended for read-only purposes and do not need to be tracked for updates.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token to observe while waiting for the asynchronous operation to complete.
+        /// </param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains the
+        /// matching order with its associated order items, or <see langword="null"/> if no
+        /// order with the specified identifier exists.
+        /// </returns>
+        public async Task<Order> GetOrderWithItemsByIdNoTrackingAsync(long orderId,
+            bool disableTracking = false, CancellationToken cancellationToken = default)
         {
-            return await _context.Orders
-                .Include(order => order.OrderItems)
-                .FirstOrDefaultAsync(order => order.Id == orderId, cancellationToken);
+            IQueryable<Order> query = _context.Orders
+                .Include(order => order.OrderItems);
+
+            if (disableTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.FirstOrDefaultAsync(
+                order => order.Id == orderId,
+                cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Asynchronously retrieves an order by its identifier for update while applying
+        /// SQL row-level update locks to prevent concurrent modifications.
+        /// </summary>
+        /// <param name="orderId">
+        /// The unique identifier of the order to retrieve.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token to observe while waiting for the asynchronous operation to complete.
+        /// </param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains
+        /// the matching order if found; otherwise, <see langword="null"/>.
+        /// </returns>
         public async Task<Order> GetOrderForUpdateAsync(long orderId, CancellationToken cancellationToken = default)
         {
             return await _context.Orders
                 .SqlQuery("SELECT * FROM Orders WITH (UPDLOCK, ROWLOCK) WHERE Id = @p0", orderId)
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -39,7 +82,7 @@ namespace RestaurantServer.Repositories.Implementations
         /// <param name="orderQueryParameters">The filters, sorting, and pagination parameters.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         /// <returns>The total number of matching orders and the orders for the requested page.</returns>
-        public async Task<(int TotalRecords, List<OrderResponse> Orders)> GetFilteredOrders(
+        public async Task<(int TotalRecords, List<OrderResponse> Orders)> GetFilteredOrdersNoTrackingAsync(
             long ownerId, OrderQueryParameters orderQueryParameters, CancellationToken cancellationToken = default)
         {
             var query = _context.Orders.AsNoTracking()
@@ -52,12 +95,9 @@ namespace RestaurantServer.Repositories.Implementations
                     .Where(order => order.Id == orderQueryParameters.OrderId.Value)
                     .Select(order => new OrderResponse
                     {
-                        Id = order.Id,
-                        CustomerId = order.UserId,
-                        CustomerName = order.User.Name,
-                        RestaurantId = order.RestaurantId,
+                        OrderId = order.Id,
                         RestaurantName = order.Restaurant.RestaurantName,
-                        Status = order.Status,
+                        Status = (order.Status).ToString(),
                         TotalPrice = order.TotalPrice,
                         CreatedAt = order.CreatedAt,
                         AddressLine1 = order.AddressLine1,
@@ -66,7 +106,7 @@ namespace RestaurantServer.Repositories.Implementations
                         PostalCode = order.PostalCode,
                         Country = order.Country
                     })
-                    .FirstOrDefaultAsync(cancellationToken);
+                    .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
                 if (searchOrder == null)
                 {
@@ -96,7 +136,8 @@ namespace RestaurantServer.Repositories.Implementations
                     order.Country.Contains(searchQuery));
             }
 
-            var totalRecords = await query.CountAsync(cancellationToken);
+            var totalRecords = await query.CountAsync(cancellationToken)
+                            .ConfigureAwait(false); ;
 
             switch (orderQueryParameters.SortBy)
             {
@@ -140,12 +181,10 @@ namespace RestaurantServer.Repositories.Implementations
                 .Take(orderQueryParameters.PageSize)
                 .Select(order => new OrderResponse
                 {
-                    Id = order.Id,
-                    CustomerId = order.UserId,
-                    CustomerName = order.User.Name,
+                    OrderId = order.Id,
                     RestaurantId = order.RestaurantId,
                     RestaurantName = order.Restaurant.RestaurantName,
-                    Status = order.Status,
+                    Status = (order.Status).ToString(),
                     TotalPrice = order.TotalPrice,
                     CreatedAt = order.CreatedAt,
                     AddressLine1 = order.AddressLine1,
@@ -154,7 +193,7 @@ namespace RestaurantServer.Repositories.Implementations
                     PostalCode = order.PostalCode,
                     Country = order.Country
                 })
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false); ;
 
             return (totalRecords, responses);
         }

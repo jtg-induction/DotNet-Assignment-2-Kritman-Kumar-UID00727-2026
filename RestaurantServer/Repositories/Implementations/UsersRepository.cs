@@ -38,16 +38,29 @@ namespace RestaurantServer.Repositories.Implementations
         /// <summary>
         /// Retrieves a user by their email address.
         /// </summary>
-        /// <param name="email">
-        /// The email address of the user.
+        /// <param name="email">The email address of the user to retrieve.</param>
+        /// <param name="disableTracking">
+        /// Indicates whether Entity Framework should disable change tracking for the returned user.
+        /// Set to <c>true</c> when the user is only needed for read-only purposes.
         /// </param>
+        /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
         /// <returns>
-        /// The matching user if found; otherwise, <c>null</c>. 
+        /// The user matching the specified email address, or <c>null</c> if no matching user is found.
         /// </returns>
-        public async Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<User> GetUserByEmailAsync(
+            string email, bool disableTracking = false,
+            CancellationToken cancellationToken = default)
         {
-            return await _context.Users
-                .FirstOrDefaultAsync(user => user.Email == email, cancellationToken);
+            var query = _context.Users.AsQueryable();
+
+            if (disableTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query
+                .FirstOrDefaultAsync(user => user.Email == email, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -57,17 +70,33 @@ namespace RestaurantServer.Repositories.Implementations
         /// <returns>List of users</returns>
         public async Task<List<User>> GetUsersByEmailsAsync(
            List<string> emails, CancellationToken cancellationToken = default)
-        { 
+        {
             return await _context.Users
                 .Where(user => emails.Contains(user.Email))
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Asynchronously retrieves a user by their identifier for update while applying
+        /// SQL row-level update locks to prevent concurrent modifications.
+        /// </summary>
+        /// <param name="userId">
+        /// The unique identifier of the user to retrieve.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token to observe while waiting for the asynchronous operation to complete.
+        /// </param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains
+        /// the matching user if found; otherwise, <see langword="null"/>.
+        /// </returns>
         public async Task<User> GetUserForUpdateAsync(long userId, CancellationToken cancellationToken = default)
         {
             return await _context.Users
                 .SqlQuery("SELECT * FROM Users WITH (UPDLOCK, ROWLOCK) WHERE Id = @p0", userId)
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }
