@@ -1,7 +1,6 @@
 ﻿using RestaurantServer.Enums;
 using RestaurantServer.Models;
 
-
 namespace RestaurantServer.DTOs.Responses
 {
     public class LoginResponse

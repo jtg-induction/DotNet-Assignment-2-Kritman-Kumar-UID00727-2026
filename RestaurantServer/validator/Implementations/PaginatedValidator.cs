@@ -1,10 +1,10 @@
 ﻿using RestaurantServer.Constants;
 using RestaurantServer.validator.Interfaces;
-using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations;
 
 namespace RestaurantServer.validator.Implementations
 {
-    public class PaginatedValidator: IPaginatedValidator
+    public class PaginatedValidator : IPaginatedValidator
     {
 
         /// <summary>

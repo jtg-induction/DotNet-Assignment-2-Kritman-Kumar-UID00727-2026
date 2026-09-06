@@ -14,5 +14,7 @@ namespace RestaurantServer.Constants
         public const string OrderPlacedSuccessfully = "Order placed successfully.";
         public const string OrderDetailsRetrievedSuccessfully = "Order details retrieved successfully.";
         public const string OrderCancelledSuccessfully = "Order cancelled successfully.";
+        public const string OrdersRetrieved = "Orders retrieved succsfully.";
+        public const string OrderStatusUpdatedSuccessfully = "Order status updated successfully.";
     }
 }

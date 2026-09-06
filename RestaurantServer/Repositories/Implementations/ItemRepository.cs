@@ -46,7 +46,7 @@ namespace RestaurantServer.Repositories.Implementations
                 .OrderBy(item => item.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace RestaurantServer.Repositories.Implementations
             var query = _context.Items
                 .Where(item => item.RestaurantId == restaurantId && !item.IsDeleted);
 
-            return await query.CountAsync(cancellationToken);
+            return await query.CountAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace RestaurantServer.Repositories.Implementations
             {
                 var item = await _context.Items
                     .SqlQuery("SELECT * FROM Items WITH (UPDLOCK, ROWLOCK) WHERE Id = @p0", itemId)
-                    .FirstOrDefaultAsync(cancellationToken);
+                    .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
                 if (item != null)
                 {

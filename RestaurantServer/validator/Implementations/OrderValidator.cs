@@ -3,6 +3,7 @@ using RestaurantServer.DTOs.Requests;
 using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
+using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,13 @@ namespace RestaurantServer.Validators.Implementations
     {
 
         private readonly UserValidator _userValidator;
+        private readonly IPaginatedValidator _paginatedValidator;
 
-        public OrderValidator(UserValidator userValidator)
+        public OrderValidator(UserValidator userValidator,
+            IPaginatedValidator paginatedValidator)
         {
-            _userValidator = userValidator;
+            _userValidator = userValidator; 
+             _paginatedValidator = paginatedValidator;
         }
 
         public void ValidateOrderRequest(CreateOrderRequest request)
@@ -140,6 +144,52 @@ namespace RestaurantServer.Validators.Implementations
             if (order.Status != (int)OrderStatus.Placed && order.Status != (int)OrderStatus.Accepted)
             {
                 throw new ValidationException(ValidationMessages.OrderCannotBeCancelled);
+            }
+        }
+
+        /// <summary>
+        /// Validates the order query parameters and sets default values for invalid pagination values.
+        /// </summary>
+        /// <param name="orderQueryParameters">The order query parameters.</param>
+        /// <returns>The validated order query parameters.</returns>
+        public OrderQueryParameters ValidateQueryParameters(OrderQueryParameters orderQueryParameters)
+        {
+            orderQueryParameters = orderQueryParameters ?? new OrderQueryParameters();
+
+            _paginatedValidator.ValidatePagination(orderQueryParameters.PageSize,
+                orderQueryParameters.PageNumber);
+
+            return orderQueryParameters;
+        }
+
+        /// <summary>
+        /// Validates whether the specified order status is valid.
+        /// </summary>
+        /// <param name="status">The order status to validate.</param>
+        public void ValidateOrderStatus(OrderStatus status)
+        {
+            if (!System.Enum.IsDefined(typeof(OrderStatus), status))
+            {
+                throw new ValidationException(
+                    ValidationMessages.InvalidOrderStatus);
+            }
+        }
+
+        /// <summary>
+        /// Validates whether the specified order status is valid.
+        /// </summary>
+        /// <param name="status">The order status to validate.</param>
+        public void ValidateOrderStatusTransition(OrderStatus currentStatus, OrderStatus newStatus)
+        {
+            bool isValidTransition = (currentStatus == OrderStatus.Placed
+                && (newStatus == OrderStatus.Accepted || newStatus == OrderStatus.Rejected))
+                || (currentStatus == OrderStatus.Accepted && newStatus == OrderStatus.Dispatched)
+                || (currentStatus == OrderStatus.Dispatched && newStatus == OrderStatus.Delivered);
+
+            if (!isValidTransition)
+            {
+                throw new ValidationException(
+                    ValidationMessages.InvalidOrderStatusTransition);
             }
         }
     }

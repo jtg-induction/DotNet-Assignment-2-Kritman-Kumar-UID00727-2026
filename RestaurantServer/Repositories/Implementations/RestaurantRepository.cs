@@ -34,7 +34,8 @@ namespace RestaurantServer.Repositories.Implementations
         {
             return await _context.Restaurants.AnyAsync(
                 restaurant => restaurant.MobileNumber == mobileNumber &&
-                              !restaurant.IsDeleted, cancellationToken);
+                              !restaurant.IsDeleted, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -48,7 +49,6 @@ namespace RestaurantServer.Repositories.Implementations
         /// </param>
         /// <param name="disableTracking">
         /// A value indicating whether Entity Framework tracking should be disabled.
-        /// When set to <see langword="true"/>, <see cref="DbExtensions.AsNoTracking{T}(System.Linq.IQueryable{T})" />
         /// is applied to the query. This is recommended for read-only operations when
         /// the returned entities do not need to be tracked for updates.
         /// </param>
@@ -74,7 +74,7 @@ namespace RestaurantServer.Repositories.Implementations
                 .OrderBy(restaurant => restaurant.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace RestaurantServer.Repositories.Implementations
 
             return await query.CountAsync(
                 restaurant => !restaurant.IsDeleted,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
         }
 
     }
