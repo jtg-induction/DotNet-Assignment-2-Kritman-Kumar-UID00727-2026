@@ -54,6 +54,20 @@ namespace RestaurantServer.Repositories.Implementations
                 cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Asynchronously retrieves an order by its identifier for update while applying
+        /// SQL row-level update locks to prevent concurrent modifications.
+        /// </summary>
+        /// <param name="orderId">
+        /// The unique identifier of the order to retrieve.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token to observe while waiting for the asynchronous operation to complete.
+        /// </param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains
+        /// the matching order if found; otherwise, <see langword="null"/>.
+        /// </returns>
         public async Task<Order> GetOrderForUpdateAsync(long orderId, CancellationToken cancellationToken = default)
         {
             return await _context.Orders
@@ -167,7 +181,7 @@ namespace RestaurantServer.Repositories.Implementations
                 .Take(orderQueryParameters.PageSize)
                 .Select(order => new OrderResponse
                 {
-                    OrderId = order.Id, 
+                    OrderId = order.Id,
                     RestaurantId = order.RestaurantId,
                     RestaurantName = order.Restaurant.RestaurantName,
                     Status = (order.Status).ToString(),

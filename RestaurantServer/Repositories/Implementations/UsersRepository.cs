@@ -77,6 +77,20 @@ namespace RestaurantServer.Repositories.Implementations
                 .ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Asynchronously retrieves a user by their identifier for update while applying
+        /// SQL row-level update locks to prevent concurrent modifications.
+        /// </summary>
+        /// <param name="userId">
+        /// The unique identifier of the user to retrieve.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token to observe while waiting for the asynchronous operation to complete.
+        /// </param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains
+        /// the matching user if found; otherwise, <see langword="null"/>.
+        /// </returns>
         public async Task<User> GetUserForUpdateAsync(long userId, CancellationToken cancellationToken = default)
         {
             return await _context.Users
