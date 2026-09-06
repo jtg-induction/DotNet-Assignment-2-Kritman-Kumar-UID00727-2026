@@ -24,7 +24,7 @@ namespace RestaurantServer.Constants
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
         public const string EmailMaxLength = "Email cannot exceed the maximum allowed length.";
-        public const string PasswordMinLength = "Password must be at least {1} characters long.";
+        public const string PasswordMinLength = "Password must be at least {0} characters long.";
         public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length.";
         public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include 1 email.";
         public const string InvalidTopItemsCount = "TopItems must be greater than 0 and TopItems cannot be greater than 100.";

@@ -80,7 +80,7 @@ namespace RestaurantServer.Controllers
         /// A downloadable PDF report.
         /// </returns>
         [HttpGet]
-        [Route("restaurants/{restaurantId}/frequently-bought-together")]
+        [Route("{restaurantId}/frequently-bought-together")]
         [CustomAuthorize(UserRole.Owner)]
         public async Task<HttpResponseMessage>
             GetFrequentlyBoughtTogether(long restaurantId,

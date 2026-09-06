@@ -52,7 +52,7 @@ namespace RestaurantServer.Repositories.Implementations
                     !request.ExcludeItemIds.Contains(orderItem.ItemId));
             }
 
-            return await query
+            var topOrderItemResult = await query
                 .GroupBy(orderItem => new
                 {
                     ItemId = orderItem.ItemId,
@@ -72,6 +72,13 @@ namespace RestaurantServer.Repositories.Implementations
                 .OrderByDescending(result => result.TotalQuantityOrdered)
                 .Take(request.TopItems)
                 .ToListAsync(cancellationToken);
+
+            for (int i = 0; i<topOrderItemResult.Count; i++)
+            {
+                topOrderItemResult[i].Rank = i + 1;
+            }
+
+            return topOrderItemResult;
         }
 
         /// <summary>
