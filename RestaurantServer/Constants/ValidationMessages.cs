@@ -19,13 +19,16 @@ namespace RestaurantServer.Constants
         public const string QuantityRequired = "Quantity id required.";
         public const string ItemIdRequired = "ItemId is required.";
         public const string RestaurantOwnerRequired = "You are not authorized to update this order.";
-        public const string RestaurantIdRequired = "Restaurant Id Is Required.";
+        public const string ReportRequestRequired = "Report request cannot be null.";
+        public const string RestaurantIdRequired = "Restaurant Id is required";
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
         public const string EmailMaxLength = "Email cannot exceed the maximum allowed length.";
         public const string PasswordMinLength = "Password must be at least {0} characters long.";
-        public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length."; 
-        public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include {0} email.";
+        public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length.";
+        public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include 1 email.";
+        public const string InvalidTopItemsCount = "TopItems must be greater than 0 and TopItems cannot be greater than 100.";
+        public const string InvalidTopPairsCount = "TopPairs must be greater than 0 and TopPairs cannot be greater than 100.";
         public const string MobileNumberMaxLength = "Mobile number cannot exceed the maximum allowed length.";
         public const string ListMinLength = "The list must contain at least {0} item";
 
@@ -38,8 +41,7 @@ namespace RestaurantServer.Constants
         public const string InvalidRefreshToken = "Invalid refresh token.";
         public const string InvalidMobileNumber = "Mobile number is invalid.";
         public const string NotAuthorized = "You are not authorized to access this resource.";
-        public const string InvalidPasswordFormat = "Password must contain at least one uppercase" +
-            " letter, one lowercase letter, one number, and one special character.";
+        public const string InvalidPasswordFormat = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
         public const string EmptyRequest = "Request body cannot be empty.";
         public const string RestaurantNotExists = "Restaurant does not exist.";
         public const string RestaurantNotavailable = "Restaurant is not available.";
@@ -47,11 +49,11 @@ namespace RestaurantServer.Constants
         public const string InvalidRestaurantOwner = "Admin users cannot be assigned as restaurant owners.";
         public const string DuplicateOwnerEmail = "Duplicate owner email found in the request.";
         public const string RestaurantMobileNumberAlreadyExists = "A restaurant with this mobile number already exists.";
-        public const string InvalidPageNumber = "Page number must be greater than or equal to {0}.";
-        public const string InvalidPageSize = "Page size must be greater than or equal to {0}.";
+        public const string InvalidPageNumber = "Page number must be greater than or equal to 1.";
+        public const string InvalidPageSize = "Page size must be greater than or equal to 1.";
         public const string OrderItemsRequired = "Order must contain at least one item.";
         public const string InvalidItemId = "Item ID is invalid.";
-        public const string InvalidQuantity = "Quantity must be at least {0}.";
+        public const string InvalidQuantity = "Quantity must be at least 1.";
         public const string InsufficientStock = "Insufficient stock for item.";
         public const string InsufficientBalance = "Insufficient balance to place order.";
         public const string ItemNotFound = "Item not found.";
@@ -64,5 +66,16 @@ namespace RestaurantServer.Constants
         public const string InvalidOrderStatus = "Invalid order status.";
         public const string InvalidOrderStatusTransition = "Invalid order status transition.";
         public const string OrderCannotBeCancelledByOwner = "Order cancellation is handled by the customer.";
+        public const string InvalidTopItems = "Top items must be between 1 and 100.";
+        public const string InvalidDateRange = "StartDate cannot be later than EndDate.";
+        public const string InvalidExcludeItemIds = "ExcludeItemIds must contain only valid item IDs.";
+        public const string InvalidRestaurantId = "RestaurantId must be greater than 0.";
+        public const string InvalidPath = "Could not map the report path: ";
+        public const string ReportNotFound = "The Telerik report file was not found.";
+        public const string TelerikFileLengthZero = "The Telerik report file exists but its file size is 0 bytes. Open the report in the Telerik Report Designer and save it.";
+        public const string ReportIsNull = "Telerik could not load the report.";
+        public const string RenderReportisNull = "Telerik RenderReport returned a null result.";
+        public const string DocumentBytesisNull = "Telerik rendered the report, but DocumentBytes is null.";
+        public const string EmptyPdf = "Telerik generated an empty PDF.";
     }
 }

@@ -17,5 +17,7 @@
         public const int PasswordMaxLength = 100;
         public const int RefreshTokenMaxLength = 500;
         public const int MaxQuantity = int.MaxValue;
+        public const int DefaultTopPair = 5;
+        public const int DefaultTopItems = 10;
     }
 }
