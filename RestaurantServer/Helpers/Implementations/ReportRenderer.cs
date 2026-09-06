@@ -13,17 +13,35 @@ namespace RestaurantServer.Helpers.Implementations
 {
     public class ReportRenderer : IReportRenderer
     {
+        /// <summary>
+        /// Renders a PDF report containing the top ordered items.
+        /// </summary>
+        /// <param name="data">The top ordered item data used to populate the report.</param>
+        /// <returns>The generated PDF document as a byte array.</returns>
         public byte[] RenderTopOrderedItemsReport(
             List<TopOrderedItemResponse> data)
         {
             return RenderReport("~/Reports/TopOrderedItems.trdp", data);
         }
 
+
+        /// <summary>
+        /// Renders a PDF report containing frequently bought together items.
+        /// </summary>
+        /// <param name="data">The frequently bought together data used to populate the report.</param>
+        /// <returns>The generated PDF document as a byte array.</returns>
         public byte[] RenderFrequentlyBoughtTogetherReport(
             List<FrequentlyBoughtTogetherResponse> data)
         {
             return RenderReport("~/Reports/FrequentlyBoughtTogether.trdp", data);
         }
+
+        /// <summary>
+        /// Loads the specified Telerik report, applies the provided data, and renders it as a PDF.
+        /// </summary>
+        /// <param name="reportRelativePath">The relative path to the Telerik report file.</param>
+        /// <param name="data">The data used to populate the report.</param>
+        /// <returns>The generated PDF document as a byte array.</returns>
 
         private byte[] RenderReport(string reportRelativePath, object data)
         {
