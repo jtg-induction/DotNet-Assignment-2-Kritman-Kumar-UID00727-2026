@@ -39,15 +39,14 @@ namespace RestaurantServer.Services.Implementations
 
             var totalRecords = await _restaurantRepository.CountAvailableRestaurantsAsync(cancellationToken);
 
-            var restaurants = await _restaurantRepository.GetAvailableRestaurantsAsync(page, pageSize, cancellationToken);
+            var restaurants = await _restaurantRepository.GetAvailableRestaurantsAsync(page, pageSize,true, cancellationToken);
 
             var restaurantDtos = restaurants
                 .Select(restaurant => new RestaurantDto(restaurant)).ToList();
 
             var paginatedResult = new PaginatedResponse(page, pageSize, totalRecords);
 
-            return new RestaurantListResponse(SuccessMessages.RestaurantsRetrieved,
-                restaurantDtos, paginatedResult);
+            return new RestaurantListResponse(restaurantDtos, paginatedResult);
         }
 
         public async Task<RestaurantItemListResponse> GetRestaurantItemsAsync(
@@ -64,7 +63,7 @@ namespace RestaurantServer.Services.Implementations
 
             var totalRecords = await _itemRepository.CountAvailableItemsByRestaurantIdAsync(restaurantId, cancellationToken);
 
-            var items = await _itemRepository.GetAvailableItemsByRestaurantIdAsync(restaurantId, page, pageSize, cancellationToken);
+            var items = await _itemRepository.GetAvailableItemsByRestaurantIdAsync(restaurantId, page, pageSize, true, cancellationToken);
 
             var itemDtos = items
                 .Select(item => new ItemDto(item))
@@ -72,7 +71,7 @@ namespace RestaurantServer.Services.Implementations
 
             var paginatedResult = new PaginatedResponse(page, pageSize, totalRecords);
 
-            return new RestaurantItemListResponse(SuccessMessages.MenuItemsRetrieved,
+            return new RestaurantItemListResponse(
                 restaurantId, itemDtos, paginatedResult);
         }
     }

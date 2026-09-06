@@ -14,14 +14,11 @@ namespace RestaurantServer.DTOs.Responses
             OrderItems = new List<OrderItemDto>();
         }
 
-        public CreateOrderResponse(Order order, string message = SuccessMessages.OrderPlacedSuccessfully)
+        public CreateOrderResponse(Order order)
         {
             OrderId = order.Id;
             RestaurantId = order.RestaurantId;
-            UserId = order.UserId;
-
-            Status = (OrderStatus)order.Status;
-
+            Status = ((OrderStatus)order.Status).ToString();
             TotalPrice = order.TotalPrice;
             AddressLine1 = order.AddressLine1;
             AddressLine2 = order.AddressLine2;
@@ -29,7 +26,6 @@ namespace RestaurantServer.DTOs.Responses
             PostalCode = order.PostalCode;
             Country = order.Country;
             CreatedAt = order.CreatedAt;
-            Message = message;
 
             OrderItems = order.OrderItems != null
                 ? order.OrderItems.Select(orderItem => new OrderItemDto(orderItem)).ToList()
@@ -38,8 +34,7 @@ namespace RestaurantServer.DTOs.Responses
 
         public long OrderId { get; set; }
         public long RestaurantId { get; set; }
-        public long UserId { get; set; }
-        public OrderStatus Status { get; set; }
+        public string Status { get; set; }
         public decimal TotalPrice { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
@@ -47,7 +42,6 @@ namespace RestaurantServer.DTOs.Responses
         public string PostalCode { get; set; }
         public string Country { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string Message { get; set; }
         public List<OrderItemDto> OrderItems { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     public static class ValidationConstants
     {
         public const string DecimalMax = "79228162514264337593543950335";
+        public const long IdMaxVal = long.MaxValue;
         public const int NameMaxLength = 150;
         public const int EmailMaxLength = 150;
         public const int PasswordHashMaxLength = 500;
