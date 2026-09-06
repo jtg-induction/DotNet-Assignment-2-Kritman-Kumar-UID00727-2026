@@ -106,9 +106,8 @@ namespace RestaurantServer.Tests
                 .ReturnsAsync(user);
 
             _orderRepositoryMock
-                .Setup(x => x.GetOrderWithItemsByIdAsync(
-                    1,
-                    It.IsAny<CancellationToken>()))
+                .Setup(x => x.GetOrderWithItemsByIdNoTrackingAsync(
+                    1,true, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((Order)null);
 
             _orderValidatorMock
@@ -172,7 +171,7 @@ namespace RestaurantServer.Tests
             var orders = new List<OrderResponse>();
 
             _orderRepositoryMock
-                .Setup(x => x.GetFilteredOrders(
+                .Setup(x => x.GetFilteredOrdersNoTrackingAsync(
                     1,
                     parameters,
                     It.IsAny<CancellationToken>()))

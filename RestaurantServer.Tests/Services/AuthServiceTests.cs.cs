@@ -76,7 +76,7 @@ namespace RestaurantServer.Tests
             _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        request.Email,
+                        request.Email,true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(existingUser);
 
@@ -101,7 +101,7 @@ namespace RestaurantServer.Tests
             _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        "newuser@example.com",
+                        "newuser@example.com",true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User)null);
 
@@ -170,7 +170,7 @@ namespace RestaurantServer.Tests
             _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        request.Email,
+                        request.Email,true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User)null);
 
@@ -209,7 +209,7 @@ namespace RestaurantServer.Tests
             _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        request.Email,
+                        request.Email,true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(inactiveUser);
 
@@ -256,7 +256,7 @@ namespace RestaurantServer.Tests
             _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        request.Email,
+                        request.Email,true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
@@ -316,7 +316,7 @@ namespace RestaurantServer.Tests
             _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        "test@example.com",
+                        "test@example.com",true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
@@ -452,7 +452,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(existingRefreshToken);
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetByIdAsync(
                         existingRefreshToken.UserId,

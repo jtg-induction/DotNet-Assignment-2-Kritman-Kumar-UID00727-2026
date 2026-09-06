@@ -17,11 +17,11 @@ namespace RestaurantServer.Controllers
     [CustomAuthorize(UserRole.Admin)]
     public class AdminRestaurantController : ApiController
     {
-        private readonly IAdminService _restaurantService;
+        private readonly IRestaurantAdminService _restaurantService;
         private readonly IRequestValidator _requestValidator;
 
         public AdminRestaurantController(
-            IAdminService restaurantService,
+            IRestaurantAdminService restaurantService,
             IRequestValidator requestValidator)
         {
             _restaurantService = restaurantService;

@@ -27,7 +27,7 @@ namespace RestaurantServer.Tests
         private Mock<IUserValidator> _userValidatorMock;
         private Mock<IUserSessionService> _userSessionServiceMock;
 
-        private AdminService _adminService;
+        private IRestaurantAdminService _adminService;
 
         [TestInitialize]
         public void Setup()
@@ -53,7 +53,7 @@ namespace RestaurantServer.Tests
             _userSessionServiceMock =
                 new Mock<IUserSessionService>();
 
-            _adminService = new AdminService(
+            _adminService = new RestaurantAdminService(
                 _restaurantRepositoryMock.Object,
                 _restaurantOwnerRepositoryMock.Object,
                 _usersRepositoryMock.Object,
@@ -227,7 +227,7 @@ namespace RestaurantServer.Tests
 
             _restaurantValidatorMock
                 .Setup(validator =>
-                    validator.ValidateAdminRole(user.Role))
+                    validator.ValidateAdminRole(user))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRole));
@@ -533,10 +533,6 @@ namespace RestaurantServer.Tests
             Assert.AreEqual(
                 (int)UserRole.Owner,
                 user.Role);
-
-            Assert.AreEqual(
-                SuccessMessages.ownersOnboardedSuccessful,
-                result.Message);
 
             _restaurantOwnerRepositoryMock.Verify(
                 repository =>

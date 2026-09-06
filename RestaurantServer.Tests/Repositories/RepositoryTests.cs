@@ -231,7 +231,7 @@ namespace RestaurantServer.Tests.Repositories
 
                 var result =
                     await _userRepository.GetUserByEmailAsync(
-                        "repository-auth@test.com",
+                        "repository-auth@test.com",true,
                         CancellationToken.None);
 
                 Assert.IsNotNull(result);
@@ -258,7 +258,7 @@ namespace RestaurantServer.Tests.Repositories
         {
             var result =
                 await _userRepository.GetUserByEmailAsync(
-                    "email-does-not-exist@test.com",
+                    "email-does-not-exist@test.com",true,
                     CancellationToken.None);
 
             Assert.IsNull(result);
