@@ -129,7 +129,7 @@ namespace RestaurantServer.Services.Implementations
             }
         }
 
-        public async Task<OrderDetailsResponse> GetOrderDetailsAsync(
+        public async Task<OrderResponse> GetOrderDetailsAsync(
             long orderId,
             CancellationToken cancellationToken = default)
         {
@@ -141,7 +141,8 @@ namespace RestaurantServer.Services.Implementations
 
             _userValidator.IsUserNullOrDeactivated(user, ValidationMessages.UserNotFound);
 
-            var order = await _orderRepository.GetOrderWithItemsByIdAsync(orderId, cancellationToken);
+            var order = await _orderRepository.GetOrderWithItemsByIdNoTrackingAsync(
+                orderId, true, cancellationToken);
 
             _orderValidator.ValidateOrderExists(order);
 
@@ -154,11 +155,10 @@ namespace RestaurantServer.Services.Implementations
 
             _orderValidator.ValidateOrderAccess(order, user, isRestaurantOwner);
 
-            return new OrderDetailsResponse(order);
+            return new OrderResponse(order);
         }
 
-        public async Task<CancelOrderResponse> CancelOrderAsync(
-            long orderId,
+        public async Task<CancelOrderResponse> CancelOrderAsync(long orderId,
             CancellationToken cancellationToken = default)
         {
             _orderValidator.ValidateOrderId(orderId);
@@ -211,9 +211,10 @@ namespace RestaurantServer.Services.Implementations
 
             orderQueryParameters = _orderValidator.ValidateQueryParameters(orderQueryParameters);
 
-            var filterOrders = await _orderRepository.GetFilteredOrders(userId, orderQueryParameters, cancellationToken);
+            var filterOrders = await _orderRepository.GetFilteredOrdersNoTrackingAsync(
+                userId, orderQueryParameters, cancellationToken);
 
-            var paginationResponse = new PaginationResponse(orderQueryParameters.PageNumber,
+            var paginationResponse = new PaginatedResponse(orderQueryParameters.PageNumber,
                 orderQueryParameters.PageSize, filterOrders.TotalRecords);
 
             return new FilterOrdersResponse(paginationResponse, filterOrders.Orders);

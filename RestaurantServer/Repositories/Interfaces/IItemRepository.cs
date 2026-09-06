@@ -8,7 +8,7 @@ namespace RestaurantServer.Repositories.Interfaces
     public interface IItemRepository : IRepository<Item>
     {
         Task<List<Item>> GetAvailableItemsByRestaurantIdAsync(
-            long restaurantId, int page, int pageSize,
+            long restaurantId, int page, int pageSize, bool disableTracking = false,
             CancellationToken cancellationToken = default);
 
         Task<int> CountAvailableItemsByRestaurantIdAsync(

@@ -9,9 +9,8 @@ namespace RestaurantServer.DTOs.Responses
             Items = new List<ItemDto>();
         }
 
-        public RestaurantItemListResponse(string message, long restaurantId, List<ItemDto> items, PaginationResponse pagination)
-        {
-            Message = message;
+        public RestaurantItemListResponse( long restaurantId, List<ItemDto> items, PaginatedResponse pagination)
+        { 
             RestaurantID = restaurantId;
             Items = items;
             Pagination = pagination;
@@ -20,6 +19,6 @@ namespace RestaurantServer.DTOs.Responses
         public string Message { get; set; }
         public long RestaurantID { get; set; }
         public List<ItemDto> Items { get; set; }
-        public PaginationResponse Pagination { get; set; }
+        public PaginatedResponse Pagination { get; set; }
     }
 }

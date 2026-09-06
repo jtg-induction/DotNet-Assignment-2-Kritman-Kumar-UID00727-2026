@@ -376,7 +376,7 @@ namespace RestaurantServer.Tests.ControllersTest
         {
             var exception =
                 new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
 
             _refreshTokenHelperMock
                 .Setup(helper =>
@@ -391,7 +391,7 @@ namespace RestaurantServer.Tests.ControllersTest
                         await _controller.Refresh());
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 actualException.Message);
 
             _authServiceMock.Verify(
@@ -600,7 +600,7 @@ namespace RestaurantServer.Tests.ControllersTest
         {
             var exception =
                 new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
 
             _refreshTokenHelperMock
                 .Setup(helper =>
@@ -615,7 +615,7 @@ namespace RestaurantServer.Tests.ControllersTest
                         await _controller.Logout());
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 actualException.Message);
 
             _authServiceMock.Verify(

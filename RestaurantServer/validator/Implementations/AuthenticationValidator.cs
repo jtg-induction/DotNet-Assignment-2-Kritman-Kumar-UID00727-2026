@@ -21,7 +21,7 @@ namespace RestaurantServer.Validators.Implementations
             if (user == null)
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidCredentials);
+                    ErrorMessages.InvalidCredentials);
             }
         }
 
@@ -39,7 +39,7 @@ namespace RestaurantServer.Validators.Implementations
             if (!user.IsActive)
             {
                 throw new ValidationException(
-                    ValidationMessages.UserInactive);
+                    ErrorMessages.UserInactive);
             }
         }
 
@@ -57,7 +57,7 @@ namespace RestaurantServer.Validators.Implementations
             if (!isValid)
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidCredentials);
+                    ErrorMessages.InvalidCredentials);
             }
         }
     }

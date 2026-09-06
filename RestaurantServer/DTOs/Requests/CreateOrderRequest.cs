@@ -1,4 +1,4 @@
-using RestaurantServer.Constants;
+using RestaurantServer.Constants; 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,6 +8,10 @@ namespace RestaurantServer.DTOs.Requests
     {
         [Required]
         public List<OrderItemRequest> Items { get; set; }
+
+        [Range(1, ValidationConstants.IdMaxVal)]
+        [Required(ErrorMessage = ValidationMessages.RestaurantIdRequired)]
+        public long RestaurantId { get; set; }
 
         [Required(ErrorMessage = ValidationMessages.AddressLine1Required)]
         [MaxLength(ValidationConstants.AddressMaxLength)]

@@ -9,9 +9,9 @@ namespace RestaurantServer.Repositories.Interfaces
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        Task<Order> GetOrderWithItemsByIdAsync(long orderId, CancellationToken cancellationToken = default);
+        Task<Order> GetOrderWithItemsByIdNoTrackingAsync(long orderId, bool disableTracking = false, CancellationToken cancellationToken = default);
         Task<Order> GetOrderForUpdateAsync(long orderId, CancellationToken cancellationToken = default);
-        Task<(int TotalRecords, List<OrderResponse> Orders)> GetFilteredOrders(long ownerId, OrderQueryParameters orderQueryParameters,
+        Task<(int TotalRecords, List<OrderResponse> Orders)> GetFilteredOrdersNoTrackingAsync(long ownerId, OrderQueryParameters orderQueryParameters,
                CancellationToken cancellationToken = default);
     }
 }

@@ -81,25 +81,25 @@ namespace RestaurantServer.Services.Implementations
         /// <exception cref="ValidationException">
         /// Thrown when an account with the provided email address already exists.
         /// </exception>
-        public async Task<SignupResponse> SignupAsync(SignupRequest request, 
+        public async Task<SignupResponse> SignupAsync(SignupRequest request,
             CancellationToken cancellationToken = default)
         {
             _requestValidator.IsRequestNull(request);
 
             request.Email = request.Email.Trim().ToLowerInvariant();
 
-            var existingUser = await _usersRepository.GetUserByEmailAsync(request.Email);
+            var existingUser = await _usersRepository.GetUserByEmailAsync(request.Email, true, cancellationToken);
 
             if (existingUser != null)
             {
-                throw new ValidationException(ValidationMessages.EmailAlreadyExists);
+                throw new ValidationException(ErrorMessages.EmailAlreadyExists);
             }
 
             var passwordHash = _passwordHasher.HashPassword(request.Password);
             var user = new User(request.Name.Trim(), request.Email, passwordHash);
 
             await _usersRepository.Add(user);
-            await _unitOfWork.SaveChangesAsync(null , cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
             return new SignupResponse(user);
         }
@@ -125,12 +125,12 @@ namespace RestaurantServer.Services.Implementations
 
             request.Email = request.Email.Trim().ToLowerInvariant();
 
-            var user = await _usersRepository.GetUserByEmailAsync(request.Email);
+            var user = await _usersRepository.GetUserByEmailAsync(request.Email, true, cancellationToken);
 
             if (user == null)
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidCredentials);
+                    ErrorMessages.InvalidCredentials);
             }
 
             _authenticationValidator.ValidateUserIsActive(user);
@@ -148,7 +148,7 @@ namespace RestaurantServer.Services.Implementations
                     Token = refreshToken
                 });
 
-            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
             return new LoginResult
             {
@@ -179,7 +179,7 @@ namespace RestaurantServer.Services.Implementations
 
             _refreshTokenValidator.ValidateRefreshTokenIsValid(existingRefreshToken);
 
-            var user = await _usersRepository.GetByIdAsync(existingRefreshToken.UserId);
+            var user = await _usersRepository.GetByIdAsync(existingRefreshToken.UserId, cancellationToken);
 
             _userValidator.IsUserNullOrDeactivated(user);
 
@@ -192,7 +192,7 @@ namespace RestaurantServer.Services.Implementations
 
             _refreshTokenRepository.Update(existingRefreshToken);
 
-            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
 
             var response = new RefreshResponse(accessToken, "Bearer");
 
@@ -221,7 +221,7 @@ namespace RestaurantServer.Services.Implementations
             if (string.IsNullOrWhiteSpace(refreshToken))
             {
                 throw new ValidationException(
-                    ValidationMessages.InvalidRefreshToken);
+                    ErrorMessages.InvalidRefreshToken);
             }
 
             var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
@@ -233,7 +233,7 @@ namespace RestaurantServer.Services.Implementations
 
             _refreshTokenRepository.Update(existingRefreshToken);
 
-            await _unitOfWork.SaveChangesAsync(null, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(personId: null, cancellationToken);
         }
 
     }

@@ -9,15 +9,13 @@ namespace RestaurantServer.DTOs.Responses
             Restaurants = new List<RestaurantDto>();
         }
 
-        public RestaurantListResponse(string message, List<RestaurantDto> restaurants, PaginationResponse pagination)
-        {
-            Message = message;
+        public RestaurantListResponse( List<RestaurantDto> restaurants, PaginatedResponse pagination)
+        { 
             Restaurants = restaurants;
             Pagination = pagination;
         }
-
-        public string Message { get; set; }
+         
         public List<RestaurantDto> Restaurants { get; set; }
-        public PaginationResponse Pagination { get; set; }
+        public PaginatedResponse Pagination { get; set; }
     }
 }

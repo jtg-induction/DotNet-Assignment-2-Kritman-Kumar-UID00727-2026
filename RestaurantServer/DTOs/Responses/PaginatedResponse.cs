@@ -1,8 +1,8 @@
 namespace RestaurantServer.DTOs.Responses
 {
-    public class PaginationResponse
+    public class PaginatedResponse
     {
-        public PaginationResponse(int currentPage, int pageSize, int totalRecords)
+        public PaginatedResponse(int currentPage, int pageSize, int totalRecords)
         {
             CurrentPage = currentPage;
             PageSize = pageSize;

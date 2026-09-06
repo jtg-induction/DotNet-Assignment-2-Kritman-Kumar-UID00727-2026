@@ -6,6 +6,7 @@ using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Services;
 using RestaurantServer.Services.Implementations;
 using RestaurantServer.Services.Interfaces;
+using RestaurantServer.validator.Implementations;
 using RestaurantServer.validator.Interfaces;
 using RestaurantServer.Validators.Implementations;
 using RestaurantServer.Validators.Interfaces;
@@ -23,7 +24,7 @@ namespace RestaurantServer.App_Start
             Container = new UnityContainer();
 
             Container.RegisterType<ApplicationDbContext>(new HierarchicalLifetimeManager());
-            Container.RegisterType<IUnitOfWork, UnitOfWork>(new HierarchicalLifetimeManager()); 
+            Container.RegisterType<IUnitOfWork, UnitOfWork>(new HierarchicalLifetimeManager());
             Container.RegisterType<IUsersRepository, UsersRepository>(new HierarchicalLifetimeManager());
             Container.RegisterType<IRefreshTokenRepository, RefreshTokenRepository>(new HierarchicalLifetimeManager());
             Container.RegisterType<IRestaurantOwnerRepository, RestaurantOwnerRepository>(new HierarchicalLifetimeManager());
@@ -42,7 +43,7 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IUserValidator, UserValidator>();
             Container.RegisterType<ICookieHelper, CookieHelper>();
             Container.RegisterType<IRequestValidator, RequestValidator>();
-            Container.RegisterType<IAdminService, AdminService>();
+            Container.RegisterType<IRestaurantAdminService, RestaurantAdminService>();
             Container.RegisterType<IRestaurantValidator, RestaurantValidator>();
             Container.RegisterType<IUserSessionService, UserSessionService>();
             Container.RegisterType<IRestaurantService, RestaurantService>();
@@ -51,6 +52,7 @@ namespace RestaurantServer.App_Start
             Container.RegisterType<IReportService, ReportService>();
             Container.RegisterType<IReportValidator, ReportValidator>();
             Container.RegisterType<IReportRenderer, ReportRenderer>();
+            Container.RegisterType<IPaginatedValidator, PaginatedValidator>();
         }
     }
 }

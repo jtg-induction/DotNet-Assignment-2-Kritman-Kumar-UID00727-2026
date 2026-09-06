@@ -1,11 +1,12 @@
-﻿using System;
+﻿using RestaurantServer.Constants;
+using System;
 using System.Collections.Generic;
 
 namespace RestaurantServer.DTOs.Requests
 {
     public class TopOrderedItemsRequest
     {
-        public int TopItems { get; set; } = 10;
+        public int TopItems { get; set; } = ValidationConstants.DefaultTopItems;
 
         public List<long> ExcludeItemIds { get; set; }
 

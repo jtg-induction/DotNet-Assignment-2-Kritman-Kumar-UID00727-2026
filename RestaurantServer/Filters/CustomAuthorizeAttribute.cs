@@ -92,7 +92,7 @@ namespace RestaurantServer.Filters
                     HttpStatusCode.Forbidden,
                     new
                     {
-                        Message = ValidationMessages.NotAuthorized
+                        Message = ErrorMessages.NotAuthorized
                     });
         }
     }

@@ -1,6 +1,3 @@
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-
 namespace RestaurantServer.Constants
 {
     public static class ValidationMessages
@@ -23,15 +20,17 @@ namespace RestaurantServer.Constants
         public const string ItemIdRequired = "ItemId is required.";
         public const string RestaurantOwnerRequired = "You are not authorized to update this order.";
         public const string ReportRequestRequired = "Report request cannot be null.";
+        public const string RestaurantIdRequired = "Restaurant Id is required";
 
         public const string NameMaxLength = "Name cannot exceed the maximum allowed length.";
         public const string EmailMaxLength = "Email cannot exceed the maximum allowed length.";
-        public const string PasswordMinLength = "Password must be at least {1} characters long.";
+        public const string PasswordMinLength = "Password must be at least {0} characters long.";
         public const string PasswordMaxLength = "Password cannot exceed the maximum allowed length.";
-        public const string MobileNumberMaxLength = "Mobile number cannot exceed the maximum allowed length.";
         public const string OnboardRestaurantOwnerEmailsMinLength = "Owners emails must include 1 email.";
         public const string InvalidTopItemsCount = "TopItems must be greater than 0 and TopItems cannot be greater than 100.";
         public const string InvalidTopPairsCount = "TopPairs must be greater than 0 and TopPairs cannot be greater than 100.";
+        public const string MobileNumberMaxLength = "Mobile number cannot exceed the maximum allowed length.";
+        public const string ListMinLength = "The list must contain at least {0} item";
 
         public const string InvalidEmail = "Please enter a valid email address.";
         public const string EmailAlreadyExists = "An account with this email already exists.";

@@ -84,7 +84,7 @@ namespace RestaurantServer.Tests
                 () => _authService.SignupAsync(request));
 
             Assert.AreEqual(
-                ValidationMessages.EmailAlreadyExists,
+                ErrorMessages.EmailAlreadyExists,
                 exception.Message);
         }
 
@@ -178,7 +178,7 @@ namespace RestaurantServer.Tests
                 () => _authService.LoginAsync(request));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidCredentials,
+                ErrorMessages.InvalidCredentials,
                 exception.Message);
 
             _authenticationValidatorMock.Verify(
@@ -218,13 +218,13 @@ namespace RestaurantServer.Tests
                     validator.ValidateUserIsActive(inactiveUser))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.UserInactive));
+                        ErrorMessages.UserInactive));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.LoginAsync(request));
 
             Assert.AreEqual(
-                ValidationMessages.UserInactive,
+                ErrorMessages.UserInactive,
                 exception.Message);
 
             _passwordHasherMock.Verify(
@@ -272,13 +272,13 @@ namespace RestaurantServer.Tests
                     validator.ValidatePassword(false))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidCredentials));
+                        ErrorMessages.InvalidCredentials));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.LoginAsync(request));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidCredentials,
+                ErrorMessages.InvalidCredentials,
                 exception.Message);
 
             _jwtTokenServiceMock.Verify(
@@ -412,13 +412,13 @@ namespace RestaurantServer.Tests
                     validator.ValidateRefreshTokenIsValid(null))
                 .Throws(
                     new ValidationException(
-                        ValidationMessages.InvalidRefreshToken));
+                        ErrorMessages.InvalidRefreshToken));
 
             var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
                 () => _authService.RefreshTokenAsync(refreshToken));
 
             Assert.AreEqual(
-                ValidationMessages.InvalidRefreshToken,
+                ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
             _usersRepositoryMock.Verify(
@@ -426,6 +426,57 @@ namespace RestaurantServer.Tests
                     repository.GetByIdAsync(
                         It.IsAny<long>(),
                         It.IsAny<CancellationToken>()),
+                Times.Never);
+        }
+
+        [TestMethod]
+        public async Task RefreshTokenAsync_UserNotFound_ShouldThrowValidationException()
+        {
+            var refreshToken = "valid-refresh-token";
+
+            var existingRefreshToken = new RefreshToken
+            {
+                Id = 1,
+                UserId = 999,
+                Token = refreshToken,
+                IsRevoked = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-1),
+                UpdatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddDays(29)
+            };
+
+            _refreshTokenRepositoryMock
+                .Setup(repository =>
+                    repository.GetByTokenAsync(
+                        refreshToken,
+                        It.IsAny<CancellationToken>()))
+                .ReturnsAsync(existingRefreshToken);
+
+            _authRepositoryMock
+                .Setup(repository =>
+                    repository.GetByIdAsync(
+                        existingRefreshToken.UserId,
+                        It.IsAny<CancellationToken>()))
+                .ReturnsAsync((User)null);
+
+            _userValidatorMock
+                .Setup(validator =>
+                    validator.IsUserNullOrDeactivated(null, ""))
+                .Throws(
+                    new ValidationException(
+                        ErrorMessages.InvalidRefreshToken));
+
+            var exception = await Assert.ThrowsExceptionAsync<ValidationException>(
+                () => _authService.RefreshTokenAsync(refreshToken));
+
+            Assert.AreEqual(
+                ErrorMessages.InvalidRefreshToken,
+                exception.Message);
+
+            _jwtTokenServiceMock.Verify(
+                service =>
+                    service.GenerateAccessToken(
+                        It.IsAny<User>()),
                 Times.Never);
         }
 

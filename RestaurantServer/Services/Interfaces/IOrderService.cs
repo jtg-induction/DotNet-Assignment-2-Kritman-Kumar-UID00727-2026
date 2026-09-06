@@ -11,12 +11,12 @@ namespace RestaurantServer.Services.Interfaces
             long restaurantId, CreateOrderRequest request,
             CancellationToken cancellationToken = default);
 
-        Task<OrderDetailsResponse> GetOrderDetailsAsync(long orderId, 
-            CancellationToken cancellationToken = default);
+        Task<OrderResponse> GetOrderDetailsAsync(
+            long orderId, CancellationToken cancellationToken = default);
 
-        Task<CancelOrderResponse> CancelOrderAsync(long orderId, 
+        Task<CancelOrderResponse> CancelOrderAsync(long orderId,
             CancellationToken cancellationToken = default);
-        Task<FilterOrdersResponse> FilterOrdersAsync(OrderQueryParameters orderQueryParameters, 
+        Task<FilterOrdersResponse> FilterOrdersAsync(OrderQueryParameters orderQueryParameters,
             CancellationToken cancellationToken = default);
         Task<UpdateOrderStatusResponse> UpdateOrderStatusAsync(long orderId,
             UpdateOrderStatusRequest request, CancellationToken cancellationToken = default);
