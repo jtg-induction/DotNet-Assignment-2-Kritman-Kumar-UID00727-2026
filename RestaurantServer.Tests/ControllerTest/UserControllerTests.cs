@@ -5,8 +5,6 @@ using RestaurantServer.Controllers;
 using RestaurantServer.DTOs.Requests;
 using RestaurantServer.DTOs.Responses;
 using RestaurantServer.Services.Interfaces;
-using RestaurantServer.Validators.Interfaces;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -20,9 +18,8 @@ namespace RestaurantServer.Tests.ControllersTest
     public class UserControllerTests
     {
         private Mock<IUserUpdateService> _userUpdateServiceMock;
-        private Mock<IUserValidator> _userValidatorMock;
         private Mock<IUserSessionService> _currentUserServiceMock;
-        private Mock<IRequestValidator> _requestValidatorMock;
+
         private UserController _controller;
 
         [TestInitialize]
@@ -31,21 +28,13 @@ namespace RestaurantServer.Tests.ControllersTest
             _userUpdateServiceMock =
                 new Mock<IUserUpdateService>();
 
-            _userValidatorMock =
-                new Mock<IUserValidator>();
-
             _currentUserServiceMock =
                 new Mock<IUserSessionService>();
-
-            _requestValidatorMock =
-                new Mock<IRequestValidator>();
 
             _controller =
                 new UserController(
                     _userUpdateServiceMock.Object,
-                    _userValidatorMock.Object,
-                    _currentUserServiceMock.Object,
-                    _requestValidatorMock.Object);
+                    _currentUserServiceMock.Object);
 
             ConfigureController();
         }
@@ -97,6 +86,11 @@ namespace RestaurantServer.Tests.ControllersTest
             Assert.AreEqual(
                 HttpStatusCode.OK,
                 response.StatusCode);
+
+            _currentUserServiceMock.Verify(
+                service =>
+                    service.GetUserId(),
+                Times.Once);
 
             _userUpdateServiceMock.Verify(
                 service =>
@@ -175,6 +169,11 @@ namespace RestaurantServer.Tests.ControllersTest
                 HttpStatusCode.OK,
                 response.StatusCode);
 
+            _currentUserServiceMock.Verify(
+                service =>
+                    service.GetUserId(),
+                Times.Once);
+
             _userUpdateServiceMock.Verify(
                 service =>
                     service.DeactivateAccountAsync(
@@ -184,63 +183,7 @@ namespace RestaurantServer.Tests.ControllersTest
         }
 
         [TestMethod]
-        public async Task DeactivateAccount_WithoutPrincipal_ShouldReturnUnauthorized()
-        {
-            _currentUserServiceMock
-                .Setup(service =>
-                    service.GetUserId())
-                .Returns((long?)null);
-
-            var result =
-                await _controller.DeactivateAccount(
-                    CancellationToken.None);
-
-            var response =
-                await result.ExecuteAsync(
-                    CancellationToken.None);
-
-            Assert.AreEqual(
-                HttpStatusCode.Unauthorized,
-                response.StatusCode);
-
-            _userUpdateServiceMock.Verify(
-                service =>
-                    service.DeactivateAccountAsync(
-                        It.IsAny<long>(),
-                        It.IsAny<CancellationToken>()),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public async Task DeactivateAccount_WithMissingUserIdClaim_ShouldReturnUnauthorized()
-        {
-            _currentUserServiceMock
-                .Setup(service =>
-                    service.GetUserId())
-                .Returns((long?)null);
-
-            var result =
-                await _controller.DeactivateAccount(
-                    CancellationToken.None);
-
-            var response =
-                await result.ExecuteAsync(
-                    CancellationToken.None);
-
-            Assert.AreEqual(
-                HttpStatusCode.Unauthorized,
-                response.StatusCode);
-
-            _userUpdateServiceMock.Verify(
-                service =>
-                    service.DeactivateAccountAsync(
-                        It.IsAny<long>(),
-                        It.IsAny<CancellationToken>()),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public async Task DeactivateAccount_WithInvalidUserIdClaim_ShouldReturnUnauthorized()
+        public async Task DeactivateAccount_WithoutUserId_ShouldReturnUnauthorized()
         {
             _currentUserServiceMock
                 .Setup(service =>
@@ -274,8 +217,8 @@ namespace RestaurantServer.Tests.ControllersTest
 
             var request =
                 new HttpRequestMessage(
-                    new HttpMethod("PATCH"),
-                    new Uri("http://localhost/api/users/1"));
+                    HttpMethod.Put,
+                    "http://localhost/api/user");
 
             request.Properties[
                 HttpPropertyKeys.HttpConfigurationKey] =

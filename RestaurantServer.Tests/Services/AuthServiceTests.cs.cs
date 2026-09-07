@@ -19,7 +19,7 @@ namespace RestaurantServer.Tests
     [TestClass]
     public class AuthServiceTests
     {
-        private Mock<IAuthRepository> _authRepositoryMock;
+        private Mock<IUsersRepository> _usersRepositoryMock;
         private Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
         private Mock<IPasswordHasher> _passwordHasherMock;
         private Mock<IJwtTokenService> _jwtTokenServiceMock;
@@ -34,7 +34,7 @@ namespace RestaurantServer.Tests
         [TestInitialize]
         public void Setup()
         {
-            _authRepositoryMock = new Mock<IAuthRepository>();
+            _usersRepositoryMock = new Mock<IUsersRepository>();
             _refreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
             _passwordHasherMock = new Mock<IPasswordHasher>();
             _jwtTokenServiceMock = new Mock<IJwtTokenService>();
@@ -45,7 +45,7 @@ namespace RestaurantServer.Tests
             _requestValidatorMock = new Mock<IRequestValidator>();
 
             _authService = new AuthService(
-                _authRepositoryMock.Object,
+                _usersRepositoryMock.Object,
                 _refreshTokenRepositoryMock.Object,
                 _passwordHasherMock.Object,
                 _jwtTokenServiceMock.Object,
@@ -73,10 +73,10 @@ namespace RestaurantServer.Tests
                 Email = "test@example.com"
             };
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        request.Email,
+                        request.Email,true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(existingUser);
 
@@ -98,10 +98,10 @@ namespace RestaurantServer.Tests
                 Password = "Password@123"
             };
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        "newuser@example.com",
+                        "newuser@example.com",true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User)null);
 
@@ -110,7 +110,7 @@ namespace RestaurantServer.Tests
                     hasher.HashPassword(request.Password))
                 .Returns("hashed-password");
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.Add(It.IsAny<User>()))
                 .Callback<User>(user =>
@@ -122,6 +122,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock
                 .Setup(unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
@@ -140,7 +141,7 @@ namespace RestaurantServer.Tests
                     hasher.HashPassword(request.Password),
                 Times.Once);
 
-            _authRepositoryMock.Verify(
+            _usersRepositoryMock.Verify(
                 repository =>
                     repository.Add(
                         It.Is<User>(user =>
@@ -152,6 +153,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
         }
@@ -165,10 +167,10 @@ namespace RestaurantServer.Tests
                 Password = "Password@123"
             };
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        request.Email,
+                        request.Email,true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User)null);
 
@@ -204,10 +206,10 @@ namespace RestaurantServer.Tests
                 IsActive = false
             };
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        request.Email,
+                        request.Email,true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(inactiveUser);
 
@@ -251,10 +253,10 @@ namespace RestaurantServer.Tests
                 IsActive = true
             };
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        request.Email,
+                        request.Email,true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
@@ -311,10 +313,10 @@ namespace RestaurantServer.Tests
                 IsActive = true
             };
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetUserByEmailAsync(
-                        "test@example.com",
+                        "test@example.com",true,
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
@@ -344,6 +346,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock
                 .Setup(unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
@@ -351,21 +354,27 @@ namespace RestaurantServer.Tests
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Response);
+
             Assert.AreEqual(
                 "access-token",
                 result.Response.AccessToken);
+
             Assert.AreEqual(
                 "refresh-token",
                 result.RefreshToken);
+
             Assert.AreEqual(
                 user.Id,
                 result.Response.UserId);
+
             Assert.AreEqual(
                 user.Name,
                 result.Response.Name);
+
             Assert.AreEqual(
                 (UserRole)user.Role,
                 result.Response.Role);
+
             Assert.AreEqual(
                 SuccessMessages.LoginSuccessful,
                 result.Response.Message);
@@ -381,6 +390,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
         }
@@ -411,7 +421,7 @@ namespace RestaurantServer.Tests
                 ErrorMessages.InvalidRefreshToken,
                 exception.Message);
 
-            _authRepositoryMock.Verify(
+            _usersRepositoryMock.Verify(
                 repository =>
                     repository.GetByIdAsync(
                         It.IsAny<long>(),
@@ -442,7 +452,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(existingRefreshToken);
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetByIdAsync(
                         existingRefreshToken.UserId,
@@ -501,7 +511,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(existingRefreshToken);
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetByIdAsync(
                         existingRefreshToken.UserId,
@@ -510,7 +520,9 @@ namespace RestaurantServer.Tests
 
             _userValidatorMock
                 .Setup(validator =>
-                    validator.IsUserNullOrDeactivated(inactiveUser, "Invalid refresh token."))
+                    validator.IsUserNullOrDeactivated(
+                        inactiveUser,
+                        It.IsAny<string>()))
                 .Throws(
                     new ValidationException(
                         ValidationMessages.InvalidRefreshToken));
@@ -562,7 +574,7 @@ namespace RestaurantServer.Tests
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(existingRefreshToken);
 
-            _authRepositoryMock
+            _usersRepositoryMock
                 .Setup(repository =>
                     repository.GetByIdAsync(
                         user.Id,
@@ -586,6 +598,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock
                 .Setup(unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
@@ -593,18 +606,23 @@ namespace RestaurantServer.Tests
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Response);
+
             Assert.AreEqual(
                 "new-access-token",
                 result.Response.AccessToken);
+
             Assert.AreEqual(
                 "Bearer",
                 result.Response.TokenType);
+
             Assert.AreEqual(
                 newRefreshToken,
                 result.RefreshToken);
+
             Assert.AreEqual(
                 newRefreshToken,
                 existingRefreshToken.Token);
+
             Assert.IsFalse(
                 existingRefreshToken.IsRevoked);
 
@@ -616,6 +634,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
         }
@@ -740,6 +759,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock
                 .Setup(unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
@@ -755,6 +775,7 @@ namespace RestaurantServer.Tests
             _unitOfWorkMock.Verify(
                 unitOfWork =>
                     unitOfWork.SaveChangesAsync(
+                        It.IsAny<long?>(),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
         }

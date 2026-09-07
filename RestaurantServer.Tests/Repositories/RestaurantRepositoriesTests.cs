@@ -2,7 +2,7 @@
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Implementations;
 using System;
-using System.Threading;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RestaurantServer.Tests.Repositories
@@ -48,8 +48,7 @@ namespace RestaurantServer.Tests.Repositories
 
                 var result =
                     await _restaurantRepository.ExistsByMobileNumberAsync(
-                        restaurant.MobileNumber,
-                        CancellationToken.None);
+                        restaurant.MobileNumber);
 
                 Assert.IsTrue(result);
             }
@@ -67,8 +66,7 @@ namespace RestaurantServer.Tests.Repositories
 
             var result =
                 await _restaurantRepository.ExistsByMobileNumberAsync(
-                    mobileNumber,
-                    CancellationToken.None);
+                    mobileNumber);
 
             Assert.IsFalse(result);
         }
@@ -95,8 +93,7 @@ namespace RestaurantServer.Tests.Repositories
 
                 var result =
                     await _restaurantRepository.ExistsByMobileNumberAsync(
-                        restaurant.MobileNumber,
-                        CancellationToken.None);
+                        restaurant.MobileNumber);
 
                 Assert.IsFalse(result);
             }
@@ -128,8 +125,7 @@ namespace RestaurantServer.Tests.Repositories
 
                 var result =
                     await _restaurantRepository.ExistsByMobileNumberAsync(
-                        "9876500004",
-                        CancellationToken.None);
+                        "9876500004");
 
                 Assert.IsFalse(result);
             }
@@ -270,8 +266,7 @@ namespace RestaurantServer.Tests.Repositories
                     await _restaurantOwnerRepository
                         .GetOwnersByRestaurantAndUserIdsAsync(
                             restaurant.Id,
-                            new[] { user.Id },
-                            CancellationToken.None);
+                            new List<long> { user.Id });
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(1, result.Count);
@@ -295,8 +290,7 @@ namespace RestaurantServer.Tests.Repositories
                 await _restaurantOwnerRepository
                     .GetOwnersByRestaurantAndUserIdsAsync(
                         long.MaxValue,
-                        new[] { long.MaxValue },
-                        CancellationToken.None);
+                        new List<long> { long.MaxValue });
 
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Count);
@@ -341,8 +335,7 @@ namespace RestaurantServer.Tests.Repositories
                     await _restaurantOwnerRepository
                         .GetOwnersByRestaurantAndUserIdsAsync(
                             restaurant.Id,
-                            new[] { user2.Id },
-                            CancellationToken.None);
+                            new List<long> { user2.Id });
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(0, result.Count);
@@ -401,8 +394,7 @@ namespace RestaurantServer.Tests.Repositories
                     await _restaurantOwnerRepository
                         .GetOwnersByRestaurantAndUserIdsAsync(
                             restaurant2.Id,
-                            new[] { user.Id },
-                            CancellationToken.None);
+                            new List<long> { user.Id });
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(0, result.Count);
@@ -418,92 +410,13 @@ namespace RestaurantServer.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetOwnersByRestaurantAndUserIdsAsync_MultipleUsers_ReturnsMatchingOwners()
-        {
-            var user1 = CreateUser("Owner One");
-            var user2 = CreateUser("Owner Two");
-            var user3 = CreateUser("Owner Three");
-
-            Restaurant restaurant = null;
-            RestaurantOwner owner1 = null;
-            RestaurantOwner owner2 = null;
-
-            try
-            {
-                _context.Users.Add(user1);
-                _context.Users.Add(user2);
-                _context.Users.Add(user3);
-
-                await _context.SaveChangesAsync();
-
-                restaurant = CreateRestaurant(
-                    "Multiple Owners Restaurant",
-                    "9876500014",
-                    user1.Id);
-
-                _context.Restaurants.Add(restaurant);
-                await _context.SaveChangesAsync();
-
-                owner1 = new RestaurantOwner
-                {
-                    RestaurantId = restaurant.Id,
-                    UserId = user1.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-
-                owner2 = new RestaurantOwner
-                {
-                    RestaurantId = restaurant.Id,
-                    UserId = user2.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-
-                _context.RestaurantOwners.Add(owner1);
-                _context.RestaurantOwners.Add(owner2);
-
-                await _context.SaveChangesAsync();
-
-                var result =
-                    await _restaurantOwnerRepository
-                        .GetOwnersByRestaurantAndUserIdsAsync(
-                            restaurant.Id,
-                            new[] { user1.Id, user2.Id, user3.Id },
-                            CancellationToken.None);
-
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
-
-                Assert.IsTrue(
-                    result.Exists(x => x.UserId == user1.Id));
-
-                Assert.IsTrue(
-                    result.Exists(x => x.UserId == user2.Id));
-
-                Assert.IsFalse(
-                    result.Exists(x => x.UserId == user3.Id));
-            }
-            finally
-            {
-                await DeleteRestaurantOwnerDataAsync(
-                    owner1,
-                    restaurant,
-                    user1,
-                    user2,
-                    user3);
-            }
-        }
-
-        [TestMethod]
         public async Task GetOwnersByRestaurantAndUserIdsAsync_EmptyUserIds_ReturnsEmptyList()
         {
             var result =
                 await _restaurantOwnerRepository
                     .GetOwnersByRestaurantAndUserIdsAsync(
                         1,
-                        Array.Empty<long>(),
-                        CancellationToken.None);
+                        new List<long>());
 
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Count);

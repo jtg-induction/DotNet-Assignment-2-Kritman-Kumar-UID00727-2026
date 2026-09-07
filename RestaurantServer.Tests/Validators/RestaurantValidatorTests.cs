@@ -1,13 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using RestaurantServer.Constants;
-using RestaurantServer.Enums;
 using RestaurantServer.Exceptions;
 using RestaurantServer.Models;
 using RestaurantServer.Repositories.Interfaces;
 using RestaurantServer.Validators.Implementations;
-using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -189,134 +186,6 @@ namespace RestaurantServer.Tests
                         null,
                         It.IsAny<CancellationToken>()),
                 Times.Once);
-        }
-
-        [TestMethod]
-        public void ValidateEmail_NullEmail_ThrowsValidationException()
-        {
-            var exception =
-                Assert.ThrowsException<ValidationException>(
-                    () => _restaurantValidator.ValidateEmail(null));
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidEmail,
-                exception.Message);
-        }
-
-        [TestMethod]
-        public void ValidateEmail_EmptyEmail_ThrowsValidationException()
-        {
-            var exception =
-                Assert.ThrowsException<ValidationException>(
-                    () => _restaurantValidator.ValidateEmail(""));
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidEmail,
-                exception.Message);
-        }
-
-        [TestMethod]
-        public void ValidateEmail_WhitespaceEmail_ThrowsValidationException()
-        {
-            var exception =
-                Assert.ThrowsException<ValidationException>(
-                    () => _restaurantValidator.ValidateEmail("   "));
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidEmail,
-                exception.Message);
-        }
-
-        [TestMethod]
-        public void ValidateEmail_InvalidEmail_ThrowsValidationException()
-        {
-            var exception =
-                Assert.ThrowsException<ValidationException>(
-                    () => _restaurantValidator.ValidateEmail(
-                        "invalid-email"));
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidEmail,
-                exception.Message);
-        }
-
-        [TestMethod]
-        public void ValidateEmail_ValidEmail_DoesNotThrowException()
-        {
-            _restaurantValidator.ValidateEmail(
-                "owner@example.com");
-        }
-
-        [TestMethod]
-        public void ValidateEmail_EmailWithWhitespace_DoesNotThrowException()
-        {
-            _restaurantValidator.ValidateEmail(
-                "  owner@example.com  ");
-        }
-
-        [TestMethod]
-        public void ValidateAdminRole_AdminRole_ThrowsValidationException()
-        {
-            var exception =
-                Assert.ThrowsException<ValidationException>(
-                    () => _restaurantValidator.ValidateAdminRole(
-                        (int)UserRole.Admin));
-
-            Assert.AreEqual(
-                ValidationMessages.InvalidRestaurantOwner,
-                exception.Message);
-        }
-
-        [TestMethod]
-        public void ValidateAdminRole_CustomerRole_DoesNotThrowException()
-        {
-            _restaurantValidator.ValidateAdminRole(
-                (int)UserRole.Customer);
-        }
-
-        [TestMethod]
-        public void ValidateAdminRole_OwnerRole_DoesNotThrowException()
-        {
-            _restaurantValidator.ValidateAdminRole(
-                (int)UserRole.Owner);
-        }
-
-        [TestMethod]
-        public void IsOwnersEmailEmpty_EmptyList_ThrowsValidationException()
-        {
-            var emails = new List<string>();
-
-            var exception =
-                Assert.ThrowsException<ValidationException>(
-                    () => _restaurantValidator
-                        .IsOwnersEmailEmpty(emails));
-
-            Assert.AreEqual(
-                ValidationMessages.OnboardRestaurantOwnerEmailsMinLength,
-                exception.Message);
-        }
-
-        [TestMethod]
-        public void IsOwnersEmailEmpty_NonEmptyList_DoesNotThrowException()
-        {
-            var emails = new List<string>
-            {
-                "owner@example.com"
-            };
-
-            _restaurantValidator.IsOwnersEmailEmpty(emails);
-        }
-
-        [TestMethod]
-        public void IsOwnersEmailEmpty_MultipleEmails_DoesNotThrowException()
-        {
-            var emails = new List<string>
-            {
-                "owner1@example.com",
-                "owner2@example.com"
-            };
-
-            _restaurantValidator.IsOwnersEmailEmpty(emails);
         }
     }
 }

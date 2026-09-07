@@ -15,12 +15,18 @@ namespace RestaurantServer.Validators.Implementations
 
         private readonly UserValidator _userValidator;
         private readonly IPaginatedValidator _paginatedValidator;
+        private UserValidator userValidator;
 
         public OrderValidator(UserValidator userValidator,
             IPaginatedValidator paginatedValidator)
         {
             _userValidator = userValidator; 
              _paginatedValidator = paginatedValidator;
+        }
+
+        public OrderValidator(UserValidator userValidator)
+        {
+            this.userValidator = userValidator;
         }
 
         public void ValidateOrderRequest(CreateOrderRequest request)
